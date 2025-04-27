@@ -53,7 +53,7 @@ const AdminLogin = () => {
     try {
       setIsResetting(true);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/admin/reset-password`,
+        redirectTo: `${window.location.origin}/admin/login`,
       });
       
       if (error) throw error;
