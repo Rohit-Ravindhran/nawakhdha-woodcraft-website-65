@@ -60,8 +60,13 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/category" className="hover:text-primary transition-colors">
-                  Furniture Categories
+                <Link to="/products" className="hover:text-primary transition-colors">
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-primary transition-colors">
+                  Blog
                 </Link>
               </li>
               <li>
@@ -73,11 +78,11 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-4 font-playfair">Popular Categories</h3>
+            <h3 className="text-lg font-bold mb-4 font-playfair">Popular Products</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  to="/category/doors-modern"
+                  to="/product/doors-modern"
                   className="hover:text-primary transition-colors"
                 >
                   Modern Wooden Doors
@@ -85,7 +90,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/category/kitchen-cabinets"
+                  to="/product/kitchen-cabinets"
                   className="hover:text-primary transition-colors"
                 >
                   Kitchen Cabinets
@@ -93,7 +98,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/category/bedroom-furniture"
+                  to="/product/bedroom-furniture"
                   className="hover:text-primary transition-colors"
                 >
                   Bedroom Furniture
@@ -101,7 +106,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/category/dining-tables"
+                  to="/product/dining-tables"
                   className="hover:text-primary transition-colors"
                 >
                   Dining Tables & Chairs

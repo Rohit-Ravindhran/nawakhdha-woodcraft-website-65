@@ -4,6 +4,14 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,6 +30,19 @@ const Header = () => {
     { name: "Kitchen Cabinets", path: "/product/kitchen-cabinets" },
     { name: "Wardrobes", path: "/product/wardrobes" },
     { name: "Dining Tables & Chairs", path: "/product/dining-tables" },
+    { name: "Teapoy", path: "/product/teapoy" },
+    { name: "Wall Partitions", path: "/product/wall-partitions" },
+    { name: "Study Tables", path: "/product/study-tables" },
+    { name: "Wall Cladding", path: "/product/wall-cladding" },
+    { name: "Office Furniture", path: "/product/office-furniture" },
+    { name: "Bedroom Furniture", path: "/product/bedroom-furniture" },
+    { name: "Dressing Tables", path: "/product/dressing-tables" },
+    { name: "Outdoor Swings", path: "/product/outdoor-swings" },
+    { name: "Patio Furniture", path: "/product/patio-furniture" },
+    { name: "Walk-in Closets", path: "/product/walk-in-closets" },
+    { name: "Parquet Flooring", path: "/product/parquet-flooring" },
+    { name: "Book Shelves", path: "/product/book-shelves" },
+    { name: "Showcases", path: "/product/showcases" },
   ];
 
   useEffect(() => {
@@ -101,40 +122,46 @@ const Header = () => {
                 </Link>
               </li>
               <li className="relative">
-                <button
-                  onClick={() => setIsProductsOpen(!isProductsOpen)}
-                  className={cn(
-                    "flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
-                    (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
-                  )}
-                >
-                  Products <ChevronDown className="h-4 w-4" />
-                </button>
-                {isProductsOpen && (
-                  <div className="absolute top-full left-0 z-50 w-64 bg-white shadow-lg rounded-md overflow-hidden">
-                    <ul className="py-2">
-                      {products.map((product) => (
-                        <li key={product.path}>
-                          <Link
-                            to={product.path}
-                            className="block px-4 py-2 text-sm hover:bg-secondary"
-                            onClick={() => setIsProductsOpen(false)}
-                          >
-                            {product.name}
-                          </Link>
-                        </li>
-                      ))}
-                      <li>
-                        <Link
-                          to="/products"
-                          className="block px-4 py-2 text-sm font-medium text-primary"
-                        >
-                          View All Products →
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger
+                        className={cn(
+                          "text-sm font-medium transition-colors hover:text-primary p-0 h-auto bg-transparent",
+                          (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
+                        )}
+                      >
+                        Products
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="grid w-[400px] gap-1 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                          {products.map((product) => (
+                            <li key={product.path}>
+                              <NavigationMenuLink asChild>
+                                <Link
+                                  to={product.path}
+                                  className="block select-none space-y-1 rounded-md p-3 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                >
+                                  {product.name}
+                                </Link>
+                              </NavigationMenuLink>
+                            </li>
+                          ))}
+                          <li className="md:col-span-2">
+                            <NavigationMenuLink asChild>
+                              <Link
+                                to="/products"
+                                className="block select-none rounded-md p-3 text-sm font-medium text-primary leading-none no-underline outline-none transition-colors hover:bg-accent"
+                              >
+                                View All Products →
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
               </li>
               <li>
                 <Link
@@ -206,8 +233,8 @@ const Header = () => {
                     />
                   </button>
                   {isProductsOpen && (
-                    <ul className="mt-2 ml-4 space-y-2">
-                      {products.slice(0, 5).map((product) => (
+                    <ul className="mt-2 ml-4 space-y-2 max-h-[200px] overflow-y-auto">
+                      {products.map((product) => (
                         <li key={product.path}>
                           <Link
                             to={product.path}

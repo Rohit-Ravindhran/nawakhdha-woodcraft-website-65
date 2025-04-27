@@ -38,21 +38,24 @@ const HomePage = () => {
       title: "Top Trends in Wooden Furniture 2025",
       excerpt: "Discover the latest trends in wooden furniture design that are dominating the industry in 2025.",
       image: "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?q=80&w=1000",
-      date: "April 15, 2025"
+      date: "April 15, 2025",
+      slug: "top-trends-wooden-furniture-2025"
     },
     {
       id: 2,
       title: "How to Maintain Custom Wooden Doors",
       excerpt: "Learn the best practices for maintaining your wooden doors to ensure they last for generations.",
       image: "https://images.unsplash.com/photo-1517857399767-a9a54424dace?q=80&w=1000",
-      date: "March 28, 2025"
+      date: "March 28, 2025",
+      slug: "maintain-custom-wooden-doors"
     },
     {
       id: 3,
       title: "Choosing the Right Wood for Your Home",
       excerpt: "A comprehensive guide to selecting the perfect wood type for different furniture pieces in your home.",
       image: "https://images.unsplash.com/photo-1529316738131-4d0e0761a38e?q=80&w=1000",
-      date: "March 10, 2025"
+      date: "March 10, 2025",
+      slug: "choosing-right-wood-home"
     }
   ];
 
@@ -116,7 +119,7 @@ const HomePage = () => {
       </section>
 
       {/* Services Section */}
-      <section className="section-padding">
+      <section className="section-padding bg-secondary/30">
         <div className="container-custom">
           <SectionTitle
             title="Our Services"
@@ -199,7 +202,7 @@ const HomePage = () => {
       </section>
 
       {/* Blog Section */}
-      <section className="section-padding">
+      <section className="section-padding bg-secondary/30">
         <div className="container-custom">
           <SectionTitle
             title="From Our Workshop Blog"
@@ -214,7 +217,7 @@ const HomePage = () => {
                 excerpt={post.excerpt}
                 image={post.image}
                 date={post.date}
-                href={`/blog/${post.id}`}
+                href={`/blog/${post.slug}`}
               />
             ))}
           </div>

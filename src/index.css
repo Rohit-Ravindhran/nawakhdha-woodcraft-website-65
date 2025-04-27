@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --background: 30 33% 98%;
+    --background: 40 30% 96%;
     --foreground: 20 10% 15%;
 
     --card: 0 0% 100%;
@@ -40,6 +40,10 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   * {
     @apply border-border;
   }
@@ -93,4 +97,37 @@
   .link-underline {
     @apply relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
   }
+
+  .prose {
+    @apply max-w-none text-foreground;
+  }
+
+  .prose h2 {
+    @apply text-2xl font-bold mt-8 mb-4 font-playfair;
+  }
+
+  .prose h3 {
+    @apply text-xl font-semibold mt-6 mb-3 font-playfair;
+  }
+
+  .prose h4 {
+    @apply text-lg font-medium mt-4 mb-2 font-playfair;
+  }
+
+  .prose p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  .prose ul {
+    @apply mb-4 ml-6 list-disc;
+  }
+
+  .prose li {
+    @apply mb-1;
+  }
+
+  .prose a {
+    @apply text-primary hover:underline;
+  }
 }
+
