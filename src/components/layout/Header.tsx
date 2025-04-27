@@ -8,20 +8,20 @@ import { cn } from "@/lib/utils";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
   const location = useLocation();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
-  const categories = [
-    { name: "Doors - Western Designs", path: "/category/doors-western" },
-    { name: "Doors - Modern Designs", path: "/category/doors-modern" },
-    { name: "Doors - Middle Eastern Designs", path: "/category/doors-middle-eastern" },
-    { name: "TV Cabinets", path: "/category/tv-cabinets" },
-    { name: "Kitchen Cabinets", path: "/category/kitchen-cabinets" },
-    { name: "Wardrobes", path: "/category/wardrobes" },
-    { name: "Dining Tables & Chairs", path: "/category/dining-tables" },
+  const products = [
+    { name: "Doors - Western Designs", path: "/product/doors-western" },
+    { name: "Doors - Modern Designs", path: "/product/doors-modern" },
+    { name: "Doors - Middle Eastern Designs", path: "/product/doors-middle-eastern" },
+    { name: "TV Cabinets", path: "/product/tv-cabinets" },
+    { name: "Kitchen Cabinets", path: "/product/kitchen-cabinets" },
+    { name: "Wardrobes", path: "/product/wardrobes" },
+    { name: "Dining Tables & Chairs", path: "/product/dining-tables" },
   ];
 
   useEffect(() => {
@@ -102,34 +102,34 @@ const Header = () => {
               </li>
               <li className="relative">
                 <button
-                  onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                  onClick={() => setIsProductsOpen(!isProductsOpen)}
                   className={cn(
                     "flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
-                    location.pathname.includes("/category") ? "text-primary" : ""
+                    (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
                   )}
                 >
-                  Categories <ChevronDown className="h-4 w-4" />
+                  Products <ChevronDown className="h-4 w-4" />
                 </button>
-                {isCategoriesOpen && (
+                {isProductsOpen && (
                   <div className="absolute top-full left-0 z-50 w-64 bg-white shadow-lg rounded-md overflow-hidden">
                     <ul className="py-2">
-                      {categories.map((category) => (
-                        <li key={category.path}>
+                      {products.map((product) => (
+                        <li key={product.path}>
                           <Link
-                            to={category.path}
+                            to={product.path}
                             className="block px-4 py-2 text-sm hover:bg-secondary"
-                            onClick={() => setIsCategoriesOpen(false)}
+                            onClick={() => setIsProductsOpen(false)}
                           >
-                            {category.name}
+                            {product.name}
                           </Link>
                         </li>
                       ))}
                       <li>
                         <Link
-                          to="/category"
+                          to="/products"
                           className="block px-4 py-2 text-sm font-medium text-primary"
                         >
-                          View All Categories →
+                          View All Products →
                         </Link>
                       </li>
                     </ul>
@@ -194,35 +194,35 @@ const Header = () => {
                 </li>
                 <li>
                   <button
-                    onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+                    onClick={() => setIsProductsOpen(!isProductsOpen)}
                     className="flex items-center justify-between w-full text-base font-medium"
                   >
-                    <span>Categories</span>
+                    <span>Products</span>
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 transition-transform",
-                        isCategoriesOpen ? "rotate-180" : ""
+                        isProductsOpen ? "rotate-180" : ""
                       )}
                     />
                   </button>
-                  {isCategoriesOpen && (
+                  {isProductsOpen && (
                     <ul className="mt-2 ml-4 space-y-2">
-                      {categories.slice(0, 5).map((category) => (
-                        <li key={category.path}>
+                      {products.slice(0, 5).map((product) => (
+                        <li key={product.path}>
                           <Link
-                            to={category.path}
+                            to={product.path}
                             className="block text-sm hover:text-primary"
                           >
-                            {category.name}
+                            {product.name}
                           </Link>
                         </li>
                       ))}
                       <li>
                         <Link
-                          to="/category"
+                          to="/products"
                           className="block text-sm font-medium text-primary"
                         >
-                          View All Categories →
+                          View All Products →
                         </Link>
                       </li>
                     </ul>

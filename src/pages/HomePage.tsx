@@ -8,7 +8,7 @@ import BlogCard from "@/components/ui/blog-card";
 
 const HomePage = () => {
   // Sample data for categories
-  const categories = [
+  const products = [
     {
       id: "doors-western",
       title: "Western Doors",
@@ -115,73 +115,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-up">
-              <SectionTitle
-                title="About Al Nawakhdha Furniture"
-                subtitle="Since 1975, we've been crafting memories through exceptional furniture."
-              />
-              <p className="body-text mb-6">
-                Al Nawakhdha Furniture was incorporated by our managing director Adnan Al Hamar
-                in 1975 in Bahrain. As one of the oldest carpentry workshops on the island, we
-                have built our reputation on service, quality, and exceptional workmanship.
-              </p>
-              <p className="body-text mb-6">
-                We understand our customers' needs and work with our multinational workforce
-                to bring those visions to life. The perfect combination of creativity, artistic
-                knowledge, and craftsmanship allows us to create inlaid and carved works of
-                incomparable beauty.
-              </p>
-              <Button asChild className="mt-2">
-                <Link to="/about">Learn More About Us</Link>
-              </Button>
-            </div>
-            <div className="relative h-[400px] md:h-[500px]">
-              <img
-                src="https://images.unsplash.com/photo-1581339042086-73549466f498?q=80&w=1000&auto=format"
-                alt="Craftsman working on wooden furniture"
-                className="w-full h-full object-cover rounded-lg"
-              />
-              <div className="absolute -bottom-6 -left-6 bg-secondary/90 backdrop-blur p-6 rounded-lg max-w-xs hidden md:block">
-                <p className="text-lg font-playfair font-bold">50+</p>
-                <p className="text-sm text-muted-foreground">Years of Excellence</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories Section */}
-      <section className="section-padding bg-secondary/30">
-        <div className="container-custom">
-          <SectionTitle
-            title="Our Furniture Collections"
-            subtitle="Explore our diverse range of expertly crafted furniture categories."
-            centered
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                title={category.title}
-                image={category.image}
-                href={`/category/${category.id}`}
-              />
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Button asChild variant="outline">
-              <Link to="/category">
-                View All Categories <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Services Section */}
       <section className="section-padding">
         <div className="container-custom">
@@ -207,6 +140,34 @@ const HomePage = () => {
                 <p className="text-muted-foreground text-sm">{service.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Products Section */}
+      <section className="section-padding bg-secondary/30">
+        <div className="container-custom">
+          <SectionTitle
+            title="Our Products"
+            subtitle="Explore our diverse range of expertly crafted furniture products."
+            centered
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <CategoryCard
+                key={product.id}
+                title={product.title}
+                image={product.image}
+                href={`/product/${product.id}`}
+              />
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Button asChild variant="outline">
+              <Link to="/products">
+                View All Products <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
