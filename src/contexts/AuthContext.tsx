@@ -56,8 +56,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/admin`
+        }
+      });
+      
       if (error) throw error;
+      
       toast.success("Successfully logged in");
       navigate('/admin');
     } catch (error: any) {
@@ -71,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       toast.info("Logged out successfully");
-      navigate('/');
+      navigate('/admin/login');
     } catch (error: any) {
       toast.error(error.message || "Error signing out");
     }

@@ -15,6 +15,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -26,6 +28,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const AdminLogin = () => {
   const { user, signIn, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -43,6 +46,23 @@ const AdminLogin = () => {
       console.error(error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleResetPassword = async (email: string) => {
+    try {
+      setIsResetting(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/admin/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast.success("Password reset email sent! Please check your inbox.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send reset email");
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -91,13 +111,31 @@ const AdminLogin = () => {
                   </FormItem>
                 )}
               />
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Logging in..." : "Login"}
-              </Button>
+              <div className="flex flex-col space-y-4">
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Logging in..." : "Login"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="w-full"
+                  disabled={isResetting}
+                  onClick={() => {
+                    const email = form.getValues("email");
+                    if (!email) {
+                      toast.error("Please enter your email address first");
+                      return;
+                    }
+                    handleResetPassword(email);
+                  }}
+                >
+                  {isResetting ? "Sending reset email..." : "Forgot Password?"}
+                </Button>
+              </div>
             </form>
           </Form>
         </div>
