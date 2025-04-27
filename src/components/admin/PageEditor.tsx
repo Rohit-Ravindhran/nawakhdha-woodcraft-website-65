@@ -57,11 +57,17 @@ export default function PageEditor({ pageName }: PageEditorProps) {
   }, [page, form]);
 
   const onSubmit = (values: PageFormValues) => {
-    updatePage.mutate({
+    // Ensure all required fields have values
+    const updatedPage = {
       id: page?.id,
       page_name: pageName,
-      ...values
-    });
+      title: values.title,
+      content: values.content,
+      seo_title: values.seo_title || "",
+      seo_description: values.seo_description || ""
+    };
+    
+    updatePage.mutate(updatedPage);
   };
 
   if (isLoading) {

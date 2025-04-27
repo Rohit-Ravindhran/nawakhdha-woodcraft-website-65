@@ -51,9 +51,9 @@ export default function ProductEditor({ productId, onSave }: ProductEditorProps)
   useEffect(() => {
     if (product) {
       form.reset({
-        product_name: product.product_name,
-        description: product.description,
-        category_name: product.category_name,
+        product_name: product.product_name || "",
+        description: product.description || "",
+        category_name: product.category_name || "",
       });
       
       setGalleryImages(product.gallery_images || []);
@@ -61,11 +61,16 @@ export default function ProductEditor({ productId, onSave }: ProductEditorProps)
   }, [product, form]);
 
   const onSubmit = (values: ProductFormValues) => {
-    updateProduct.mutate({
+    // Ensure all required fields have values
+    const updatedProduct = {
       id: productId,
-      ...values,
-      gallery_images: galleryImages,
-    }, {
+      product_name: values.product_name,
+      description: values.description,
+      category_name: values.category_name,
+      gallery_images: galleryImages
+    };
+    
+    updateProduct.mutate(updatedProduct, {
       onSuccess: () => {
         if (onSave) onSave();
       }
@@ -104,7 +109,7 @@ export default function ProductEditor({ productId, onSave }: ProductEditorProps)
   return (
     <div className="bg-white p-6 rounded-lg border border-border">
       <h3 className="text-xl font-semibold mb-4">
-        {productId ? `Edit ${product?.product_name}` : "Add New Product"}
+        {productId ? `Edit ${product?.product_name || "Product"}` : "Add New Product"}
       </h3>
       
       <Form {...form}>

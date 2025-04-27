@@ -42,18 +42,23 @@ export default function SettingsEditor() {
   useEffect(() => {
     if (settings) {
       form.reset({
-        background_color: settings.background_color,
-        site_title: settings.site_title,
-        site_description: settings.site_description,
+        background_color: settings.background_color || "#F8F7F4",
+        site_title: settings.site_title || "Al Nawakhdha Furniture W.L.L.",
+        site_description: settings.site_description || "Bahrain's premier carpentry and furniture manufacturing workshop.",
       });
     }
   }, [settings, form]);
 
   const onSubmit = (values: SettingsFormValues) => {
-    updateSettings.mutate({
+    // Ensure all required fields have values
+    const updatedSettings = {
       id: settings?.id,
-      ...values
-    });
+      background_color: values.background_color,
+      site_title: values.site_title,
+      site_description: values.site_description
+    };
+    
+    updateSettings.mutate(updatedSettings);
   };
 
   if (isLoading) {

@@ -9,6 +9,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
+  // Show loading state while authentication is being checked
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -17,10 +18,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
+  // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/admin/login" replace />;
   }
 
+  // Render children if authenticated
   return <>{children}</>;
 };
 

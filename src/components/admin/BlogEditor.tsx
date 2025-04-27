@@ -52,10 +52,10 @@ export default function BlogEditor({ blogId, onSave }: BlogEditorProps) {
   useEffect(() => {
     if (blog) {
       form.reset({
-        title: blog.title,
-        body_content: blog.body_content,
+        title: blog.title || "",
+        body_content: blog.body_content || "",
         excerpt: blog.excerpt || "",
-        slug: blog.slug,
+        slug: blog.slug || "",
       });
       
       setFeaturedImage(blog.featured_image_url || "");
@@ -63,12 +63,18 @@ export default function BlogEditor({ blogId, onSave }: BlogEditorProps) {
   }, [blog, form]);
 
   const onSubmit = (values: BlogFormValues) => {
-    updateBlog.mutate({
+    // Ensure all required fields have values
+    const updatedBlog = {
       id: blogId,
-      ...values,
+      title: values.title,
+      body_content: values.body_content,
       featured_image_url: featuredImage,
+      slug: values.slug,
+      excerpt: values.excerpt,
       date: blog?.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    }, {
+    };
+
+    updateBlog.mutate(updatedBlog, {
       onSuccess: () => {
         if (onSave) onSave();
       }
@@ -90,7 +96,7 @@ export default function BlogEditor({ blogId, onSave }: BlogEditorProps) {
   return (
     <div className="bg-white p-6 rounded-lg border border-border">
       <h3 className="text-xl font-semibold mb-4">
-        {blogId ? `Edit ${blog?.title}` : "Add New Blog Post"}
+        {blogId ? `Edit ${blog?.title || "Blog Post"}` : "Add New Blog Post"}
       </h3>
       
       <Form {...form}>

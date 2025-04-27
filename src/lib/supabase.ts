@@ -10,24 +10,24 @@ export type Database = {
           page_name: string;
           title: string;
           content: string;
-          seo_title: string;
-          seo_description: string;
+          seo_title: string | null;
+          seo_description: string | null;
         };
         Insert: {
           id?: number;
           page_name: string;
           title: string;
           content: string;
-          seo_title?: string;
-          seo_description?: string;
+          seo_title?: string | null;
+          seo_description?: string | null;
         };
         Update: {
           id?: number;
           page_name?: string;
           title?: string;
           content?: string;
-          seo_title?: string;
-          seo_description?: string;
+          seo_title?: string | null;
+          seo_description?: string | null;
         };
       };
       products: {
@@ -36,21 +36,21 @@ export type Database = {
           product_name: string;
           description: string;
           category_name: string;
-          gallery_images: { url: string; caption: string }[];
+          gallery_images: { url: string; caption: string }[] | null;
         };
         Insert: {
           id?: number;
           product_name: string;
           description: string;
           category_name: string;
-          gallery_images?: { url: string; caption: string }[];
+          gallery_images?: { url: string; caption: string }[] | null;
         };
         Update: {
           id?: number;
           product_name?: string;
           description?: string;
           category_name?: string;
-          gallery_images?: { url: string; caption: string }[];
+          gallery_images?: { url: string; caption: string }[] | null;
         };
       };
       blogs: {
@@ -58,45 +58,45 @@ export type Database = {
           id: number;
           title: string;
           body_content: string;
-          featured_image_url: string;
+          featured_image_url: string | null;
           slug: string;
           date: string;
-          excerpt: string;
+          excerpt: string | null;
         };
         Insert: {
           id?: number;
           title: string;
           body_content: string;
-          featured_image_url?: string;
+          featured_image_url?: string | null;
           slug: string;
           date: string;
-          excerpt?: string;
+          excerpt?: string | null;
         };
         Update: {
           id?: number;
           title?: string;
           body_content?: string;
-          featured_image_url?: string;
+          featured_image_url?: string | null;
           slug?: string;
           date?: string;
-          excerpt?: string;
+          excerpt?: string | null;
         };
       };
       gallery: {
         Row: {
           id: number;
           image_url: string;
-          caption: string;
+          caption: string | null;
         };
         Insert: {
           id?: number;
           image_url: string;
-          caption?: string;
+          caption?: string | null;
         };
         Update: {
           id?: number;
           image_url?: string;
-          caption?: string;
+          caption?: string | null;
         };
       };
       settings: {
