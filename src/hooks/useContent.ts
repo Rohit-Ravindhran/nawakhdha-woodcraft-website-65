@@ -1,7 +1,20 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+export interface PageData {
+  id?: number;
+  page_name: string;
+  title: string;
+  content: string;
+  seo_title?: string;
+  seo_description?: string;
+  hero?: string;
+  services?: string;
+  products?: string;
+  blog?: string;
+  created_at?: string;
+}
 
 // Pages
 export function usePage(pageName: string) {
@@ -17,7 +30,7 @@ export function usePage(pageName: string) {
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return data as PageData;
     }
   });
 }
@@ -26,18 +39,7 @@ export function useUpdatePage() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (pageData: { 
-      id?: number; 
-      page_name: string; 
-      title: string; 
-      content: string;
-      seo_title?: string;
-      seo_description?: string;
-      hero?: string;
-      services?: string;
-      products?: string;
-      blog?: string;
-    }) => {
+    mutationFn: async (pageData: PageData) => {
       const { id, ...pageFields } = pageData;
       
       if (id) {
@@ -58,7 +60,7 @@ export function useUpdatePage() {
           .single();
           
         if (error) throw error;
-        return data;
+        return data as PageData;
       }
     },
     onSuccess: (data) => {

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { usePage, useUpdatePage } from "@/hooks/useContent";
+import { usePage, useUpdatePage, PageData } from "@/hooks/useContent";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,44 +21,56 @@ import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import ImageUploader from "@/components/admin/ImageUploader";
 
+// Hero section schema for the home page
+const heroSchema = z.object({
+  background_image: z.string().optional(),
+  headline: z.string().optional(),
+  subheadline: z.string().optional(),
+  button_text: z.string().optional(),
+  button_link: z.string().optional(),
+});
+
+// Services section schema
+const servicesSchema = z.object({
+  section_title: z.string().optional(),
+  items: z.array(z.object({
+    image: z.string().optional(),
+    title: z.string().optional(), 
+    description: z.string().optional()
+  })).optional()
+});
+
+// Products section schema
+const productsSchema = z.object({
+  section_title: z.string().optional(),
+  items: z.array(z.object({
+    image: z.string().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+  })).optional()
+});
+
+// Blog section schema
+const blogSchema = z.object({
+  section_title: z.string().optional(),
+  items: z.array(z.object({
+    image: z.string().optional(),
+    title: z.string().optional(),
+    excerpt: z.string().optional(),
+    link: z.string().optional(),
+  })).optional()
+});
+
 // Define homepage-specific sections schema
 const homePageSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.string(),
   seo_title: z.string().optional(),
   seo_description: z.string().optional(),
-  hero: z.object({
-    background_image: z.string().optional(),
-    headline: z.string().optional(),
-    subheadline: z.string().optional(),
-    button_text: z.string().optional(),
-    button_link: z.string().optional(),
-  }).optional(),
-  services: z.object({
-    section_title: z.string().optional(),
-    items: z.array(z.object({
-      image: z.string().optional(),
-      title: z.string().optional(), 
-      description: z.string().optional()
-    })).optional()
-  }).optional(),
-  products: z.object({
-    section_title: z.string().optional(),
-    items: z.array(z.object({
-      image: z.string().optional(),
-      title: z.string().optional(),
-      description: z.string().optional(),
-    })).optional()
-  }).optional(),
-  blog: z.object({
-    section_title: z.string().optional(),
-    items: z.array(z.object({
-      image: z.string().optional(),
-      title: z.string().optional(),
-      excerpt: z.string().optional(),
-      link: z.string().optional(),
-    })).optional()
-  }).optional(),
+  hero: heroSchema.optional(),
+  services: servicesSchema.optional(),
+  products: productsSchema.optional(),
+  blog: blogSchema.optional(),
 });
 
 // Regular page schema for non-home pages
@@ -130,53 +142,61 @@ export default function PageEditor({ pageName }: PageEditorProps) {
   useEffect(() => {
     if (page) {
       // Parse JSON fields if they exist
-      const parsedPage = {
-        ...page,
-        hero: page.hero ? 
-          (typeof page.hero === 'string' ? JSON.parse(page.hero) : page.hero) : 
-          form.getValues().hero,
-        services: page.services ? 
-          (typeof page.services === 'string' ? JSON.parse(page.services) : page.services) : 
-          form.getValues().services,
-        products: page.products ? 
-          (typeof page.products === 'string' ? JSON.parse(page.products) : page.products) : 
-          form.getValues().products,
-        blog: page.blog ? 
-          (typeof page.blog === 'string' ? JSON.parse(page.blog) : page.blog) : 
-          form.getValues().blog
-      };
-
-      form.reset({
-        title: parsedPage.title || "",
-        content: parsedPage.content || "",
-        seo_title: parsedPage.seo_title || "",
-        seo_description: parsedPage.seo_description || "",
-        ...(pageName === "home" && {
-          hero: parsedPage.hero,
-          services: parsedPage.services,
-          products: parsedPage.products,
-          blog: parsedPage.blog
-        })
-      });
+      try {
+        const parsedPage = {
+          ...page,
+          hero: page.hero ? 
+            (typeof page.hero === 'string' ? JSON.parse(page.hero) : page.hero) : 
+            form.getValues().hero,
+          services: page.services ? 
+            (typeof page.services === 'string' ? JSON.parse(page.services) : page.services) : 
+            form.getValues().services,
+          products: page.products ? 
+            (typeof page.products === 'string' ? JSON.parse(page.products) : page.products) : 
+            form.getValues().products,
+          blog: page.blog ? 
+            (typeof page.blog === 'string' ? JSON.parse(page.blog) : page.blog) : 
+            form.getValues().blog
+        };
+        
+        form.reset({
+          title: parsedPage.title || "",
+          content: parsedPage.content || "",
+          seo_title: parsedPage.seo_title || "",
+          seo_description: parsedPage.seo_description || "",
+          ...(pageName === "home" && {
+            hero: parsedPage.hero,
+            services: parsedPage.services,
+            products: parsedPage.products,
+            blog: parsedPage.blog
+          })
+        });
+      } catch (e) {
+        console.error("Error parsing JSON:", e);
+      }
     }
   }, [page, form, pageName]);
 
   const onSubmit = (values: PageFormValues) => {
     // Ensure all required fields have values
-    const updatedPage = {
+    const updatedPage: PageData = {
       id: page?.id,
       page_name: pageName,
       title: values.title,
       content: values.content,
       seo_title: values.seo_title || "",
       seo_description: values.seo_description || "",
-      ...(pageName === "home" && {
-        hero: JSON.stringify(values.hero),
-        services: JSON.stringify(values.services),
-        products: JSON.stringify(values.products),
-        blog: JSON.stringify(values.blog)
-      })
     };
+    
+    // Only add homepage-specific fields if this is the home page
+    if (pageName === "home") {
+      const homeValues = values as z.infer<typeof homePageSchema>;
+      
+      updatedPage.hero = JSON.stringify(homeValues.hero);
+      updatedPage.services = JSON.stringify(homeValues.services);
+      updatedPage.products = JSON.stringify(homeValues.products);
+      updatedPage.blog = JSON.stringify(homeValues.blog);
+    }
     
     updatePage.mutate(updatedPage, {
       onSuccess: () => {
@@ -189,14 +209,16 @@ export default function PageEditor({ pageName }: PageEditorProps) {
   };
 
   const handleImageUploaded = (section: string, index: number | null, url: string) => {
+    if (pageName !== "home") return;
+    
     if (section === 'hero') {
-      form.setValue('hero.background_image', url);
+      form.setValue('hero.background_image', url, { shouldValidate: true });
     } else if (section === 'services' && index !== null) {
-      form.setValue(`services.items.${index}.image`, url);
+      form.setValue(`services.items.${index}.image`, url, { shouldValidate: true });
     } else if (section === 'products' && index !== null) {
-      form.setValue(`products.items.${index}.image`, url);
+      form.setValue(`products.items.${index}.image`, url, { shouldValidate: true });
     } else if (section === 'blog' && index !== null) {
-      form.setValue(`blog.items.${index}.image`, url);
+      form.setValue(`blog.items.${index}.image`, url, { shouldValidate: true });
     }
   };
 
