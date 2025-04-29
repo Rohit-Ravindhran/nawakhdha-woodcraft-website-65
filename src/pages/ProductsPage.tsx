@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
@@ -6,7 +7,25 @@ import { Loader2 } from "lucide-react";
 
 const ProductsPage = () => {
   // Product categories data
-  const products = useProducts();
+  const { data: products, isLoading, error } = useProducts();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !products) {
+    return (
+      <div className="section-padding">
+        <div className="container-custom">
+          <p className="text-center text-muted-foreground">Failed to load products. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="section-padding">
@@ -21,8 +40,9 @@ const ProductsPage = () => {
           {products.map((product) => (
             <CategoryCard
               key={product.id}
-              title={product.title}
-              image={product.image}
+              title={product.product_name}
+              image={product.gallery_images?.[0]?.url || "/placeholder.svg"}
+              imageAlt={product.gallery_images?.[0]?.alt || product.product_name}
               href={`/product/${product.id}`}
             />
           ))}
