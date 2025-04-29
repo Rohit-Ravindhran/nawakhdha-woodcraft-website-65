@@ -46,7 +46,8 @@ const ProductsTab = () => {
               <DialogTitle>Add New Product</DialogTitle>
             </DialogHeader>
             <ProductEditor 
-              onSave={() => setIsAddingProduct(false)} 
+              onSave={() => setIsAddingProduct(false)}
+              isLoading={false} 
             />
           </DialogContent>
         </Dialog>
@@ -59,13 +60,40 @@ const ProductsTab = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
           {products && products.length > 0 ? (
-            products.map((product) => (
-              <ProductListItem 
-                key={product.id} 
-                product={product as ProductData & { id: number }}
-                onDelete={handleDeleteProduct}
-              />
-            ))
+            products.map((product) => {
+              // Transform the product data to match the expected type
+              const transformedProduct: ProductData & { id: number } = {
+                id: product.id,
+                product_name: product.product_name,
+                description: product.description,
+                category_name: product.category_name,
+                seo_title: product.seo_title,
+                seo_description: product.seo_description,
+                seo_keywords: product.seo_keywords,
+                // Transform gallery_images to ensure it matches the expected format
+                gallery_images: Array.isArray(product.gallery_images) 
+                  ? product.gallery_images.map(img => {
+                      // Ensure each image has the required properties
+                      if (typeof img === 'object' && img !== null) {
+                        return {
+                          url: typeof img.url === 'string' ? img.url : '',
+                          caption: typeof img.caption === 'string' ? img.caption : '',
+                          alt: typeof img.alt === 'string' ? img.alt : undefined
+                        };
+                      }
+                      return { url: '', caption: '' };
+                    }).filter(img => img.url !== '') // Filter out invalid items
+                  : []
+              };
+              
+              return (
+                <ProductListItem 
+                  key={transformedProduct.id} 
+                  product={transformedProduct}
+                  onDelete={handleDeleteProduct}
+                />
+              );
+            })
           ) : (
             <div className="col-span-full text-center py-8 text-muted-foreground">
               No products found. Add your first product!
@@ -97,6 +125,7 @@ const ProductListItem = ({ product, onDelete }: ProductListItemProps) => {
             </DialogHeader>
             <ProductEditor 
               product={product}
+              isLoading={false}
             />
           </DialogContent>
         </Dialog>

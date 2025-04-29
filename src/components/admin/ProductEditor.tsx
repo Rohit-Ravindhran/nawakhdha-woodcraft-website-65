@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useUpdateProduct, ProductData } from "@/hooks/content";
+import { useUpdateProduct } from "@/hooks/content";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,6 +11,8 @@ import { toast } from "sonner";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { z } from "zod";
 import SeoFields from "@/components/admin/SeoFields";
+import { ProductData } from "@/hooks/content/types";
+import { ProductEditorProps } from "./ProductEditorTypes";
 
 const productSchema = z.object({
   product_name: z.string().min(1, "Product name is required"),
@@ -26,12 +27,7 @@ type ProductFormValues = z.infer<typeof productSchema> & {
   gallery_images?: { url: string; caption: string; alt?: string }[];
 };
 
-interface ProductEditorProps {
-  product: ProductData | null;
-  isLoading: boolean;
-}
-
-export default function ProductEditor({ product, isLoading }: ProductEditorProps) {
+export default function ProductEditor({ product, onComplete, onSave, isLoading = false }: ProductEditorProps) {
   const [galleryImages, setGalleryImages] = useState<{ url: string; caption: string; alt?: string }[]>([]);
   const updateProduct = useUpdateProduct();
 
@@ -107,7 +103,12 @@ export default function ProductEditor({ product, isLoading }: ProductEditorProps
       gallery_images: galleryImages,
     };
 
-    updateProduct.mutate(updatedProduct);
+    updateProduct.mutate(updatedProduct, {
+      onSuccess: () => {
+        if (onComplete) onComplete();
+        if (onSave) onSave();
+      }
+    });
   };
 
   if (isLoading) {
