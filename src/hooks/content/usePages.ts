@@ -10,7 +10,6 @@ export function usePage(pageName: string) {
     queryKey: ['page', pageName],
     queryFn: async () => {
       // Changed from .single() to .maybeSingle() to handle the case of no rows
-      // or first() to handle the case of multiple rows
       const { data, error } = await supabase
         .from('pages')
         .select('*')
