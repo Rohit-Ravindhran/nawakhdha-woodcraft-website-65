@@ -12,6 +12,7 @@ import { productSchema, ProductFormValues } from "./schemas/productSchema";
 import ProductGalleryManager from "./ProductGalleryManager";
 import ProductFormFields from "./ProductFormFields";
 import SeoFields from "@/components/admin/SeoFields";
+import { toast } from "sonner";
 
 export default function ProductEditor({ product, onComplete, onSave, isLoading = false }: ProductEditorProps) {
   const [galleryImages, setGalleryImages] = useState<{ url: string; caption: string; alt?: string }[]>([]);
@@ -51,22 +52,58 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
     }
   }, [product]);
 
+  const validateGalleryImages = () => {
+    // Check if there are any gallery images
+    if (galleryImages.length === 0) {
+      toast.error("Please upload at least one product image");
+      return false;
+    }
+    
+    // Check if all gallery images have valid URLs
+    const invalidImages = galleryImages.filter(img => !img.url || img.url.trim() === '');
+    if (invalidImages.length > 0) {
+      toast.error("All product images must have valid URLs");
+      return false;
+    }
+    
+    return true;
+  };
+
   const onSubmit = (values: ProductFormValues) => {
+    // Validate gallery images before submission
+    if (!validateGalleryImages()) {
+      return;
+    }
+    
+    // Process SEO keywords: convert comma-separated string to array
+    const seoKeywords = values.seo_keywords ? 
+      values.seo_keywords.split(',').map(keyword => keyword.trim()).filter(Boolean) : 
+      [];
+
+    // Auto-generate SEO fields if empty
+    const seoTitle = values.seo_title || values.product_name;
+    const seoDescription = values.seo_description || values.description.substring(0, 160);
+
     const updatedProduct: ProductData = {
       id: product?.id,
       product_name: values.product_name,
       description: values.description,
       category_name: values.category_name,
-      seo_title: values.seo_title,
-      seo_description: values.seo_description,
-      seo_keywords: values.seo_keywords,
-      gallery_images: galleryImages,
+      seo_title: seoTitle,
+      seo_description: seoDescription,
+      seo_keywords: seoKeywords.join(','), // Store as comma-separated string for consistency
+      gallery_images: galleryImages.filter(img => img.url && img.url.trim() !== ''), // Filter out any empty URLs
     };
 
     updateProduct.mutate(updatedProduct, {
       onSuccess: () => {
         if (onComplete) onComplete();
         if (onSave) onSave();
+      },
+      onError: (error) => {
+        // Display detailed error message
+        toast.error(`Failed to save product: ${error.message}`);
+        console.error("Product update error:", error);
       }
     });
   };
@@ -95,12 +132,18 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
               onChange={setGalleryImages}
               productId={product?.id}
             />
+            {galleryImages.length === 0 && (
+              <p className="text-sm text-amber-500">Please add at least one product image</p>
+            )}
           </div>
           
           {/* SEO Settings Section */}
           <div className="border-t pt-6 mt-6">
             <h4 className="font-medium mb-4">SEO Settings</h4>
             <SeoFields control={form.control} />
+            <p className="text-xs text-muted-foreground mt-2">
+              For keywords, use comma-separated values (e.g., "kitchen, cabinet, modern")
+            </p>
           </div>
           
           {/* Submit Button */}

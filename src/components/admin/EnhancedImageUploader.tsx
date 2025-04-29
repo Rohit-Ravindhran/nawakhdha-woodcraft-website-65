@@ -3,9 +3,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useStorage } from "@/hooks/useStorage";
-import { Loader2, Upload, TrashIcon } from "lucide-react";
+import { Loader2, Upload, TrashIcon, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface EnhancedImageUploaderProps {
@@ -30,6 +29,7 @@ export default function EnhancedImageUploader({
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>(initialImageUrl);
   const [altText, setAltText] = useState<string>(initialAltText);
+  const [uploadError, setUploadError] = useState<string>("");
   const { uploadImage, deleteImage, uploading } = useStorage();
 
   useEffect(() => {
@@ -38,25 +38,49 @@ export default function EnhancedImageUploader({
   }, [initialImageUrl, initialAltText]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError("");
+    
     if (e.target.files && e.target.files.length > 0) {
-      // Check file size - 5MB max
-      if (e.target.files[0].size > 5 * 1024 * 1024) {
-        toast.error("File is too large. Please select an image smaller than 5MB.");
+      // Validate file type
+      const file = e.target.files[0];
+      const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+      
+      if (!validTypes.includes(file.type)) {
+        setUploadError("Invalid file type. Please select a JPEG, PNG, WebP, or GIF image");
         return;
       }
       
-      setFile(e.target.files[0]);
+      // Check file size - 5MB max
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError("File is too large. Please select an image smaller than 5MB");
+        return;
+      }
+      
+      setFile(file);
     }
   };
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file) {
+      setUploadError("Please select a file first");
+      return;
+    }
     
-    const url = await uploadImage(file, bucket, folder);
-    if (url) {
-      setImageUrl(url);
-      onImageUploaded(url, altText);
-      setFile(null);
+    try {
+      setUploadError("");
+      const url = await uploadImage(file, bucket, folder);
+      if (url) {
+        setImageUrl(url);
+        onImageUploaded(url, altText);
+        setFile(null);
+        toast.success("Image uploaded successfully");
+      } else {
+        setUploadError("Failed to upload image. Please try again.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      setUploadError("Failed to upload image. Please try again.");
+      toast.error("Image upload failed");
     }
   };
 
@@ -69,10 +93,17 @@ export default function EnhancedImageUploader({
 
   const handleDeleteImage = async () => {
     if (imageUrl && window.confirm("Are you sure you want to delete this image?")) {
-      if (await deleteImage(imageUrl, bucket)) {
-        setImageUrl("");
-        onImageUploaded("", "");
-        toast.success("Image deleted successfully");
+      try {
+        if (await deleteImage(imageUrl, bucket)) {
+          setImageUrl("");
+          onImageUploaded("", "");
+          toast.success("Image deleted successfully");
+        } else {
+          toast.error("Failed to delete image");
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        toast.error("Failed to delete image");
       }
     }
   };
@@ -125,6 +156,13 @@ export default function EnhancedImageUploader({
             onChange={handleFileChange}
             className="cursor-pointer"
           />
+          
+          {uploadError && (
+            <div className="flex items-center text-destructive text-sm mt-1">
+              <AlertCircle className="h-4 w-4 mr-1" />
+              <span>{uploadError}</span>
+            </div>
+          )}
           
           {file && (
             <div className="mt-2 flex flex-col space-y-2">

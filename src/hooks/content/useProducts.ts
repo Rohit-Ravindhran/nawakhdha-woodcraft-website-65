@@ -45,11 +45,26 @@ export function useUpdateProduct() {
     mutationFn: async (productData: ProductData) => {
       const { id, ...productFields } = productData;
       
+      // Prepare gallery_images to ensure they're in the correct format
+      const sanitizedGalleryImages = productFields.gallery_images?.map(img => ({
+        url: img.url,
+        caption: img.caption || '',
+        alt: img.alt || ''
+      })).filter(img => img.url && img.url.trim() !== '') || [];
+
+      // Prepare product fields for submission
+      const sanitizedProductFields = {
+        ...productFields,
+        gallery_images: sanitizedGalleryImages.length > 0 ? sanitizedGalleryImages : null,
+        // Ensure seo_keywords is a string (Supabase will handle it according to the schema)
+        seo_keywords: productFields.seo_keywords || null,
+      };
+      
       if (id) {
         // Update existing product
         const { error } = await supabase
           .from('products')
-          .update(productFields)
+          .update(sanitizedProductFields)
           .eq('id', id);
           
         if (error) throw error;
@@ -58,7 +73,7 @@ export function useUpdateProduct() {
         // Insert new product
         const { data, error } = await supabase
           .from('products')
-          .insert(productFields)
+          .insert(sanitizedProductFields)
           .select()
           .single();
           
@@ -73,6 +88,7 @@ export function useUpdateProduct() {
     },
     onError: (error: Error) => {
       toast.error(`Error updating product: ${error.message}`);
+      console.error("Product update error details:", error);
     }
   });
 }

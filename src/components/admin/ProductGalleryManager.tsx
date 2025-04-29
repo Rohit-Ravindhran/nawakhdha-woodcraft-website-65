@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { FormLabel, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { AlertCircle } from "lucide-react";
 
 interface GalleryImage {
   url: string;
@@ -23,6 +24,8 @@ export default function ProductGalleryManager({
   productId = "new"
 }: ProductGalleryManagerProps) {
   const handleImageUploaded = (url: string, alt: string, index?: number) => {
+    if (!url) return; // Don't add empty URLs
+    
     if (index !== undefined && index >= 0 && index < images.length) {
       // Update existing image
       const updatedImages = [...images];
@@ -46,7 +49,15 @@ export default function ProductGalleryManager({
 
   return (
     <div className="space-y-4">
-      <h4 className="font-medium">Gallery Images</h4>
+      <div className="flex justify-between items-center">
+        <h4 className="font-medium">Gallery Images</h4>
+        {images.length === 0 && (
+          <div className="flex items-center text-amber-500 text-sm">
+            <AlertCircle className="h-4 w-4 mr-1" />
+            <span>At least one image is required</span>
+          </div>
+        )}
+      </div>
       
       {images.map((image, index) => (
         <div key={index} className="flex flex-col gap-2 p-4 border rounded-md">
