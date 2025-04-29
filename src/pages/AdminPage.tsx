@@ -5,15 +5,18 @@ import { useAuth } from "@/contexts/AuthContext";
 import GalleryManager from "@/components/admin/GalleryManager";
 import SettingsEditor from "@/components/admin/SettingsEditor";
 import AdminHeader from "@/components/admin/AdminHeader";
-import PagesTab from "@/components/admin/tabs/PagesTab";
-import ProductsTab from "@/components/admin/tabs/ProductsTab";
-import BlogsTab from "@/components/admin/tabs/BlogsTab";
 import TabNavigation from "@/components/admin/TabNavigation";
 import TabContentWrapper from "@/components/admin/TabContentWrapper";
+import HomePageEditor from "@/components/admin/editors/HomePageEditor";
+import AllProductsTab from "@/components/admin/tabs/AllProductsTab";
+import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
+import AboutPageEditor from "@/components/admin/editors/AboutPageEditor";
+import ContactPageEditor from "@/components/admin/editors/ContactPageEditor";
+import BlogsTab from "@/components/admin/tabs/BlogsTab";
 
 const AdminPage = () => {
   const { signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState("pages");
+  const [activeTab, setActiveTab] = useState("home");
 
   const handleLogout = async () => {
     await signOut();
@@ -27,17 +30,38 @@ const AdminPage = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabNavigation activeTab={activeTab} />
           
-          {/* Main Pages Tab */}
-          <TabsContent value="pages">
+          {/* Home Page Tab */}
+          <TabsContent value="home">
             <TabContentWrapper>
-              <PagesTab />
+              <HomePageEditor page={null} isLoading={false} />
             </TabContentWrapper>
           </TabsContent>
           
-          {/* Products Tab */}
-          <TabsContent value="products">
+          {/* All Products Tab */}
+          <TabsContent value="all-products">
             <TabContentWrapper>
-              <ProductsTab />
+              <AllProductsTab />
+            </TabContentWrapper>
+          </TabsContent>
+          
+          {/* Product Details Tab */}
+          <TabsContent value="product-details">
+            <TabContentWrapper>
+              <ProductDetailsTab />
+            </TabContentWrapper>
+          </TabsContent>
+          
+          {/* About Page Tab */}
+          <TabsContent value="about">
+            <TabContentWrapper>
+              <AboutPageEditor />
+            </TabContentWrapper>
+          </TabsContent>
+          
+          {/* Contact Us Tab */}
+          <TabsContent value="contact">
+            <TabContentWrapper>
+              <ContactPageEditor />
             </TabContentWrapper>
           </TabsContent>
           

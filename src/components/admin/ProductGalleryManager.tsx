@@ -16,12 +16,14 @@ interface ProductGalleryManagerProps {
   images: GalleryImage[];
   onChange: (images: GalleryImage[]) => void;
   productId?: number | string;
+  required?: boolean;
 }
 
 export default function ProductGalleryManager({
   images,
   onChange,
-  productId = "new"
+  productId = "new",
+  required = true
 }: ProductGalleryManagerProps) {
   const handleImageUploaded = (url: string, alt: string, index?: number) => {
     if (!url) return; // Don't add empty URLs
@@ -47,11 +49,13 @@ export default function ProductGalleryManager({
     onChange(images.filter((_, i) => i !== index));
   };
 
+  const hasValidImages = images.length > 0 && images.every(img => img.url && img.url.trim() !== '');
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h4 className="font-medium">Gallery Images</h4>
-        {images.length === 0 && (
+        {required && images.length === 0 && (
           <div className="flex items-center text-amber-500 text-sm">
             <AlertCircle className="h-4 w-4 mr-1" />
             <span>At least one image is required</span>
@@ -87,6 +91,7 @@ export default function ProductGalleryManager({
               <Input 
                 value={image.caption} 
                 onChange={(e) => handleCaptionChange(e.target.value, index)} 
+                placeholder="Enter a description for this image"
               />
             </FormControl>
           </FormItem>
@@ -100,6 +105,12 @@ export default function ProductGalleryManager({
       >
         Add Image
       </Button>
+      
+      {required && !hasValidImages && (
+        <p className="text-sm text-destructive">
+          Please add at least one image to the gallery
+        </p>
+      )}
     </div>
   );
 }
