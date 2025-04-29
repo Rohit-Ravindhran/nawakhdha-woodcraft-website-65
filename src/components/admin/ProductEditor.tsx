@@ -1,31 +1,18 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useUpdateProduct } from "@/hooks/content";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
-import { z } from "zod";
-import SeoFields from "@/components/admin/SeoFields";
 import { ProductData } from "@/hooks/content/types";
 import { ProductEditorProps } from "./ProductEditorTypes";
-
-const productSchema = z.object({
-  product_name: z.string().min(1, "Product name is required"),
-  description: z.string().min(1, "Description is required"),
-  category_name: z.string().min(1, "Category is required"),
-  seo_title: z.string().optional(),
-  seo_description: z.string().optional(),
-  seo_keywords: z.string().optional(),
-});
-
-type ProductFormValues = z.infer<typeof productSchema> & {
-  gallery_images?: { url: string; caption: string; alt?: string }[];
-};
+import { productSchema, ProductFormValues } from "./schemas/productSchema";
+import ProductGalleryManager from "./ProductGalleryManager";
+import ProductFormFields from "./ProductFormFields";
+import SeoFields from "@/components/admin/SeoFields";
 
 export default function ProductEditor({ product, onComplete, onSave, isLoading = false }: ProductEditorProps) {
   const [galleryImages, setGalleryImages] = useState<{ url: string; caption: string; alt?: string }[]>([]);
@@ -65,32 +52,6 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
     }
   }, [product]);
 
-  const handleImageUploaded = (url: string, alt: string, index?: number) => {
-    if (index !== undefined && index >= 0 && index < galleryImages.length) {
-      // Update existing image
-      setGalleryImages(prev => {
-        const updated = [...prev];
-        updated[index] = { ...updated[index], url, alt };
-        return updated;
-      });
-    } else {
-      // Add new image
-      setGalleryImages(prev => [...prev, { url, caption: "", alt }]);
-    }
-  };
-
-  const handleCaptionChange = (caption: string, index: number) => {
-    setGalleryImages(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], caption };
-      return updated;
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setGalleryImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   const onSubmit = (values: ProductFormValues) => {
     const updatedProduct: ProductData = {
       id: product?.id,
@@ -125,99 +86,25 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="product_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Product Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Main Product Fields */}
+          <ProductFormFields control={form.control} />
           
-          <FormField
-            control={form.control}
-            name="category_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea {...field} rows={5} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
+          {/* Gallery Images Section */}
           <div className="space-y-4">
-            <h4 className="font-medium">Gallery Images</h4>
-            
-            {galleryImages.map((image, index) => (
-              <div key={index} className="flex flex-col gap-2 p-4 border rounded-md">
-                <div className="flex justify-between items-center">
-                  <h5 className="font-medium">Image {index + 1}</h5>
-                  <Button 
-                    type="button" 
-                    variant="destructive" 
-                    size="sm" 
-                    onClick={() => removeImage(index)}
-                  >
-                    Remove
-                  </Button>
-                </div>
-                
-                <EnhancedImageUploader
-                  onImageUploaded={(url, alt) => handleImageUploaded(url, alt, index)}
-                  bucket="products"
-                  folder={`product-${product?.id || 'new'}`}
-                  initialImageUrl={image.url}
-                  initialAltText={image.alt}
-                />
-                
-                <FormItem>
-                  <FormLabel>Caption</FormLabel>
-                  <FormControl>
-                    <Input 
-                      value={image.caption} 
-                      onChange={(e) => handleCaptionChange(e.target.value, index)} 
-                    />
-                  </FormControl>
-                </FormItem>
-              </div>
-            ))}
-            
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleImageUploaded("", "", galleryImages.length)}
-            >
-              Add Image
-            </Button>
+            <ProductGalleryManager 
+              images={galleryImages}
+              onChange={setGalleryImages}
+              productId={product?.id}
+            />
           </div>
           
+          {/* SEO Settings Section */}
           <div className="border-t pt-6 mt-6">
             <h4 className="font-medium mb-4">SEO Settings</h4>
             <SeoFields control={form.control} />
           </div>
           
+          {/* Submit Button */}
           <Button 
             type="submit" 
             disabled={updateProduct.isPending}

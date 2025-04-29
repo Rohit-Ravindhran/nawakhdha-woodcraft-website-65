@@ -67,18 +67,19 @@ const ProductsTab = () => {
                 product_name: product.product_name,
                 description: product.description,
                 category_name: product.category_name,
-                seo_title: product.seo_title,
-                seo_description: product.seo_description,
-                seo_keywords: product.seo_keywords,
+                // These fields may not exist in some database records, so we add them conditionally
+                seo_title: product.seo_title || "",
+                seo_description: product.seo_description || "",
+                seo_keywords: product.seo_keywords || "",
                 // Transform gallery_images to ensure it matches the expected format
                 gallery_images: Array.isArray(product.gallery_images) 
                   ? product.gallery_images.map(img => {
                       // Ensure each image has the required properties
                       if (typeof img === 'object' && img !== null) {
                         return {
-                          url: typeof img.url === 'string' ? img.url : '',
-                          caption: typeof img.caption === 'string' ? img.caption : '',
-                          alt: typeof img.alt === 'string' ? img.alt : undefined
+                          url: img.url ? String(img.url) : '',
+                          caption: img.caption ? String(img.caption) : '',
+                          alt: img.alt ? String(img.alt) : undefined
                         };
                       }
                       return { url: '', caption: '' };
