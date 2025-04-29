@@ -32,22 +32,26 @@ const HomePage = () => {
     {
       id: "doors-western",
       title: "Western Doors",
-      image: "https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000"
+      image: "https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000",
+      image_alt: "Western style wooden door design"
     },
     {
       id: "kitchen-cabinets",
       title: "Kitchen Cabinets",
-      image: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000"
+      image: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000",
+      image_alt: "Modern kitchen cabinet designs"
     },
     {
       id: "bedroom-furniture",
       title: "Bedroom Furniture",
-      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000"
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000",
+      image_alt: "Elegant wooden bedroom furniture set"
     },
     {
       id: "dining-tables",
       title: "Dining Tables",
-      image: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1000"
+      image: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1000",
+      image_alt: "Handcrafted dining table"
     }
   ];
 
@@ -58,6 +62,7 @@ const HomePage = () => {
       title: "Top Trends in Wooden Furniture 2025",
       excerpt: "Discover the latest trends in wooden furniture design that are dominating the industry in 2025.",
       image: "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?q=80&w=1000",
+      image_alt: "Modern wooden furniture trend examples",
       date: "April 15, 2025",
       slug: "top-trends-wooden-furniture-2025"
     },
@@ -66,6 +71,7 @@ const HomePage = () => {
       title: "How to Maintain Custom Wooden Doors",
       excerpt: "Learn the best practices for maintaining your wooden doors to ensure they last for generations.",
       image: "https://images.unsplash.com/photo-1517857399767-a9a54424dace?q=80&w=1000",
+      image_alt: "Wooden door maintenance techniques",
       date: "March 28, 2025",
       slug: "maintain-custom-wooden-doors"
     },
@@ -74,6 +80,7 @@ const HomePage = () => {
       title: "Choosing the Right Wood for Your Home",
       excerpt: "A comprehensive guide to selecting the perfect wood type for different furniture pieces in your home.",
       image: "https://images.unsplash.com/photo-1529316738131-4d0e0761a38e?q=80&w=1000",
+      image_alt: "Different wood types for furniture",
       date: "March 10, 2025",
       slug: "choosing-right-wood-home"
     }
@@ -84,22 +91,26 @@ const HomePage = () => {
     {
       title: "Custom Design",
       description: "Personalized furniture design services tailored to your specific needs and preferences.",
-      icon: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=300"
+      image: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=300",
+      image_alt: "Custom furniture design sketches"
     },
     {
       title: "Professional Craftsmanship",
       description: "Expert craftsmen with decades of experience creating beautiful wooden masterpieces.",
-      icon: "https://images.unsplash.com/photo-1533227268428-f9ed0900fb3b?q=80&w=300"
+      image: "https://images.unsplash.com/photo-1533227268428-f9ed0900fb3b?q=80&w=300",
+      image_alt: "Skilled craftsman working on wooden furniture"
     },
     {
       title: "Premium Materials",
       description: "Only the finest quality woods and materials are used in our furniture and products.",
-      icon: "https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?q=80&w=300"
+      image: "https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?q=80&w=300",
+      image_alt: "High quality wood materials"
     },
     {
       title: "Installation Services",
       description: "Professional installation by our experienced team ensures perfect fit and finish.",
-      icon: "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?q=80&w=300"
+      image: "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?q=80&w=300",
+      image_alt: "Furniture installation process"
     }
   ];
 
@@ -129,6 +140,8 @@ const HomePage = () => {
             backgroundImage:
               `url('${heroData?.background_image || "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format"}')`
           }}
+          role="img"
+          aria-label={heroData?.background_image_alt || "Carpentry workshop banner"}
         ></div>
         <div className="absolute inset-0 flex items-center z-20">
           <div className="container-custom">
@@ -170,8 +183,8 @@ const HomePage = () => {
               >
                 <div className="w-16 h-16 rounded-md overflow-hidden mb-4">
                   <img
-                    src={service.image || service.icon}
-                    alt={service.title}
+                    src={service.image}
+                    alt={service.image_alt || `${service.title} service`}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -197,7 +210,8 @@ const HomePage = () => {
                 key={index}
                 title={product.title}
                 image={product.image}
-                href={`/product/${product.id || `product-${index}`}`}
+                href={product.link || `/product/${product.id || `product-${index}`}`}
+                imageAlt={product.image_alt || `${product.title} product`}
               />
             ))}
           </div>
@@ -220,6 +234,8 @@ const HomePage = () => {
             backgroundImage:
               "url('https://images.unsplash.com/photo-1560185007-5f0bb1866cab?q=80&w=1000&auto=format')"
           }}
+          role="img"
+          aria-label="Carpentry workshop with tools and wood"
         ></div>
         <div className="container-custom relative z-10">
           <div className="max-w-2xl mx-auto text-center">
@@ -252,6 +268,7 @@ const HomePage = () => {
                 title={post.title}
                 excerpt={post.excerpt}
                 image={post.image}
+                imageAlt={post.image_alt || `Blog post about ${post.title}`}
                 date={post.date || "Recent"}
                 href={post.link || `/blog/${post.slug || `post-${index}`}`}
               />

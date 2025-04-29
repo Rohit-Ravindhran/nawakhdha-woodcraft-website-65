@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -9,6 +10,9 @@ export interface PageData {
   content: string;
   seo_title?: string;
   seo_description?: string;
+  seo_keywords?: string;
+  seo_canonical_url?: string;
+  seo_image_alt?: string;
   hero?: string;
   services?: string;
   products?: string;
@@ -107,17 +111,22 @@ export function useProduct(productId?: number) {
   });
 }
 
+export interface ProductData {
+  id?: number; 
+  product_name: string; 
+  description: string;
+  category_name: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+  gallery_images?: { url: string; caption: string; alt?: string }[];
+}
+
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (productData: { 
-      id?: number; 
-      product_name: string; 
-      description: string;
-      category_name: string;
-      gallery_images?: { url: string; caption: string }[];
-    }) => {
+    mutationFn: async (productData: ProductData) => {
       const { id, ...productFields } = productData;
       
       if (id) {
@@ -210,19 +219,25 @@ export function useBlog(blogId?: number) {
   });
 }
 
+export interface BlogData {
+  id?: number; 
+  title: string; 
+  body_content: string;
+  featured_image_url?: string;
+  featured_image_alt?: string;
+  slug: string;
+  date: string;
+  excerpt?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+}
+
 export function useUpdateBlog() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (blogData: { 
-      id?: number; 
-      title: string; 
-      body_content: string;
-      featured_image_url?: string;
-      slug: string;
-      date: string;
-      excerpt?: string;
-    }) => {
+    mutationFn: async (blogData: BlogData) => {
       const { id, ...blogFields } = blogData;
       
       if (id) {
@@ -296,11 +311,18 @@ export function useGallery() {
   });
 }
 
+export interface GalleryImageData {
+  id?: number;
+  image_url: string;
+  caption: string;
+  alt_text?: string;
+}
+
 export function useAddGalleryImage() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (imageData: { image_url: string; caption: string }) => {
+    mutationFn: async (imageData: GalleryImageData) => {
       const { data, error } = await supabase
         .from('gallery')
         .insert(imageData)
@@ -360,16 +382,20 @@ export function useSettings() {
   });
 }
 
+export interface SettingsData {
+  id?: number;
+  background_color: string;
+  site_title: string;
+  site_description: string;
+  site_keywords?: string;
+  favicon_url?: string;
+}
+
 export function useUpdateSettings() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (settingsData: { 
-      id?: number; 
-      background_color: string; 
-      site_title: string;
-      site_description: string;
-    }) => {
+    mutationFn: async (settingsData: SettingsData) => {
       if (settingsData.id) {
         // Update existing settings
         const { error } = await supabase
@@ -377,7 +403,9 @@ export function useUpdateSettings() {
           .update({
             background_color: settingsData.background_color,
             site_title: settingsData.site_title,
-            site_description: settingsData.site_description
+            site_description: settingsData.site_description,
+            site_keywords: settingsData.site_keywords,
+            favicon_url: settingsData.favicon_url
           })
           .eq('id', settingsData.id);
           
@@ -391,7 +419,9 @@ export function useUpdateSettings() {
             id: 1,
             background_color: settingsData.background_color,
             site_title: settingsData.site_title,
-            site_description: settingsData.site_description
+            site_description: settingsData.site_description,
+            site_keywords: settingsData.site_keywords,
+            favicon_url: settingsData.favicon_url
           })
           .select()
           .single();

@@ -1,13 +1,10 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { usePage, useUpdatePage, PageData } from "@/hooks/useContent";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -16,74 +13,27 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Loader2, ChevronDown, ChevronUp, Upload } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import ImageUploader from "@/components/admin/ImageUploader";
-
-// Hero section schema for the home page
-const heroSchema = z.object({
-  background_image: z.string().optional(),
-  headline: z.string().optional(),
-  subheadline: z.string().optional(),
-  button_text: z.string().optional(),
-  button_link: z.string().optional(),
-});
-
-// Services section schema
-const servicesSchema = z.object({
-  section_title: z.string().optional(),
-  items: z.array(z.object({
-    image: z.string().optional(),
-    title: z.string().optional(), 
-    description: z.string().optional()
-  })).optional()
-});
-
-// Products section schema
-const productsSchema = z.object({
-  section_title: z.string().optional(),
-  items: z.array(z.object({
-    image: z.string().optional(),
-    title: z.string().optional(),
-    description: z.string().optional(),
-  })).optional()
-});
-
-// Blog section schema
-const blogSchema = z.object({
-  section_title: z.string().optional(),
-  items: z.array(z.object({
-    image: z.string().optional(),
-    title: z.string().optional(),
-    excerpt: z.string().optional(),
-    link: z.string().optional(),
-  })).optional()
-});
-
-// Define homepage-specific sections schema
-const homePageSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string(),
-  seo_title: z.string().optional(),
-  seo_description: z.string().optional(),
-  hero: heroSchema.optional(),
-  services: servicesSchema.optional(),
-  products: productsSchema.optional(),
-  blog: blogSchema.optional(),
-});
-
-// Regular page schema for non-home pages
-const regularPageSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string(),
-  seo_title: z.string().optional(),
-  seo_description: z.string().optional(),
-});
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import SeoFields from "@/components/admin/SeoFields";
+import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
+import { 
+  getPageSchemaByName, 
+  getDefaultValues, 
+  HomePageFormValues,
+  BasePageFormValues,
+  AboutPageFormValues,
+  ContactPageFormValues
+} from "@/components/admin/PageSchemas";
 
 interface PageEditorProps {
   pageName: string;
 }
+
+type PageFormValues = HomePageFormValues | BasePageFormValues | AboutPageFormValues | ContactPageFormValues;
 
 export default function PageEditor({ pageName }: PageEditorProps) {
   const { data: page, isLoading, error } = usePage(pageName);
@@ -94,42 +44,17 @@ export default function PageEditor({ pageName }: PageEditorProps) {
     services: false,
     products: false,
     blog: false,
+    team: false,
+    contacts: false,
     seo: false
   });
   
   // Use different schema based on page type
-  const pageSchema = pageName === "home" ? homePageSchema : regularPageSchema;
-  type PageFormValues = z.infer<typeof pageSchema>;
+  const pageSchema = getPageSchemaByName(pageName);
   
   const form = useForm<PageFormValues>({
     resolver: zodResolver(pageSchema),
-    defaultValues: {
-      title: "",
-      content: "",
-      seo_title: "",
-      seo_description: "",
-      ...(pageName === "home" && {
-        hero: {
-          background_image: "",
-          headline: "",
-          subheadline: "",
-          button_text: "",
-          button_link: ""
-        },
-        services: {
-          section_title: "Our Services",
-          items: Array(4).fill({image: "", title: "", description: ""})
-        },
-        products: {
-          section_title: "Our Products",
-          items: Array(4).fill({image: "", title: "", description: ""})
-        },
-        blog: {
-          section_title: "From Our Workshop Blog",
-          items: Array(3).fill({image: "", title: "", excerpt: "", link: ""})
-        }
-      })
-    },
+    defaultValues: getDefaultValues(pageName),
   });
 
   const toggleSection = (section: string) => {
@@ -143,8 +68,9 @@ export default function PageEditor({ pageName }: PageEditorProps) {
     if (page) {
       // Parse JSON fields if they exist
       try {
-        const parsedPage = {
+        const parsedPage: any = {
           ...page,
+          // Parse JSON fields if they are strings
           hero: page.hero ? 
             (typeof page.hero === 'string' ? JSON.parse(page.hero) : page.hero) : 
             form.getValues().hero,
@@ -159,17 +85,22 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             form.getValues().blog
         };
         
+        // Reset form with values from database
         form.reset({
           title: parsedPage.title || "",
           content: parsedPage.content || "",
           seo_title: parsedPage.seo_title || "",
           seo_description: parsedPage.seo_description || "",
+          seo_keywords: parsedPage.seo_keywords || "",
+          seo_canonical_url: parsedPage.seo_canonical_url || "",
+          seo_image_alt: parsedPage.seo_image_alt || "",
           ...(pageName === "home" && {
             hero: parsedPage.hero,
             services: parsedPage.services,
             products: parsedPage.products,
             blog: parsedPage.blog
-          })
+          }),
+          // Add other page-specific fields as needed
         });
       } catch (e) {
         console.error("Error parsing JSON:", e);
@@ -186,11 +117,14 @@ export default function PageEditor({ pageName }: PageEditorProps) {
       content: values.content,
       seo_title: values.seo_title || "",
       seo_description: values.seo_description || "",
+      seo_keywords: values.seo_keywords || "",
+      seo_canonical_url: (values as any).seo_canonical_url || "",
+      seo_image_alt: values.seo_image_alt || "",
     };
     
     // Only add homepage-specific fields if this is the home page
     if (pageName === "home") {
-      const homeValues = values as z.infer<typeof homePageSchema>;
+      const homeValues = values as HomePageFormValues;
       
       updatedPage.hero = JSON.stringify(homeValues.hero);
       updatedPage.services = JSON.stringify(homeValues.services);
@@ -208,18 +142,32 @@ export default function PageEditor({ pageName }: PageEditorProps) {
     });
   };
 
-  const handleImageUploaded = (section: string, index: number | null, url: string) => {
+  const handleHeroImageUploaded = (url: string, alt: string) => {
     if (pageName !== "home") return;
     
-    if (section === 'hero') {
-      form.setValue('hero.background_image', url, { shouldValidate: true });
-    } else if (section === 'services' && index !== null) {
-      form.setValue(`services.items.${index}.image`, url, { shouldValidate: true });
-    } else if (section === 'products' && index !== null) {
-      form.setValue(`products.items.${index}.image`, url, { shouldValidate: true });
-    } else if (section === 'blog' && index !== null) {
-      form.setValue(`blog.items.${index}.image`, url, { shouldValidate: true });
-    }
+    form.setValue('hero.background_image', url, { shouldValidate: true });
+    form.setValue('hero.background_image_alt', alt, { shouldValidate: true });
+  };
+
+  const handleServiceImageUploaded = (index: number, url: string, alt: string) => {
+    if (pageName !== "home") return;
+    
+    form.setValue(`services.items.${index}.image`, url, { shouldValidate: true });
+    form.setValue(`services.items.${index}.image_alt`, alt, { shouldValidate: true });
+  };
+
+  const handleProductImageUploaded = (index: number, url: string, alt: string) => {
+    if (pageName !== "home") return;
+    
+    form.setValue(`products.items.${index}.image`, url, { shouldValidate: true });
+    form.setValue(`products.items.${index}.image_alt`, alt, { shouldValidate: true });
+  };
+
+  const handleBlogImageUploaded = (index: number, url: string, alt: string) => {
+    if (pageName !== "home") return;
+    
+    form.setValue(`blog.items.${index}.image`, url, { shouldValidate: true });
+    form.setValue(`blog.items.${index}.image_alt`, alt, { shouldValidate: true });
   };
 
   if (isLoading) {
@@ -274,35 +222,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             />
             
             <div className="pt-4 border-t">
-              <h4 className="text-lg font-medium mb-3">SEO Settings</h4>
-              
-              <FormField
-                control={form.control}
-                name="seo_title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>SEO Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="seo_description"
-                render={({ field }) => (
-                  <FormItem className="mt-3">
-                    <FormLabel>SEO Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} rows={3} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <SeoFields control={form.control} />
             </div>
             
             <Button 
@@ -337,7 +257,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             <Collapsible open={openSections.content} onOpenChange={() => toggleSection('content')}>
               <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
                 <span>Basic Page Information</span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" type="button">
                   {openSections.content ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </Button>
               </CollapsibleTrigger>
@@ -380,29 +300,18 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             <Collapsible open={openSections.hero} onOpenChange={() => toggleSection('hero')}>
               <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
                 <span>Hero Banner Section</span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" type="button">
                   {openSections.hero ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="pt-4 px-1 space-y-4">
                 <div className="mb-4">
-                  <Label className="block mb-2">Background Image</Label>
-                  {form.watch('hero.background_image') && (
-                    <div className="relative mb-4 bg-slate-100 p-2 rounded-md">
-                      <img 
-                        src={form.watch('hero.background_image')} 
-                        alt="Hero background" 
-                        className="max-h-40 object-cover rounded-md"
-                      />
-                      <div className="text-xs text-muted-foreground mt-1 break-all">
-                        {form.watch('hero.background_image')}
-                      </div>
-                    </div>
-                  )}
-                  <ImageUploader 
-                    onImageUploaded={(url) => handleImageUploaded('hero', null, url)} 
+                  <EnhancedImageUploader 
+                    onImageUploaded={(url, alt) => handleHeroImageUploaded(url, alt)} 
                     bucket="homepage"
                     folder="hero"
+                    initialImageUrl={form.watch('hero.background_image')}
+                    initialAltText={form.watch('hero.background_image_alt')}
                   />
                 </div>
                 
@@ -470,7 +379,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             <Collapsible open={openSections.services} onOpenChange={() => toggleSection('services')}>
               <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
                 <span>Our Services Section</span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" type="button">
                   {openSections.services ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </Button>
               </CollapsibleTrigger>
@@ -497,23 +406,13 @@ export default function PageEditor({ pageName }: PageEditorProps) {
                       <h5 className="font-medium mb-3">Service Card {index + 1}</h5>
                       
                       <div className="mb-4">
-                        <Label className="block mb-2">Service Image</Label>
-                        {form.watch(`services.items.${index}.image`) && (
-                          <div className="relative mb-2 bg-slate-100 p-2 rounded-md">
-                            <img 
-                              src={form.watch(`services.items.${index}.image`)} 
-                              alt={`Service ${index + 1}`} 
-                              className="max-h-24 object-cover rounded-md" 
-                            />
-                            <div className="text-xs text-muted-foreground mt-1 break-all">
-                              {form.watch(`services.items.${index}.image`)}
-                            </div>
-                          </div>
-                        )}
-                        <ImageUploader 
-                          onImageUploaded={(url) => handleImageUploaded('services', index, url)} 
+                        <EnhancedImageUploader
+                          onImageUploaded={(url, alt) => handleServiceImageUploaded(index, url, alt)}
                           bucket="homepage"
                           folder="services"
+                          initialImageUrl={form.watch(`services.items.${index}.image`)}
+                          initialAltText={form.watch(`services.items.${index}.image_alt`)}
+                          imagePreviewHeight="24"
                         />
                       </div>
                       
@@ -554,7 +453,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             <Collapsible open={openSections.products} onOpenChange={() => toggleSection('products')}>
               <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
                 <span>Our Products Section</span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" type="button">
                   {openSections.products ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </Button>
               </CollapsibleTrigger>
@@ -581,23 +480,13 @@ export default function PageEditor({ pageName }: PageEditorProps) {
                       <h5 className="font-medium mb-3">Product Card {index + 1}</h5>
                       
                       <div className="mb-4">
-                        <Label className="block mb-2">Product Image</Label>
-                        {form.watch(`products.items.${index}.image`) && (
-                          <div className="relative mb-2 bg-slate-100 p-2 rounded-md">
-                            <img 
-                              src={form.watch(`products.items.${index}.image`)} 
-                              alt={`Product ${index + 1}`} 
-                              className="max-h-24 object-cover rounded-md" 
-                            />
-                            <div className="text-xs text-muted-foreground mt-1 break-all">
-                              {form.watch(`products.items.${index}.image`)}
-                            </div>
-                          </div>
-                        )}
-                        <ImageUploader 
-                          onImageUploaded={(url) => handleImageUploaded('products', index, url)} 
+                        <EnhancedImageUploader
+                          onImageUploaded={(url, alt) => handleProductImageUploaded(index, url, alt)}
                           bucket="homepage"
                           folder="products"
+                          initialImageUrl={form.watch(`products.items.${index}.image`)}
+                          initialAltText={form.watch(`products.items.${index}.image_alt`)}
+                          imagePreviewHeight="24"
                         />
                       </div>
                       
@@ -628,6 +517,20 @@ export default function PageEditor({ pageName }: PageEditorProps) {
                           </FormItem>
                         )}
                       />
+                      
+                      <FormField
+                        control={form.control}
+                        name={`products.items.${index}.link`}
+                        render={({ field }) => (
+                          <FormItem className="mt-3">
+                            <FormLabel>Product Link</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="/products/product-slug" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   ))}
                 </div>
@@ -638,7 +541,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             <Collapsible open={openSections.blog} onOpenChange={() => toggleSection('blog')}>
               <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
                 <span>From Our Workshop Blog Section</span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" type="button">
                   {openSections.blog ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </Button>
               </CollapsibleTrigger>
@@ -665,23 +568,13 @@ export default function PageEditor({ pageName }: PageEditorProps) {
                       <h5 className="font-medium mb-3">Blog Post {index + 1}</h5>
                       
                       <div className="mb-4">
-                        <Label className="block mb-2">Blog Image</Label>
-                        {form.watch(`blog.items.${index}.image`) && (
-                          <div className="relative mb-2 bg-slate-100 p-2 rounded-md">
-                            <img 
-                              src={form.watch(`blog.items.${index}.image`)} 
-                              alt={`Blog ${index + 1}`} 
-                              className="max-h-24 object-cover rounded-md" 
-                            />
-                            <div className="text-xs text-muted-foreground mt-1 break-all">
-                              {form.watch(`blog.items.${index}.image`)}
-                            </div>
-                          </div>
-                        )}
-                        <ImageUploader 
-                          onImageUploaded={(url) => handleImageUploaded('blog', index, url)} 
+                        <EnhancedImageUploader
+                          onImageUploaded={(url, alt) => handleBlogImageUploaded(index, url, alt)}
                           bucket="homepage"
                           folder="blog"
+                          initialImageUrl={form.watch(`blog.items.${index}.image`)}
+                          initialAltText={form.watch(`blog.items.${index}.image_alt`)}
+                          imagePreviewHeight="24"
                         />
                       </div>
                       
@@ -736,38 +629,12 @@ export default function PageEditor({ pageName }: PageEditorProps) {
             <Collapsible open={openSections.seo} onOpenChange={() => toggleSection('seo')}>
               <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
                 <span>SEO Settings</span>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" type="button">
                   {openSections.seo ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="pt-4 px-1">
-                <FormField
-                  control={form.control}
-                  name="seo_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>SEO Title</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="seo_description"
-                  render={({ field }) => (
-                    <FormItem className="mt-3">
-                      <FormLabel>SEO Description</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} rows={3} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <SeoFields control={form.control} />
               </CollapsibleContent>
             </Collapsible>
             
@@ -791,7 +658,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
     );
   }
   
-  // For non-home pages, render the regular editor
+  // For non-home pages, render the regular editor with enhanced SEO
   return (
     <div className="bg-white p-6 rounded-lg border border-border">
       <h3 className="text-xl font-semibold mb-4">Edit {pageName} Page</h3>
@@ -831,35 +698,7 @@ export default function PageEditor({ pageName }: PageEditorProps) {
           />
           
           <div className="pt-4 border-t">
-            <h4 className="text-lg font-medium mb-3">SEO Settings</h4>
-            
-            <FormField
-              control={form.control}
-              name="seo_title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>SEO Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="seo_description"
-              render={({ field }) => (
-                <FormItem className="mt-3">
-                  <FormLabel>SEO Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} rows={3} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <SeoFields control={form.control} />
           </div>
           
           <Button 
