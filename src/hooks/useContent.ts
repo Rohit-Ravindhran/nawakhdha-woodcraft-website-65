@@ -1,6 +1,5 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 // Pages
@@ -8,11 +7,13 @@ export function usePage(pageName: string) {
   return useQuery({
     queryKey: ['page', pageName],
     queryFn: async () => {
+      // Changed from .single() to .maybeSingle() to handle the case of no rows
+      // or first() to handle the case of multiple rows
       const { data, error } = await supabase
         .from('pages')
         .select('*')
         .eq('page_name', pageName)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
