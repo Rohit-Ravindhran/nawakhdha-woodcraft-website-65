@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -32,6 +33,10 @@ export function useUpdatePage() {
       content: string;
       seo_title?: string;
       seo_description?: string;
+      hero?: string;
+      services?: string;
+      products?: string;
+      blog?: string;
     }) => {
       const { id, ...pageFields } = pageData;
       

@@ -5,10 +5,30 @@ import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import CategoryCard from "@/components/ui/category-card";
 import BlogCard from "@/components/ui/blog-card";
+import { usePage } from "@/hooks/useContent";
 
 const HomePage = () => {
-  // Sample data for categories
-  const products = [
+  const { data: page, isLoading } = usePage("home");
+  
+  // Parse JSON data from page if it exists
+  const heroData = page?.hero ? 
+    (typeof page.hero === 'string' ? JSON.parse(page.hero) : page.hero) : 
+    null;
+  
+  const servicesData = page?.services ? 
+    (typeof page.services === 'string' ? JSON.parse(page.services) : page.services) : 
+    null;
+  
+  const productsData = page?.products ? 
+    (typeof page.products === 'string' ? JSON.parse(page.products) : page.products) : 
+    null;
+  
+  const blogData = page?.blog ? 
+    (typeof page.blog === 'string' ? JSON.parse(page.blog) : page.blog) : 
+    null;
+  
+  // Default data if not set in admin
+  const defaultProducts = [
     {
       id: "doors-western",
       title: "Western Doors",
@@ -31,8 +51,8 @@ const HomePage = () => {
     }
   ];
 
-  // Sample data for blog posts
-  const blogPosts = [
+  // Default blog posts if not set in admin
+  const defaultBlogPosts = [
     {
       id: 1,
       title: "Top Trends in Wooden Furniture 2025",
@@ -59,8 +79,8 @@ const HomePage = () => {
     }
   ];
 
-  // Services data
-  const services = [
+  // Default services if not set in admin
+  const defaultServices = [
     {
       title: "Custom Design",
       description: "Personalized furniture design services tailored to your specific needs and preferences.",
@@ -83,6 +103,21 @@ const HomePage = () => {
     }
   ];
 
+  // Use admin-defined products or default if not available
+  const products = productsData?.items && productsData.items.length > 0 
+    ? productsData.items.filter(item => item.title && item.image) 
+    : defaultProducts;
+
+  // Use admin-defined blog posts or default if not available
+  const blogPosts = blogData?.items && blogData.items.length > 0
+    ? blogData.items.filter(item => item.title && item.image) 
+    : defaultBlogPosts;
+
+  // Use admin-defined services or default if not available
+  const services = servicesData?.items && servicesData.items.length > 0
+    ? servicesData.items.filter(item => item.title && item.image) 
+    : defaultServices;
+
   return (
     <>
       {/* Hero Section */}
@@ -92,23 +127,24 @@ const HomePage = () => {
           className="h-[85vh] bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format')"
+              `url('${heroData?.background_image || "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format"}')`
           }}
         ></div>
         <div className="absolute inset-0 flex items-center z-20">
           <div className="container-custom">
             <div className="max-w-2xl animate-fade-in">
               <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-                Crafting Excellence Since 1975
+                {heroData?.headline || "Crafting Excellence Since 1975"}
               </h1>
               <p className="text-lg md:text-xl text-white/90 mb-8">
-                Bahrain's premier carpentry and furniture manufacturing workshop,
-                bringing your vision to life with exceptional craftsmanship.
+                {heroData?.subheadline || "Bahrain's premier carpentry and furniture manufacturing workshop, bringing your vision to life with exceptional craftsmanship."}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg">
-                  <Link to="/about">Discover Our Story</Link>
-                </Button>
+                {heroData?.button_text && (
+                  <Button asChild size="lg">
+                    <Link to={heroData?.button_link || "/about"}>{heroData.button_text}</Link>
+                  </Button>
+                )}
                 <Button variant="outline" size="lg" className="bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20">
                   <Link to="/contact">Request a Quote</Link>
                 </Button>
@@ -122,7 +158,7 @@ const HomePage = () => {
       <section className="section-padding bg-secondary/30">
         <div className="container-custom">
           <SectionTitle
-            title="Our Services"
+            title={servicesData?.section_title || "Our Services"}
             subtitle="We offer a comprehensive range of woodworking and furniture services."
             centered
           />
@@ -134,7 +170,7 @@ const HomePage = () => {
               >
                 <div className="w-16 h-16 rounded-md overflow-hidden mb-4">
                   <img
-                    src={service.icon}
+                    src={service.image || service.icon}
                     alt={service.title}
                     className="w-full h-full object-cover"
                   />
@@ -151,17 +187,17 @@ const HomePage = () => {
       <section className="section-padding bg-secondary/30">
         <div className="container-custom">
           <SectionTitle
-            title="Our Products"
+            title={productsData?.section_title || "Our Products"}
             subtitle="Explore our diverse range of expertly crafted furniture products."
             centered
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {products.map((product, index) => (
               <CategoryCard
-                key={product.id}
+                key={index}
                 title={product.title}
                 image={product.image}
-                href={`/product/${product.id}`}
+                href={`/product/${product.id || `product-${index}`}`}
               />
             ))}
           </div>
@@ -205,19 +241,19 @@ const HomePage = () => {
       <section className="section-padding bg-secondary/30">
         <div className="container-custom">
           <SectionTitle
-            title="From Our Workshop Blog"
+            title={blogData?.section_title || "From Our Workshop Blog"}
             subtitle="Insights, tips, and updates from our furniture workshop."
             centered
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
+            {blogPosts.map((post, index) => (
               <BlogCard
-                key={post.id}
+                key={index}
                 title={post.title}
                 excerpt={post.excerpt}
                 image={post.image}
-                date={post.date}
-                href={`/blog/${post.slug}`}
+                date={post.date || "Recent"}
+                href={post.link || `/blog/${post.slug || `post-${index}`}`}
               />
             ))}
           </div>
