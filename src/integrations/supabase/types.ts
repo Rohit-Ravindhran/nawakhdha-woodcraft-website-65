@@ -101,6 +101,9 @@ export type Database = {
           gallery_images: Json | null
           id: number
           product_name: string
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
         }
         Insert: {
           category_name: string
@@ -109,6 +112,9 @@ export type Database = {
           gallery_images?: Json | null
           id?: number
           product_name: string
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
         }
         Update: {
           category_name?: string
@@ -117,6 +123,9 @@ export type Database = {
           gallery_images?: Json | null
           id?: number
           product_name?: string
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
         }
         Relationships: []
       }
