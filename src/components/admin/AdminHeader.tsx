@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminHeaderProps {
@@ -9,10 +9,20 @@ interface AdminHeaderProps {
 }
 
 const AdminHeader = ({ handleLogout }: AdminHeaderProps) => {
+  const { user } = useAuth();
+  
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="heading-md">Admin Dashboard</h1>
+        <div className="flex items-center">
+          <h1 className="heading-md">Admin Dashboard</h1>
+          {user && (
+            <div className="ml-4 text-sm text-muted-foreground flex items-center">
+              <User className="h-4 w-4 mr-1" />
+              {user.email}
+            </div>
+          )}
+        </div>
         <Button variant="outline" onClick={handleLogout}>
           Logout
         </Button>

@@ -12,6 +12,7 @@ import { Loader2, PlusCircle } from "lucide-react";
 import ProductEditor from "@/components/admin/ProductEditor";
 import { useProducts, useDeleteProduct } from "@/hooks/content";
 import { toast } from "sonner";
+import { ProductData } from "@/hooks/content/types";
 
 export interface Product {
   id: number;
@@ -45,7 +46,7 @@ const ProductsTab = () => {
               <DialogTitle>Add New Product</DialogTitle>
             </DialogHeader>
             <ProductEditor 
-              onComplete={() => setIsAddingProduct(false)} 
+              onSave={() => setIsAddingProduct(false)} 
             />
           </DialogContent>
         </Dialog>
@@ -59,31 +60,11 @@ const ProductsTab = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
           {products && products.length > 0 ? (
             products.map((product) => (
-              <div key={product.id} className="flex justify-between items-center p-4 border rounded-md">
-                <span>{product.product_name}</span>
-                <div className="space-x-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">Edit</Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Edit Product</DialogTitle>
-                      </DialogHeader>
-                      <ProductEditor 
-                        product={product}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => handleDeleteProduct(product.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </div>
+              <ProductListItem 
+                key={product.id} 
+                product={product as ProductData & { id: number }}
+                onDelete={handleDeleteProduct}
+              />
             ))
           ) : (
             <div className="col-span-full text-center py-8 text-muted-foreground">
@@ -92,6 +73,41 @@ const ProductsTab = () => {
           )}
         </div>
       )}
+    </div>
+  );
+};
+
+interface ProductListItemProps {
+  product: ProductData & { id: number };
+  onDelete: (id: number) => void;
+}
+
+const ProductListItem = ({ product, onDelete }: ProductListItemProps) => {
+  return (
+    <div className="flex justify-between items-center p-4 border rounded-md">
+      <span>{product.product_name}</span>
+      <div className="space-x-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">Edit</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Product</DialogTitle>
+            </DialogHeader>
+            <ProductEditor 
+              product={product}
+            />
+          </DialogContent>
+        </Dialog>
+        <Button 
+          variant="destructive" 
+          size="sm"
+          onClick={() => onDelete(product.id)}
+        >
+          Delete
+        </Button>
+      </div>
     </div>
   );
 };

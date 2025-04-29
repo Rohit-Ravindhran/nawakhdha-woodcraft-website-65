@@ -58,32 +58,11 @@ const BlogsTab = () => {
         <div className="grid grid-cols-1 gap-4 max-h-[600px] overflow-y-auto">
           {blogs && blogs.length > 0 ? (
             blogs.map((blog) => (
-              <div key={blog.id} className="flex justify-between items-center p-4 border rounded-md">
-                <div>
-                  <h3 className="font-medium">{blog.title}</h3>
-                  <p className="text-sm text-muted-foreground">{blog.date}</p>
-                </div>
-                <div className="space-x-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">Edit</Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Edit Blog Post</DialogTitle>
-                      </DialogHeader>
-                      <BlogEditor blogId={blog.id} />
-                    </DialogContent>
-                  </Dialog>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => handleDeleteBlog(blog.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </div>
+              <BlogListItem 
+                key={blog.id}
+                blog={blog}
+                onDelete={handleDeleteBlog}
+              />
             ))
           ) : (
             <div className="col-span-full text-center py-8 text-muted-foreground">
@@ -92,6 +71,42 @@ const BlogsTab = () => {
           )}
         </div>
       )}
+    </div>
+  );
+};
+
+interface BlogListItemProps {
+  blog: Blog;
+  onDelete: (id: number) => void;
+}
+
+const BlogListItem = ({ blog, onDelete }: BlogListItemProps) => {
+  return (
+    <div className="flex justify-between items-center p-4 border rounded-md">
+      <div>
+        <h3 className="font-medium">{blog.title}</h3>
+        <p className="text-sm text-muted-foreground">{blog.date}</p>
+      </div>
+      <div className="space-x-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">Edit</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Blog Post</DialogTitle>
+            </DialogHeader>
+            <BlogEditor blogId={blog.id} />
+          </DialogContent>
+        </Dialog>
+        <Button 
+          variant="destructive" 
+          size="sm"
+          onClick={() => onDelete(blog.id)}
+        >
+          Delete
+        </Button>
+      </div>
     </div>
   );
 };
