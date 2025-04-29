@@ -1,35 +1,42 @@
 
-import { Link } from "react-router-dom";
-import { Calendar } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
 
-interface BlogCardProps {
+export interface BlogCardProps {
   title: string;
   excerpt: string;
   image: string;
+  imageAlt?: string; // Added imageAlt prop
   date: string;
   href: string;
 }
 
-const BlogCard = ({ title, excerpt, image, date, href }: BlogCardProps) => {
+export function BlogCard({ title, excerpt, image, imageAlt = "", date, href }: BlogCardProps) {
   return (
-    <Link to={href} className="block group">
-      <div className="overflow-hidden rounded-lg mb-4">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      </div>
-      <div className="flex items-center text-sm text-muted-foreground mb-2">
-        <Calendar className="h-4 w-4 mr-1" />
-        <span>{date}</span>
-      </div>
-      <h3 className="text-xl font-bold font-playfair mb-2 group-hover:text-primary transition-colors">
-        {title}
-      </h3>
-      <p className="text-muted-foreground line-clamp-2">{excerpt}</p>
-    </Link>
+    <Card className="overflow-hidden">
+      <a href={href} className="group">
+        <AspectRatio ratio={16 / 9} className="overflow-hidden">
+          <img
+            src={image || "/placeholder.svg"}
+            alt={imageAlt || title} // Use imageAlt if provided, otherwise fallback to title
+            className="object-cover w-full h-full transition-all group-hover:scale-105"
+          />
+        </AspectRatio>
+      </a>
+      <CardHeader className="p-4 pb-2">
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">{formatDate(date)}</p>
+          <a href={href} className="group">
+            <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-2">
+              {title}
+            </h3>
+          </a>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4 pt-0">
+        <p className="text-muted-foreground text-sm line-clamp-3">{excerpt}</p>
+      </CardContent>
+    </Card>
   );
-};
-
-export default BlogCard;
+}

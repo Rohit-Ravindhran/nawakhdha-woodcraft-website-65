@@ -155,15 +155,20 @@ export function useStorage() {
       
       const filePath = urlParts[1];
       
+      // Updated to use list instead of getMetadata which doesn't exist in the API
       const { data, error } = await supabase.storage
         .from(bucket)
-        .getMetadata(filePath);
+        .list(filePath.substring(0, filePath.lastIndexOf('/')), {
+          limit: 1,
+          offset: 0,
+          search: filePath.substring(filePath.lastIndexOf('/') + 1)
+        });
         
       if (error) {
         throw error;
       }
       
-      return data;
+      return data?.[0] || null;
     } catch (error: any) {
       console.error(`Error getting image metadata: ${error.message}`);
       return null;

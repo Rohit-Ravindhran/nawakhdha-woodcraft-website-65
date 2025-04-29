@@ -1,53 +1,45 @@
 
-import { Link } from "react-router-dom";
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
 
-interface CategoryCardProps {
+export interface CategoryCardProps {
   title: string;
   image: string;
+  imageAlt?: string; // Added imageAlt prop
   href: string;
-  size?: "sm" | "md" | "lg";
   className?: string;
+  children?: React.ReactNode;
 }
 
-const CategoryCard = ({
+export function CategoryCard({
   title,
   image,
+  imageAlt = "",  // Default to empty string
   href,
-  size = "md",
   className,
-}: CategoryCardProps) => {
-  const sizeClasses = {
-    sm: "h-64",
-    md: "h-80",
-    lg: "h-96",
-  };
-
+  children,
+  ...props
+}: CategoryCardProps) {
   return (
-    <Link
-      to={href}
-      className={cn(
-        "group relative block overflow-hidden rounded-lg",
-        sizeClasses[size],
-        className
-      )}
-    >
-      <img
-        src={image}
-        alt={title}
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-        <h3 className="text-xl md:text-2xl font-bold text-white">{title}</h3>
-        <div className="mt-2">
-          <span className="inline-flex items-center text-sm text-white border-b border-white/0 transition-all group-hover:border-white/100">
-            View Collection
-          </span>
+    <Card className={cn("overflow-hidden rounded-xl", className)} {...props}>
+      <a href={href} className="group">
+        <div className="relative">
+          <AspectRatio ratio={16 / 9}>
+            <img
+              src={image || "/placeholder.svg"}
+              alt={imageAlt || title} // Use imageAlt if provided, otherwise fallback to title
+              className="object-cover w-full h-full transition-all group-hover:scale-105"
+            />
+          </AspectRatio>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-0 w-full p-4">
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
+          </div>
         </div>
-      </div>
-    </Link>
+      </a>
+      {children && <CardContent className="p-4">{children}</CardContent>}
+    </Card>
   );
-};
-
-export default CategoryCard;
+}
