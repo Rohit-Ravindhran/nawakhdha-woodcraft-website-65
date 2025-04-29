@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import { ProductData } from "@/hooks/content/types";
 import { ProductEditorProps } from "./ProductEditorTypes";
 import { productSchema, ProductFormValues } from "./schemas/productSchema";
@@ -37,10 +36,10 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
       const parsedImages = Array.isArray(product.gallery_images) 
         ? product.gallery_images.map(img => {
             // Ensure each item has the required properties
-            if (typeof img === 'object' && img !== null && 'url' in img && 'caption' in img) {
+            if (typeof img === 'object' && img !== null && 'url' in img) {
               return {
                 url: String(img.url),
-                caption: String(img.caption),
+                caption: 'caption' in img ? String(img.caption) : '',
                 alt: 'alt' in img ? String(img.alt) : undefined
               };
             }

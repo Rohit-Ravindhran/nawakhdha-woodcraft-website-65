@@ -36,21 +36,33 @@ export type Database = {
           product_name: string;
           description: string;
           category_name: string;
-          gallery_images: { url: string; caption: string }[] | null;
+          gallery_images: { url: string; caption: string; alt?: string }[] | null;
+          seo_title?: string | null;
+          seo_description?: string | null;
+          seo_keywords?: string | null;
+          created_at: string;
         };
         Insert: {
           id?: number;
           product_name: string;
           description: string;
           category_name: string;
-          gallery_images?: { url: string; caption: string }[] | null;
+          gallery_images?: { url: string; caption: string; alt?: string }[] | null;
+          seo_title?: string | null;
+          seo_description?: string | null;
+          seo_keywords?: string | null;
+          created_at?: string;
         };
         Update: {
           id?: number;
           product_name?: string;
           description?: string;
           category_name?: string;
-          gallery_images?: { url: string; caption: string }[] | null;
+          gallery_images?: { url: string; caption: string; alt?: string }[] | null;
+          seo_title?: string | null;
+          seo_description?: string | null;
+          seo_keywords?: string | null;
+          created_at?: string;
         };
       };
       blogs: {

@@ -13,6 +13,7 @@ import ProductEditor from "@/components/admin/ProductEditor";
 import { useProducts, useDeleteProduct } from "@/hooks/content";
 import { toast } from "sonner";
 import { ProductData } from "@/hooks/content/types";
+import { Json } from "@/integrations/supabase/types";
 
 export interface Product {
   id: number;
@@ -72,18 +73,7 @@ const ProductsTab = () => {
                 seo_description: product.seo_description || "",
                 seo_keywords: product.seo_keywords || "",
                 // Safely transform gallery_images
-                gallery_images: Array.isArray(product.gallery_images) 
-                  ? product.gallery_images.map(img => {
-                      if (typeof img === 'object' && img !== null) {
-                        return {
-                          url: typeof img.url === 'string' ? img.url : '',
-                          caption: typeof img.caption === 'string' ? img.caption : '',
-                          alt: typeof img.alt === 'string' ? img.alt : undefined
-                        };
-                      }
-                      return { url: '', caption: '' };
-                    }).filter(img => img.url !== '')
-                  : []
+                gallery_images: transformGalleryImages(product.gallery_images)
               };
               
               return (
@@ -104,6 +94,31 @@ const ProductsTab = () => {
     </div>
   );
 };
+
+/**
+ * Safely transforms gallery images from JSON to the expected format
+ */
+function transformGalleryImages(galleryImages: any): { url: string; caption: string; alt?: string }[] {
+  if (!galleryImages) return [];
+  
+  if (!Array.isArray(galleryImages)) {
+    // If it's not an array but an object, try to convert it
+    try {
+      galleryImages = Object.values(galleryImages);
+    } catch (e) {
+      return [];
+    }
+  }
+  
+  return galleryImages
+    .filter(img => img !== null && typeof img === 'object')
+    .map(img => ({
+      url: typeof img.url === 'string' ? img.url : '',
+      caption: typeof img.caption === 'string' ? img.caption : '',
+      alt: typeof img.alt === 'string' ? img.alt : undefined
+    }))
+    .filter(img => img.url !== '');
+}
 
 interface ProductListItemProps {
   product: ProductData & { id: number };

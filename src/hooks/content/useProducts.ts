@@ -32,7 +32,7 @@ export function useProduct(productId?: number) {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as ProductData & { id: number };
     },
     enabled: !!productId
   });
@@ -63,7 +63,7 @@ export function useUpdateProduct() {
           .single();
           
         if (error) throw error;
-        return data;
+        return data as ProductData & { id: number };
       }
     },
     onSuccess: (data) => {

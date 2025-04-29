@@ -4,6 +4,7 @@ import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
 import { useProducts } from "@/hooks/content";
 import { Loader2 } from "lucide-react";
+import { transformGalleryImages } from "@/utils/imageHelpers";
 
 const ProductsPage = () => {
   // Product categories data
@@ -37,15 +38,19 @@ const ProductsPage = () => {
         />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <CategoryCard
-              key={product.id}
-              title={product.product_name}
-              image={product.gallery_images?.[0]?.url || "/placeholder.svg"}
-              imageAlt={product.gallery_images?.[0]?.alt || product.product_name}
-              href={`/product/${product.id}`}
-            />
-          ))}
+          {products.map((product) => {
+            const galleryImages = transformGalleryImages(product.gallery_images);
+            
+            return (
+              <CategoryCard
+                key={product.id}
+                title={product.product_name}
+                image={galleryImages[0]?.url || "/placeholder.svg"}
+                imageAlt={galleryImages[0]?.alt || product.product_name}
+                href={`/product/${product.id}`}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

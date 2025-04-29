@@ -27,6 +27,7 @@ export interface ProductData {
   seo_description?: string;
   seo_keywords?: string;
   gallery_images?: { url: string; caption: string; alt?: string }[];
+  created_at?: string;
 }
 
 export interface BlogData {
