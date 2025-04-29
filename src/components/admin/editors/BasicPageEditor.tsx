@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useUpdatePage, PageData } from "@/hooks/useContent";
+import { useUpdatePage, PageData } from "@/hooks/content";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

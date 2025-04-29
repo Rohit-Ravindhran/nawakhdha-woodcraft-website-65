@@ -1,8 +1,8 @@
 
 import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
-import BlogCard from "@/components/ui/blog-card";
-import { useBlogs } from "@/hooks/useContent";
+import { BlogCard } from "@/components/ui/blog-card";
+import { useBlogs } from "@/hooks/content";
 import { Loader2 } from "lucide-react";
 
 const BlogPage = () => {

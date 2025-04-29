@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useBlog, useUpdateBlog } from "@/hooks/useContent";
+import { useBlog, useUpdateBlog } from "@/hooks/content";
 import { useStorage } from "@/hooks/useStorage";
 import ImageUploader from "./ImageUploader";
 import { Loader2 } from "lucide-react";

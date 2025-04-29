@@ -1,11 +1,10 @@
-
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
-import CategoryCard from "@/components/ui/category-card";
-import BlogCard from "@/components/ui/blog-card";
-import { usePage } from "@/hooks/useContent";
+import { CategoryCard } from "@/components/ui/category-card";
+import { BlogCard } from "@/components/ui/blog-card";
+import { usePage } from "@/hooks/content";
 
 const HomePage = () => {
   const { data: page, isLoading } = usePage("home");

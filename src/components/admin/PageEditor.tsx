@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { usePage } from "@/hooks/useContent";
+import { usePage } from "@/hooks/content";
 import { Loader2 } from "lucide-react";
 import HomePageEditor from "@/components/admin/editors/HomePageEditor";
 import BasicPageEditor from "@/components/admin/editors/BasicPageEditor";

@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { usePage, useUpdatePage, PageData } from "@/hooks/useContent";
+import { usePage, useUpdatePage, PageData } from "@/hooks/content";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
