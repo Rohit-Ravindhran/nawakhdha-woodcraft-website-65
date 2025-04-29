@@ -16,6 +16,21 @@ export interface PageData {
   products?: string;
   blog?: string;
   created_at?: string;
+  // About Page Fields
+  header_image?: string;
+  header_image_alt?: string;
+  company_story?: string;
+  mission?: string;
+  vision?: string;
+  since_year?: string;
+  // Contact Page Fields
+  subtitle?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  map_url?: string;
+  form_title?: string;
+  form_description?: string;
 }
 
 export interface ProductData {
@@ -23,6 +38,9 @@ export interface ProductData {
   product_name: string; 
   description: string;
   category_name: string;
+  price?: string;
+  dimensions?: string;
+  material?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;

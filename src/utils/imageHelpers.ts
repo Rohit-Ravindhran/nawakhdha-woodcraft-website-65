@@ -1,8 +1,10 @@
 
+import { GalleryImage } from "@/components/admin/schemas/productSchema";
+
 /**
  * Safely transforms gallery images from JSON to the expected format
  */
-export function transformGalleryImages(galleryImages: any): { url: string; caption: string; alt?: string }[] {
+export function transformGalleryImages(galleryImages: any): GalleryImage[] {
   if (!galleryImages) return [];
   
   if (!Array.isArray(galleryImages)) {

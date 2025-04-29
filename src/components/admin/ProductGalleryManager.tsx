@@ -5,12 +5,7 @@ import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { FormLabel, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AlertCircle } from "lucide-react";
-
-interface GalleryImage {
-  url: string;
-  caption: string;
-  alt?: string;
-}
+import { GalleryImage } from "@/components/admin/schemas/productSchema";
 
 interface ProductGalleryManagerProps {
   images: GalleryImage[];
@@ -89,7 +84,7 @@ export default function ProductGalleryManager({
             <FormLabel>Caption</FormLabel>
             <FormControl>
               <Input 
-                value={image.caption} 
+                value={image.caption || ""} 
                 onChange={(e) => handleCaptionChange(e.target.value, index)} 
                 placeholder="Enter a description for this image"
               />
@@ -101,7 +96,8 @@ export default function ProductGalleryManager({
       <Button
         type="button"
         variant="outline"
-        onClick={() => handleImageUploaded("", "", images.length)}
+        onClick={() => handleImageUploaded("", "")}
+        className="w-full"
       >
         Add Image
       </Button>
