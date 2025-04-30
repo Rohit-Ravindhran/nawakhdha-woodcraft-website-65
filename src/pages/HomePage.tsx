@@ -1,7 +1,6 @@
-
 import React from "react";
 import { usePage } from "@/hooks/content";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import HeroSection from "@/components/home/HeroSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
