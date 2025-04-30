@@ -45,11 +45,26 @@ const productDatabase = {
     description: "Redefine your space with our collection of modern wooden door designs, perfect for contemporary homes and commercial properties in Bahrain. These doors blend sleek geometry, clean lines, and premium hardwoods to create a stunning minimalist look. From pivot and flush doors to bold engravings and creative glasswork, each design prioritizes innovation, durability, and aesthetic harmony. Perfect for clients seeking a modern architectural finish with lasting functionality.",
     detailedDescription: "Modern design doors are perfect for those seeking a sleek, contemporary look. We utilize both traditional hardwoods and engineered materials to create doors with perfect geometry and exceptional durability. Features like concealed hinges, integrated handles, and flush designs create a seamless look that integrates perfectly with modern interior design concepts.",
     images: [
-      { src: "https://images.unsplash.com/photo-1612452600903-d7246211cc28?q=80&w=1000", caption: "Traditional geometric solid wood door with deep grains", alt: "modern geometric wooden door in Bahrain" },
-      { src: "https://images.unsplash.com/photo-1526057565006-20beab8dd2ed?q=80&w=1000", caption: "Circular bronze mandala door with twin carved panels", alt: "round pattern double entrance modern door Bahrain" },
-      { src: "https://images.unsplash.com/photo-1535655585277-6f2b35275f50?q=80&w=1000", caption: "Textured bronze finish door with traditional carving", alt: "bronze textured designer modern door" },
-      { src: "https://images.unsplash.com/photo-1514462354494-435bd80e9076?q=80&w=1000", caption: "Contemporary pivot door with angled grain pattern", alt: "angled grain pivot wooden door Bahrain" },
-      { src: "https://images.unsplash.com/photo-1581275456228-b89f94b334ff?q=80&w=1000", caption: "Circular sunburst engraved pivot door", alt: "circular sun design modern wooden pivot door" }
+      { src: "/lovable-uploads/71aa8d6e-7f0d-4f60-a276-df8ee58b9c7a.png", caption: "Traditional geometric solid wood door with deep grains", alt: "modern geometric wooden door in Bahrain" },
+      { src: "/lovable-uploads/388418d1-a414-4bef-bacc-fc13744927ee.png", caption: "Circular bronze mandala door with twin carved panels", alt: "round pattern double entrance modern door Bahrain" },
+      { src: "/lovable-uploads/39337aa7-083c-48bc-867a-c3b38c73dd99.png", caption: "Textured bronze finish door with traditional carving", alt: "bronze textured designer modern door" },
+      { src: "/lovable-uploads/0185c8cc-c1e1-408e-b3fd-c7124284ad8e.png", caption: "Contemporary pivot door with angled grain pattern", alt: "angled grain pivot wooden door Bahrain" },
+      { src: "/lovable-uploads/e9dcbadd-f122-412c-8e5e-e05bef7be4ae.png", caption: "Circular sunburst engraved pivot door", alt: "circular sun design modern wooden pivot door" },
+      { src: "/lovable-uploads/8b505a94-7fae-4f64-9c09-501c2ec3d9e4.png", caption: "Industrial bronze double door with grid texture", alt: "industrial style bronze front door Bahrain" },
+      { src: "/lovable-uploads/a63f6e85-444f-41b2-a1c1-be01ce9fdb29.png", caption: "Mandala center design in dark polished hardwood", alt: "mandala engraved dark wood modern door Bahrain" },
+      { src: "/lovable-uploads/f0f1e646-a5e8-431c-8e24-596599f23942.png", caption: "Classic fusion door with antique bronze accents", alt: "antique-meets-modern wooden fusion door" },
+      { src: "/lovable-uploads/7c298345-4f12-4f1c-ab22-4f98f1a2a1c7.png", caption: "Recessed geometric door with deep brown panels", alt: "recessed panel dark wood modern door" },
+      { src: "/lovable-uploads/71be00fe-b0f2-489a-b7f9-55bda4853c39.png", caption: "Faceted pyramid-patterned dual panel door", alt: "pyramid carved geometric modern wood door" },
+      { src: "/lovable-uploads/6c647cf0-8488-47c5-9fe0-9e8422871f36.png", caption: "Arched dual door with golden floral wrought iron", alt: "arched luxury door with golden iron and wood" },
+      { src: "/lovable-uploads/dbbe1df3-eb9f-4c7d-a7f7-c3f236591589.png", caption: "Glossy carved teak door with floral side panels", alt: "teak modern carved entry door with floral glass" },
+      { src: "/lovable-uploads/c0d23e83-070e-4c5f-a340-ff751b937ad4.png", caption: "Diamond-patterned modern pivot door with black handle", alt: "diagonal-cut diamond grid wooden pivot door" },
+      { src: "/lovable-uploads/03a7a393-48e2-472a-bfa4-b36fa2df6312.png", caption: "Arched door with classic molding and lantern sconces", alt: "modern classic arched wooden double door Bahrain" },
+      { src: "/lovable-uploads/c7bddfba-ae2f-4a0c-90c2-6e3f6c5a1f56.png", caption: "Straight panel door with side glass frames and metallic logo", alt: "vertical panel modern front door with glass" },
+      { src: "/lovable-uploads/eaef49c0-6a37-4d1f-a2b1-0eb839aceda6.png", caption: "Circular panel door with matching frosted side panels", alt: "circular glass and wood door set Bahrain" },
+      { src: "/lovable-uploads/ea1e7147-7ddc-4d4a-9b32-7900da4ace22.png", caption: "Chevron woodgrain with triangle iron lattice", alt: "geometric iron-inlaid triangle wood door" },
+      { src: "/lovable-uploads/c74a4d41-54c4-4718-ac3c-d3feab4d0c12.png", caption: "Modern grid pattern entrance with soft brown tones", alt: "warm wood modern grid panel entry door" },
+      { src: "/lovable-uploads/373de5dd-1e47-4476-9ee1-5094a3abab03.png", caption: "Honeycomb block wooden door with pivot installation", alt: "honeycomb block modern pivot door Bahrain" },
+      { src: "/lovable-uploads/86c18c60-710b-486c-bf8e-4e1bf2fb9b13.png", caption: "Contemporary interior grid door with matte handle", alt: "minimalist wood grid door modern Bahrain" }
     ]
   },
   "kitchen-cabinets": {
