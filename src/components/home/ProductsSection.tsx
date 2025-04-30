@@ -29,7 +29,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({ productsData, default
     : defaultProducts;
 
   return (
-    <section className="section-padding bg-secondary/30">
+    <section className="section-padding bg-white">
       <div className="container-custom">
         <SectionTitle
           title={productsData?.section_title || "Our Products"}

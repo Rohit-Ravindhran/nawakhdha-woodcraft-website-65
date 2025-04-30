@@ -1,6 +1,7 @@
 
 import React from "react";
 import { usePage } from "@/hooks/content";
+import { Helmet } from "react-helmet";
 import HeroSection from "@/components/home/HeroSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
@@ -27,31 +28,35 @@ const HomePage = () => {
     (typeof page.blog === 'string' ? JSON.parse(page.blog) : page.blog) : 
     null;
   
-  // Default data if not set in admin
+  // Default products if not set in admin
   const defaultProducts = [
     {
       id: "doors-western",
-      title: "Western Doors",
+      title: "Western Wooden Doors",
       image: "https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000",
-      image_alt: "Western style wooden door design"
+      image_alt: "Western style wooden doors Bahrain",
+      description: "Premium handcrafted Western-style doors for villas and apartments. Strong, stylish, and suitable for Bahraini interiors."
     },
     {
       id: "kitchen-cabinets",
-      title: "Kitchen Cabinets",
+      title: "Custom Kitchen Cabinets",
       image: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000",
-      image_alt: "Modern kitchen cabinet designs"
+      image_alt: "Custom wooden kitchen cabinets Bahrain",
+      description: "Tailored wooden kitchen cabinetry made from durable hardwoods. Designed for practical use and elegant aesthetics."
     },
     {
-      id: "bedroom-furniture",
-      title: "Bedroom Furniture",
+      id: "wooden-wardrobes",
+      title: "Wooden Wardrobes",
       image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000",
-      image_alt: "Elegant wooden bedroom furniture set"
+      image_alt: "Custom wooden wardrobes Bahrain",
+      description: "Elegant and functional wardrobes custom-built for your space. Optimized for storage and style in every Bahraini home."
     },
     {
-      id: "dining-tables",
-      title: "Dining Tables",
+      id: "outdoor-furniture",
+      title: "Outdoor Wooden Furniture",
       image: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1000",
-      image_alt: "Handcrafted dining table"
+      image_alt: "Outdoor wooden furniture Bahrain",
+      description: "Weather-resistant wooden furniture designed for Bahrain's climate. Perfect for patios, gardens, and balconies."
     }
   ];
 
@@ -86,36 +91,59 @@ const HomePage = () => {
     }
   ];
 
-  // Default services if not set in admin
+  // Default services updated with the new requirements
   const defaultServices = [
     {
-      title: "Custom Design",
-      description: "Personalized furniture design services tailored to your specific needs and preferences.",
+      title: "Custom Furniture Design in Bahrain",
+      description: "Tailored wooden furniture crafted to suit your space, style, and lifestyle. Perfect for modern and traditional homes in Bahrain.",
       image: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=300",
-      image_alt: "Custom furniture design sketches"
+      image_alt: "custom wooden furniture design Bahrain"
     },
     {
-      title: "Professional Craftsmanship",
-      description: "Expert craftsmen with decades of experience creating beautiful wooden masterpieces.",
+      title: "Experienced Bahraini Woodworkers",
+      description: "Our master craftsmen bring decades of expertise to your furniture, delivering quality, durability, and timeless design.",
       image: "https://images.unsplash.com/photo-1533227268428-f9ed0900fb3b?q=80&w=300",
-      image_alt: "Skilled craftsman working on wooden furniture"
+      image_alt: "experienced wood craftsmen Bahrain"
     },
     {
-      title: "Premium Materials",
-      description: "Only the finest quality woods and materials are used in our furniture and products.",
+      title: "High-Quality Wood & Finishes",
+      description: "Only the finest imported and local woods are used to ensure long-lasting furniture and impeccable finishes.",
       image: "https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?q=80&w=300",
-      image_alt: "High quality wood materials"
+      image_alt: "premium hardwood materials Bahrain"
     },
     {
-      title: "Installation Services",
-      description: "Professional installation by our experienced team ensures perfect fit and finish.",
+      title: "Professional Installation in Bahrain",
+      description: "We provide precise on-site installation of furniture and doors across Bahrain, ensuring a perfect fit and seamless experience.",
       image: "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?q=80&w=300",
-      image_alt: "Furniture installation process"
+      image_alt: "furniture installation services Bahrain"
+    },
+    {
+      title: "Civil Maintenance Services in Bahrain",
+      description: "Affordable and reliable carpentry, plumbing, and drainage solutions. Serving both residential and commercial properties in Bahrain.",
+      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=300",
+      image_alt: "carpentry plumbing drainage maintenance Bahrain"
     }
   ];
 
+  const pageTitle = page?.seo_title || "Custom Wooden Furniture, Doors & Maintenance Services in Bahrain | Nawakhdha Woodcraft";
+  const pageDescription = page?.seo_description || "Expert wooden furniture, doors, and civil maintenance services tailored for homes and businesses across Bahrain. Handcrafted quality and modern design.";
+  const pageKeywords = page?.seo_keywords || "wooden furniture, doors, civil maintenance, Bahrain, custom furniture, carpentry, plumbing, drainage";
+
   return (
     <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta name="keywords" content={pageKeywords} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <link rel="canonical" href="https://nawakhdha-woodcraft.com/" />
+      </Helmet>
+
       <HeroSection heroData={heroData} />
       <ServicesSection servicesData={servicesData} defaultServices={defaultServices} />
       <ProductsSection productsData={productsData} defaultProducts={defaultProducts} />

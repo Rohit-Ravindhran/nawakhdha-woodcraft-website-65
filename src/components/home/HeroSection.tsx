@@ -24,7 +24,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           backgroundImage: `url('${heroData?.background_image || "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format"}')`
         }}
         role="img"
-        aria-label={heroData?.background_image_alt || "Carpentry workshop banner"}
+        aria-label={heroData?.background_image_alt || "Carpentry workshop in Bahrain - Nawakhdha Woodcraft"}
       ></div>
       <div className="absolute inset-0 flex items-center z-20">
         <div className="container-custom">
