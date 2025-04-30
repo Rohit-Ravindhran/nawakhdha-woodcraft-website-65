@@ -7,7 +7,7 @@ import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
 import CallToActionSection from "@/components/home/CallToActionSection";
 import BlogSection from "@/components/home/BlogSection";
-
+// trigger rebuild
 const HomePage = () => {
   const { data: page, isLoading } = usePage("home");
   
