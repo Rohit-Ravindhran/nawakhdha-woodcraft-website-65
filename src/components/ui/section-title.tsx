@@ -24,9 +24,15 @@ const SectionTitle = ({
     >
       <h2 className="heading-md mb-3 relative">
         {title}
-        <span className="absolute bottom-0 left-0 w-16 h-1 bg-primary mt-2"></span>
+        <span className={cn(
+          "absolute bottom-0 h-1 bg-primary mt-2",
+          centered ? "left-1/2 transform -translate-x-1/2 w-16" : "left-0 w-16"
+        )}></span>
       </h2>
-      {subtitle && <p className="text-muted-foreground max-w-2xl">{subtitle}</p>}
+      {subtitle && <p className={cn(
+        "text-muted-foreground",
+        centered ? "mx-auto max-w-2xl" : "max-w-2xl"
+      )}>{subtitle}</p>}
     </div>
   );
 };

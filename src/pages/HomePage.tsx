@@ -1,3 +1,4 @@
+
 import React from "react";
 import { usePage } from "@/hooks/content";
 import { Helmet } from "react-helmet-async";
@@ -27,35 +28,35 @@ const HomePage = () => {
     (typeof page.blog === 'string' ? JSON.parse(page.blog) : page.blog) : 
     null;
   
-  // Default products if not set in admin
+  // Default products if not set in admin - Updated with new images and descriptions
   const defaultProducts = [
     {
       id: "doors-western",
       title: "Western Wooden Doors",
-      image: "https://images.unsplash.com/photo-1615529328331-f8917597711f?q=80&w=1000",
-      image_alt: "Western style wooden doors Bahrain",
-      description: "Premium handcrafted Western-style doors for villas and apartments. Strong, stylish, and suitable for Bahraini interiors."
+      image: "/lovable-uploads/45696e18-e786-427b-afb9-73fe39867839.png",
+      image_alt: "premium western wooden doors in Bahrain",
+      description: "Contemporary Western-style wooden doors designed for security, beauty, and long-lasting performance."
     },
     {
       id: "kitchen-cabinets",
       title: "Custom Kitchen Cabinets",
-      image: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000",
-      image_alt: "Custom wooden kitchen cabinets Bahrain",
-      description: "Tailored wooden kitchen cabinetry made from durable hardwoods. Designed for practical use and elegant aesthetics."
+      image: "/lovable-uploads/8a5e7c00-cb95-422d-ab89-1482457d52fa.png",
+      image_alt: "custom wooden kitchen cabinets in Bahrain",
+      description: "Tailor-made wooden kitchen cabinets that combine sleek design and maximum storage, crafted for modern Bahraini homes."
     },
     {
       id: "wooden-wardrobes",
       title: "Wooden Wardrobes",
-      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000",
-      image_alt: "Custom wooden wardrobes Bahrain",
-      description: "Elegant and functional wardrobes custom-built for your space. Optimized for storage and style in every Bahraini home."
+      image: "/lovable-uploads/fd7125fb-168c-46ac-a882-ca1c34f60941.png",
+      image_alt: "built-in wooden wardrobes in Bahrain",
+      description: "Elegant, space-efficient wardrobes built from premium wood for lasting style and utility in Bahraini interiors."
     },
     {
       id: "outdoor-furniture",
       title: "Outdoor Wooden Furniture",
-      image: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1000",
-      image_alt: "Outdoor wooden furniture Bahrain",
-      description: "Weather-resistant wooden furniture designed for Bahrain's climate. Perfect for patios, gardens, and balconies."
+      image: "/lovable-uploads/274a92b8-0cf0-43c7-a39c-049e10f312be.png",
+      image_alt: "outdoor wooden furniture for patios in Bahrain",
+      description: "Weather-resistant, stylish patio furniture crafted for outdoor comfort and durability in Bahrain's climate."
     }
   ];
 

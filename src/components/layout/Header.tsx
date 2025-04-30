@@ -88,11 +88,9 @@ const Header = () => {
         {/* Main Header */}
         <div className="flex items-center justify-between py-4">
           <Link to="/" className="flex items-center gap-2">
+            {/* Updated company name styling as requested */}
             <h1 className="text-xl font-bold text-primary font-playfair leading-none">
-              Al Nawakhdha
-              <span className="text-sm block font-normal text-muted-foreground">
-                Furniture W.L.L
-              </span>
+              Al Nawakhdha Furnitures W.L.L
             </h1>
           </Link>
 
