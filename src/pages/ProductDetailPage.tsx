@@ -67,6 +67,24 @@ const productDatabase = {
       { src: "/lovable-uploads/86c18c60-710b-486c-bf8e-4e1bf2fb9b13.png", caption: "Contemporary interior grid door with matte handle", alt: "minimalist wood grid door modern Bahrain" }
     ]
   },
+  "doors-middle-eastern": {
+    title: "Middle Eastern Design Doors",
+    description: "Discover the rich heritage and craftsmanship of our Middle Eastern design wooden doors, created for discerning clients across Bahrain. These doors feature intricate geometric patterns, ornamental carvings, and arched motifs reminiscent of Islamic architecture. Built from the finest hardwoods, they are ideal for mosques, villas, majlis entrances, or luxury residences that value artistic tradition, cultural depth, and functional durability.",
+    detailedDescription: "Each Middle Eastern door we create is a masterpiece of craftsmanship featuring geometric patterns, arabesque designs, and ornate inlay work. These doors often incorporate traditional motifs and can include metal accents, ornate carving, and sometimes colorful inlays. Perfect for creating a dramatic entrance or adding cultural richness to interior spaces.",
+    images: [
+      { src: "/lovable-uploads/56759753-02ab-4107-8ee2-065ec161f547.png", caption: "Traditional Islamic pattern inlaid wood door", alt: "hand-carved Islamic motif wooden door Bahrain" },
+      { src: "/lovable-uploads/0f759282-8762-46b6-94e4-afa18f801e6e.png", caption: "Symmetrical geometric double door with bold grains", alt: "middle eastern wood door with repeating star design Bahrain" },
+      { src: "/lovable-uploads/2e104c9d-b0f1-4d86-8466-264e0224d731.png", caption: "Detailed lattice carving on ancient-style arched door", alt: "carved lattice Islamic wooden door for homes in Bahrain" },
+      { src: "/lovable-uploads/0aab3249-fdc8-407c-8ee6-b84104e0a625.png", caption: "Ornamental inset bronze circle motif doors", alt: "contemporary Islamic bronze detail wood door Bahrain" },
+      { src: "/lovable-uploads/25d13934-3885-4415-9e3a-ca91ebee9709.png", caption: "Mosque-style arched door with intricate panel carvings", alt: "Islamic mosque-inspired carved entry door in Bahrain" },
+      { src: "/lovable-uploads/1dbf3998-10a5-4630-9cf1-58dad48d116b.png", caption: "Rustic Arabic castle-style studded wood door", alt: "castle gate style heavy wooden door with metal studs Bahrain" },
+      { src: "/lovable-uploads/d721f9b8-ab4f-445e-bcbe-f02e16e06e0a.png", caption: "Grid patterned leather-textured wood panel door", alt: "grid panel middle eastern style modern wood door" },
+      { src: "/lovable-uploads/beec8109-fbf6-4a97-9840-346f46fd833e.png", caption: "Light carved wooden double doors with star motifs", alt: "Arabian decorative wood door for villa or mosque Bahrain" },
+      { src: "/lovable-uploads/d8892851-0232-443d-9299-69b2cddd25fd.png", caption: "Sunburst star medallion design on Islamic arch door", alt: "traditional Islamic star carving arched door Bahrain" },
+      { src: "/lovable-uploads/293ee33a-2408-4dc3-8ff8-0b2c74535423.png", caption: "Grand mosque-style entry with symbolic pattern carvings", alt: "mosque door woodwork with Islamic inscriptions Bahrain" },
+      { src: "https://images.unsplash.com/photo-1582216601714-dca3dd3c6846?q=80&w=1000", caption: "Ottoman-inspired arch door with heavy floral carvings", alt: "ottoman styled Islamic double wood door in Bahrain" }
+    ]
+  },
   "kitchen-cabinets": {
     title: "Kitchen Cabinets",
     description: "Our custom kitchen cabinets are designed to maximize both beauty and functionality in the heart of your home. Built with premium materials and expert craftsmanship, these cabinets offer superior storage solutions while elevating your kitchen's aesthetic.",
@@ -90,21 +108,7 @@ const productDatabase = {
       { src: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?q=80&w=1000", caption: "Minimalist scandinavian style bed frame", alt: "minimalist scandinavian style bed frame Bahrain" },
       { src: "https://images.unsplash.com/photo-1615874694520-474822394e73?q=80&w=1000", caption: "Custom wardrobe with sliding doors", alt: "custom wardrobe with sliding doors Bahrain" }
     ]
-  },
-  // Add placeholders for the remaining products
-  "doors-middle-eastern": {
-    title: "Middle Eastern Design Doors",
-    description: "Our Middle Eastern design doors showcase intricate patterns and ornate details inspired by traditional Arabic and Islamic architectural elements.",
-    detailedDescription: "Each Middle Eastern door we create is a masterpiece of craftsmanship featuring geometric patterns, arabesque designs, and ornate inlay work. These doors often incorporate traditional motifs and can include metal accents, ornate carving, and sometimes colorful inlays. Perfect for creating a dramatic entrance or adding cultural richness to interior spaces.",
-    images: [
-      { src: "https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=1000", caption: "Traditional arabesque pattern wooden door", alt: "traditional arabesque pattern wooden door Bahrain" },
-      { src: "https://images.unsplash.com/photo-1560106426-c90e52d218d4?q=80&w=1000", caption: "Ornate Middle Eastern entrance door with metal accents", alt: "ornate middle eastern entrance door with metal accents Bahrain" },
-      { src: "https://images.unsplash.com/photo-1613490277829-e957a4872c01?q=80&w=1000", caption: "Geometric pattern door with traditional motifs", alt: "geometric pattern door with traditional motifs Bahrain" },
-      { src: "https://images.unsplash.com/photo-1557010328-5eefa4b5d51a?q=80&w=1000", caption: "Hand-carved door panel with Islamic-inspired design", alt: "hand-carved door panel with islamic-inspired design Bahrain" },
-      { src: "https://images.unsplash.com/photo-1520438865223-4c9be730469b?q=80&w=1000", caption: "Elegant Middle Eastern door with brass details", alt: "elegant middle eastern door with brass details Bahrain" }
-    ]
   }
-  // Default templates for remaining products would be added similarly
 };
 
 const ProductDetailPage = () => {
