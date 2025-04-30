@@ -42,14 +42,14 @@ const productDatabase = {
   },
   "doors-modern": {
     title: "Modern Design Doors",
-    description: "Our modern door collection features sleek, minimalist designs that complement contemporary architecture. These doors emphasize clean lines, hidden hardware, and innovative materials that combine beauty with functionality.",
+    description: "Redefine your space with our collection of modern wooden door designs, perfect for contemporary homes and commercial properties in Bahrain. These doors blend sleek geometry, clean lines, and premium hardwoods to create a stunning minimalist look. From pivot and flush doors to bold engravings and creative glasswork, each design prioritizes innovation, durability, and aesthetic harmony. Perfect for clients seeking a modern architectural finish with lasting functionality.",
     detailedDescription: "Modern design doors are perfect for those seeking a sleek, contemporary look. We utilize both traditional hardwoods and engineered materials to create doors with perfect geometry and exceptional durability. Features like concealed hinges, integrated handles, and flush designs create a seamless look that integrates perfectly with modern interior design concepts.",
     images: [
-      { src: "https://images.unsplash.com/photo-1612452600903-d7246211cc28?q=80&w=1000", caption: "Minimalist flush door in dark walnut" },
-      { src: "https://images.unsplash.com/photo-1526057565006-20beab8dd2ed?q=80&w=1000", caption: "Geometric pattern modern door" },
-      { src: "https://images.unsplash.com/photo-1535655585277-6f2b35275f50?q=80&w=1000", caption: "Sleek interior door with hidden hardware" },
-      { src: "https://images.unsplash.com/photo-1514462354494-435bd80e9076?q=80&w=1000", caption: "Two-tone contemporary door design" },
-      { src: "https://images.unsplash.com/photo-1581275456228-b89f94b334ff?q=80&w=1000", caption: "Modern pivot door with glass accents" }
+      { src: "https://images.unsplash.com/photo-1612452600903-d7246211cc28?q=80&w=1000", caption: "Traditional geometric solid wood door with deep grains", alt: "modern geometric wooden door in Bahrain" },
+      { src: "https://images.unsplash.com/photo-1526057565006-20beab8dd2ed?q=80&w=1000", caption: "Circular bronze mandala door with twin carved panels", alt: "round pattern double entrance modern door Bahrain" },
+      { src: "https://images.unsplash.com/photo-1535655585277-6f2b35275f50?q=80&w=1000", caption: "Textured bronze finish door with traditional carving", alt: "bronze textured designer modern door" },
+      { src: "https://images.unsplash.com/photo-1514462354494-435bd80e9076?q=80&w=1000", caption: "Contemporary pivot door with angled grain pattern", alt: "angled grain pivot wooden door Bahrain" },
+      { src: "https://images.unsplash.com/photo-1581275456228-b89f94b334ff?q=80&w=1000", caption: "Circular sunburst engraved pivot door", alt: "circular sun design modern wooden pivot door" }
     ]
   },
   "kitchen-cabinets": {
@@ -57,11 +57,11 @@ const productDatabase = {
     description: "Our custom kitchen cabinets are designed to maximize both beauty and functionality in the heart of your home. Built with premium materials and expert craftsmanship, these cabinets offer superior storage solutions while elevating your kitchen's aesthetic.",
     detailedDescription: "From traditional to contemporary styles, our kitchen cabinets can be customized to match any design preference. We use high-quality woods like maple, cherry, and oak, combined with precision hardware for smooth operation that will last for decades. Options include soft-close features, custom inserts for organization, and specialized storage solutions for everything from spices to large appliances.",
     images: [
-      { src: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000", caption: "Modern white and wood kitchen cabinet design" },
-      { src: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1000", caption: "Traditional wood cabinetry with ornate details" },
-      { src: "https://images.unsplash.com/photo-1604709177225-055f99402ea3?q=80&w=1000", caption: "Contemporary kitchen cabinet with integrated handles" },
-      { src: "https://images.unsplash.com/photo-1556909172-8c2f041fca1e?q=80&w=1000", caption: "Kitchen island with custom storage solutions" },
-      { src: "https://images.unsplash.com/photo-1600125693227-050ded46c15a?q=80&w=1000", caption: "Minimalist kitchen cabinetry with clean lines" }
+      { src: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000", caption: "Modern white and wood kitchen cabinet design", alt: "modern white and wood kitchen cabinet design Bahrain" },
+      { src: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1000", caption: "Traditional wood cabinetry with ornate details", alt: "traditional wood cabinetry with ornate details Bahrain" },
+      { src: "https://images.unsplash.com/photo-1604709177225-055f99402ea3?q=80&w=1000", caption: "Contemporary kitchen cabinet with integrated handles", alt: "contemporary kitchen cabinet with integrated handles Bahrain" },
+      { src: "https://images.unsplash.com/photo-1556909172-8c2f041fca1e?q=80&w=1000", caption: "Kitchen island with custom storage solutions", alt: "kitchen island with custom storage solutions Bahrain" },
+      { src: "https://images.unsplash.com/photo-1600125693227-050ded46c15a?q=80&w=1000", caption: "Minimalist kitchen cabinetry with clean lines", alt: "minimalist kitchen cabinetry with clean lines Bahrain" }
     ]
   },
   "bedroom-furniture": {
@@ -69,11 +69,11 @@ const productDatabase = {
     description: "Our bedroom furniture collection combines comfort with timeless design to create peaceful sleeping environments. Each piece is crafted with attention to detail, from the joinery to the final finish.",
     detailedDescription: "We offer complete bedroom sets or individual pieces that can be customized to your space and style preferences. Our bedroom furniture features solid wood construction, dovetail joinery in drawers, and premium hardware for durability. From statement bed frames to elegant nightstands and dressers with smart storage solutions, our bedroom collections are designed to stand the test of time both in style and construction.",
     images: [
-      { src: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000", caption: "King-size wooden platform bed" },
-      { src: "https://images.unsplash.com/photo-1505692952047-1a78307d7f52?q=80&w=1000", caption: "Custom nightstand with drawer storage" },
-      { src: "https://images.unsplash.com/photo-1584053595111-534e74825d2d?q=80&w=1000", caption: "Traditional six-drawer wooden dresser" },
-      { src: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?q=80&w=1000", caption: "Minimalist scandinavian style bed frame" },
-      { src: "https://images.unsplash.com/photo-1615874694520-474822394e73?q=80&w=1000", caption: "Custom wardrobe with sliding doors" }
+      { src: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000", caption: "King-size wooden platform bed", alt: "king-size wooden platform bed Bahrain" },
+      { src: "https://images.unsplash.com/photo-1505692952047-1a78307d7f52?q=80&w=1000", caption: "Custom nightstand with drawer storage", alt: "custom nightstand with drawer storage Bahrain" },
+      { src: "https://images.unsplash.com/photo-1584053595111-534e74825d2d?q=80&w=1000", caption: "Traditional six-drawer wooden dresser", alt: "traditional six-drawer wooden dresser Bahrain" },
+      { src: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?q=80&w=1000", caption: "Minimalist scandinavian style bed frame", alt: "minimalist scandinavian style bed frame Bahrain" },
+      { src: "https://images.unsplash.com/photo-1615874694520-474822394e73?q=80&w=1000", caption: "Custom wardrobe with sliding doors", alt: "custom wardrobe with sliding doors Bahrain" }
     ]
   },
   // Add placeholders for the remaining products
@@ -82,11 +82,11 @@ const productDatabase = {
     description: "Our Middle Eastern design doors showcase intricate patterns and ornate details inspired by traditional Arabic and Islamic architectural elements.",
     detailedDescription: "Each Middle Eastern door we create is a masterpiece of craftsmanship featuring geometric patterns, arabesque designs, and ornate inlay work. These doors often incorporate traditional motifs and can include metal accents, ornate carving, and sometimes colorful inlays. Perfect for creating a dramatic entrance or adding cultural richness to interior spaces.",
     images: [
-      { src: "https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=1000", caption: "Traditional arabesque pattern wooden door" },
-      { src: "https://images.unsplash.com/photo-1560106426-c90e52d218d4?q=80&w=1000", caption: "Ornate Middle Eastern entrance door with metal accents" },
-      { src: "https://images.unsplash.com/photo-1613490277829-e957a4872c01?q=80&w=1000", caption: "Geometric pattern door with traditional motifs" },
-      { src: "https://images.unsplash.com/photo-1557010328-5eefa4b5d51a?q=80&w=1000", caption: "Hand-carved door panel with Islamic-inspired design" },
-      { src: "https://images.unsplash.com/photo-1520438865223-4c9be730469b?q=80&w=1000", caption: "Elegant Middle Eastern door with brass details" }
+      { src: "https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=1000", caption: "Traditional arabesque pattern wooden door", alt: "traditional arabesque pattern wooden door Bahrain" },
+      { src: "https://images.unsplash.com/photo-1560106426-c90e52d218d4?q=80&w=1000", caption: "Ornate Middle Eastern entrance door with metal accents", alt: "ornate middle eastern entrance door with metal accents Bahrain" },
+      { src: "https://images.unsplash.com/photo-1613490277829-e957a4872c01?q=80&w=1000", caption: "Geometric pattern door with traditional motifs", alt: "geometric pattern door with traditional motifs Bahrain" },
+      { src: "https://images.unsplash.com/photo-1557010328-5eefa4b5d51a?q=80&w=1000", caption: "Hand-carved door panel with Islamic-inspired design", alt: "hand-carved door panel with islamic-inspired design Bahrain" },
+      { src: "https://images.unsplash.com/photo-1520438865223-4c9be730469b?q=80&w=1000", caption: "Elegant Middle Eastern door with brass details", alt: "elegant middle eastern door with brass details Bahrain" }
     ]
   }
   // Default templates for remaining products would be added similarly
