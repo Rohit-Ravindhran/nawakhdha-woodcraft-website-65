@@ -269,16 +269,28 @@ export type Database = {
           category_id: string | null
           description: string | null
           id: string
+          product_name: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
         }
         Insert: {
           category_id?: string | null
           description?: string | null
           id?: string
+          product_name?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
         }
         Update: {
           category_id?: string | null
           description?: string | null
           id?: string
+          product_name?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
         }
         Relationships: [
           {

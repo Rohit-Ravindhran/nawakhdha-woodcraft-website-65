@@ -29,3 +29,16 @@ export function isJsonString(value: any): boolean {
     return false;
   }
 }
+
+/**
+ * Safely parses a JSON string, returns null if parsing fails
+ * @param input The JSON string to parse
+ * @returns The parsed object or null if parsing fails
+ */
+export function parseJSON(input: string): any | null {
+  try {
+    return JSON.parse(input);
+  } catch {
+    return null;
+  }
+}
