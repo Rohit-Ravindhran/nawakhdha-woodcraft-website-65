@@ -27,7 +27,7 @@ export default function SeoFields({ control }: SeoFieldsProps) {
           <FormItem>
             <FormLabel>SEO Title</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="SEO page title" />
+              <Input {...field} placeholder="SEO page title" value={field.value || ''} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -45,6 +45,7 @@ export default function SeoFields({ control }: SeoFieldsProps) {
                 {...field}
                 placeholder="Meta description for search engines"
                 className="min-h-[80px]"
+                value={field.value || ''}
               />
             </FormControl>
             <FormMessage />
@@ -62,6 +63,7 @@ export default function SeoFields({ control }: SeoFieldsProps) {
               <Input
                 {...field}
                 placeholder="Keywords separated by commas"
+                value={field.value || ''}
               />
             </FormControl>
             <FormMessage />

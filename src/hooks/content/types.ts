@@ -3,7 +3,7 @@
 
 export interface PageData {
   id?: string;
-  page_name: string;
+  page_name?: string;
   hero?: string;
   seo_title?: string;
   seo_description?: string;
@@ -26,7 +26,6 @@ export interface ProductDetailData {
   id?: string;
   category_id?: string;
   description?: string;
-  product_name?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
@@ -40,8 +39,8 @@ export interface BlogData {
   featured_image_url?: string;
   image_url?: string;
   alt_text?: string;
-  slug: string;
-  date: string;
+  slug?: string;
+  date?: string;
   excerpt?: string;
 }
 
