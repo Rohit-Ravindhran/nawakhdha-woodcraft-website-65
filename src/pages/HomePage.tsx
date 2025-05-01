@@ -6,7 +6,7 @@ import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
 import CallToActionSection from "@/components/home/CallToActionSection";
 import BlogSection from "@/components/home/BlogSection";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, safeJsonParse } from "@/integrations/supabase/client";
 
 const HomePage = () => {
   const [pageData, setPageData] = useState<any>(null);
@@ -56,10 +56,8 @@ const HomePage = () => {
     fetchData();
   }, []);
   
-  // Parse JSON data from page if it exists
-  const heroData = pageData?.hero ? 
-    (typeof pageData.hero === 'string' ? JSON.parse(pageData.hero) : pageData.hero) : 
-    null;
+  // Parse JSON data from page if it exists, using the safe parser
+  const heroData = pageData?.hero ? safeJsonParse(pageData.hero) : null;
   
   // Format services data for the ServicesSection component
   const formattedServices = services.map(service => ({

@@ -22,8 +22,8 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
   defaultServices = [] 
 }) => {
   // Use services from props, ensuring we have valid data
-  const services = servicesData?.items && servicesData.items.length > 0
-    ? servicesData.items.filter(item => item.title) 
+  const services = servicesData?.items && Array.isArray(servicesData.items) && servicesData.items.length > 0
+    ? servicesData.items.filter(item => item && item.title) 
     : defaultServices;
 
   return (
@@ -42,7 +42,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
             >
               <figure className="mb-4">
                 <img
-                  src={service.image}
+                  src={service.image || "https://placehold.co/400x400"}
                   alt={service.image_alt || `${service.title} service`}
                   className="w-16 h-16 object-cover rounded-md"
                 />

@@ -10,3 +10,14 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+// Helper function to safely parse JSON
+export function safeJsonParse(jsonString: string | null | undefined) {
+  if (!jsonString || jsonString === "NULL") return null;
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    console.error("Error parsing JSON:", e);
+    return null;
+  }
+}

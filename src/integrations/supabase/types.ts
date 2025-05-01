@@ -39,7 +39,11 @@ export type Database = {
       blogs: {
         Row: {
           alt_text: string | null
+          body_content: string | null
           content: string | null
+          date: string | null
+          excerpt: string | null
+          featured_image_url: string | null
           id: string
           image_url: string | null
           slug: string | null
@@ -47,7 +51,11 @@ export type Database = {
         }
         Insert: {
           alt_text?: string | null
+          body_content?: string | null
           content?: string | null
+          date?: string | null
+          excerpt?: string | null
+          featured_image_url?: string | null
           id?: string
           image_url?: string | null
           slug?: string | null
@@ -55,7 +63,11 @@ export type Database = {
         }
         Update: {
           alt_text?: string | null
+          body_content?: string | null
           content?: string | null
+          date?: string | null
+          excerpt?: string | null
+          featured_image_url?: string | null
           id?: string
           image_url?: string | null
           slug?: string | null
@@ -189,6 +201,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pages: {
+        Row: {
+          hero: string | null
+          id: string
+          page_name: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
+        }
+        Insert: {
+          hero?: string | null
+          id?: string
+          page_name?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+        }
+        Update: {
+          hero?: string | null
+          id?: string
+          page_name?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+        }
+        Relationships: []
+      }
       product_categories: {
         Row: {
           alt_text: string | null
@@ -196,6 +235,10 @@ export type Database = {
           category_name: string | null
           category_slug: string | null
           id: string
+          product_name: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
         }
         Insert: {
           alt_text?: string | null
@@ -203,6 +246,10 @@ export type Database = {
           category_name?: string | null
           category_slug?: string | null
           id?: string
+          product_name?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
         }
         Update: {
           alt_text?: string | null
@@ -210,6 +257,10 @@ export type Database = {
           category_name?: string | null
           category_slug?: string | null
           id?: string
+          product_name?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
         }
         Relationships: []
       }
@@ -273,6 +324,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      settings: {
+        Row: {
+          background_color: string | null
+          favicon_url: string | null
+          id: string
+          site_description: string | null
+          site_keywords: string | null
+          site_title: string | null
+        }
+        Insert: {
+          background_color?: string | null
+          favicon_url?: string | null
+          id?: string
+          site_description?: string | null
+          site_keywords?: string | null
+          site_title?: string | null
+        }
+        Update: {
+          background_color?: string | null
+          favicon_url?: string | null
+          id?: string
+          site_description?: string | null
+          site_keywords?: string | null
+          site_title?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

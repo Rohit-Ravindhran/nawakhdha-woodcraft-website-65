@@ -1,11 +1,18 @@
 
 import { GalleryImage } from "@/components/admin/schemas/productSchema";
+import { safeJsonParse } from "./jsonHelpers";
 
 /**
  * Safely transforms gallery images from JSON to the expected format
  */
 export function transformGalleryImages(galleryImages: any): GalleryImage[] {
   if (!galleryImages) return [];
+  
+  // If it's a string, try to parse it
+  if (typeof galleryImages === 'string') {
+    galleryImages = safeJsonParse(galleryImages);
+    if (!galleryImages) return [];
+  }
   
   if (!Array.isArray(galleryImages)) {
     // If it's not an array but an object, try to convert it
