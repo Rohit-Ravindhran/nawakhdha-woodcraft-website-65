@@ -12,6 +12,7 @@ interface Product {
   image: string;
   image_alt?: string;
   link?: string;
+  description?: string;
 }
 
 interface ProductsSectionProps {
@@ -19,11 +20,14 @@ interface ProductsSectionProps {
     section_title?: string;
     items?: Product[];
   } | null;
-  defaultProducts: Product[];
+  defaultProducts?: Product[];
 }
 
-const ProductsSection: React.FC<ProductsSectionProps> = ({ productsData, defaultProducts }) => {
-  // Use admin-defined products or default if not available
+const ProductsSection: React.FC<ProductsSectionProps> = ({ 
+  productsData, 
+  defaultProducts = [] 
+}) => {
+  // Use products from props, ensuring we have valid data
   const products = productsData?.items && productsData.items.length > 0
     ? productsData.items.filter(item => item.title && item.image) 
     : defaultProducts;

@@ -9,149 +9,270 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      about_team: {
+        Row: {
+          alt_text: string | null
+          bio: string | null
+          id: string
+          image_url: string | null
+          name: string | null
+          role: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          bio?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string | null
+          role?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          bio?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string | null
+          role?: string | null
+        }
+        Relationships: []
+      }
       blogs: {
         Row: {
-          body_content: string
-          created_at: string
-          date: string
-          excerpt: string | null
-          featured_image_url: string | null
-          id: number
-          slug: string
-          title: string
+          alt_text: string | null
+          content: string | null
+          id: string
+          image_url: string | null
+          slug: string | null
+          title: string | null
         }
         Insert: {
-          body_content: string
-          created_at?: string
-          date: string
-          excerpt?: string | null
-          featured_image_url?: string | null
-          id?: number
-          slug: string
-          title: string
+          alt_text?: string | null
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          slug?: string | null
+          title?: string | null
         }
         Update: {
-          body_content?: string
-          created_at?: string
-          date?: string
-          excerpt?: string | null
-          featured_image_url?: string | null
-          id?: number
-          slug?: string
-          title?: string
+          alt_text?: string | null
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          slug?: string | null
+          title?: string | null
         }
         Relationships: []
       }
-      gallery: {
+      contact_form_submissions: {
         Row: {
+          email: string | null
+          id: string
+          message: string | null
+          name: string | null
+          phone: string | null
+          subject: string | null
+          submitted_at: string | null
+        }
+        Insert: {
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          phone?: string | null
+          subject?: string | null
+          submitted_at?: string | null
+        }
+        Update: {
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          phone?: string | null
+          subject?: string | null
+          submitted_at?: string | null
+        }
+        Relationships: []
+      }
+      contact_info: {
+        Row: {
+          address: string | null
+          business_hours_json: Json | null
+          email: string | null
+          id: string
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          business_hours_json?: Json | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          business_hours_json?: Json | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      home_blog_cards: {
+        Row: {
+          alt_text: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          slug: string | null
+          title: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          slug?: string | null
+          title?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          slug?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
+      home_products: {
+        Row: {
+          alt_text: string | null
+          category_name: string | null
+          id: string
+          image_url: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          category_name?: string | null
+          id?: string
+          image_url?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          category_name?: string | null
+          id?: string
+          image_url?: string | null
+        }
+        Relationships: []
+      }
+      home_services: {
+        Row: {
+          alt_text: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          title: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          title?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
+      product_categories: {
+        Row: {
+          alt_text: string | null
+          category_image_url: string | null
+          category_name: string | null
+          category_slug: string | null
+          id: string
+        }
+        Insert: {
+          alt_text?: string | null
+          category_image_url?: string | null
+          category_name?: string | null
+          category_slug?: string | null
+          id?: string
+        }
+        Update: {
+          alt_text?: string | null
+          category_image_url?: string | null
+          category_name?: string | null
+          category_slug?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      product_category_details: {
+        Row: {
+          category_id: string | null
+          description: string | null
+          id: string
+        }
+        Insert: {
+          category_id?: string | null
+          description?: string | null
+          id?: string
+        }
+        Update: {
+          category_id?: string | null
+          description?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_category_details_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_gallery: {
+        Row: {
+          alt_text: string | null
           caption: string | null
-          created_at: string
-          id: number
-          image_url: string
+          category_id: string | null
+          id: string
+          image_url: string | null
+          position: number | null
         }
         Insert: {
+          alt_text?: string | null
           caption?: string | null
-          created_at?: string
-          id?: number
-          image_url: string
+          category_id?: string | null
+          id?: string
+          image_url?: string | null
+          position?: number | null
         }
         Update: {
+          alt_text?: string | null
           caption?: string | null
-          created_at?: string
-          id?: number
-          image_url?: string
+          category_id?: string | null
+          id?: string
+          image_url?: string | null
+          position?: number | null
         }
-        Relationships: []
-      }
-      pages: {
-        Row: {
-          content: string
-          created_at: string | null
-          id: number
-          page_name: string
-          seo_description: string | null
-          seo_title: string | null
-          title: string
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          id?: number
-          page_name: string
-          seo_description?: string | null
-          seo_title?: string | null
-          title: string
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          id?: number
-          page_name?: string
-          seo_description?: string | null
-          seo_title?: string | null
-          title?: string
-        }
-        Relationships: []
-      }
-      products: {
-        Row: {
-          category_name: string
-          created_at: string
-          description: string
-          gallery_images: Json | null
-          id: number
-          product_name: string
-          seo_description: string | null
-          seo_keywords: string | null
-          seo_title: string | null
-        }
-        Insert: {
-          category_name: string
-          created_at?: string
-          description: string
-          gallery_images?: Json | null
-          id?: number
-          product_name: string
-          seo_description?: string | null
-          seo_keywords?: string | null
-          seo_title?: string | null
-        }
-        Update: {
-          category_name?: string
-          created_at?: string
-          description?: string
-          gallery_images?: Json | null
-          id?: number
-          product_name?: string
-          seo_description?: string | null
-          seo_keywords?: string | null
-          seo_title?: string | null
-        }
-        Relationships: []
-      }
-      settings: {
-        Row: {
-          background_color: string
-          created_at: string
-          id: number
-          site_description: string
-          site_title: string
-        }
-        Insert: {
-          background_color: string
-          created_at?: string
-          id?: number
-          site_description: string
-          site_title: string
-        }
-        Update: {
-          background_color?: string
-          created_at?: string
-          id?: number
-          site_description?: string
-          site_title?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_gallery_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

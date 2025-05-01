@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +8,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import SectionTitle from "@/components/ui/section-title";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+interface ContactInfo {
+  id: string;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  business_hours_json: Record<string, string> | null;
+}
 
 const ContactPage = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,6 +31,30 @@ const ContactPage = () => {
     subject: "",
     message: ""
   });
+
+  // Fetch contact information from Supabase
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('contact_info')
+          .select('*')
+          .maybeSingle();
+        
+        if (error) {
+          throw error;
+        }
+        
+        setContactInfo(data);
+      } catch (error) {
+        console.error("Error fetching contact information:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchContactInfo();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -27,16 +64,33 @@ const ContactPage = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      // Store the form submission in Supabase
+      const { error } = await supabase
+        .from('contact_form_submissions')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            subject: formData.subject,
+            message: formData.message,
+            submitted_at: new Date().toISOString()
+          }
+        ]);
+      
+      if (error) throw error;
+      
       toast({
         title: "Message Sent!",
         description: "We'll get back to you as soon as possible.",
       });
+      
+      // Reset form
       setFormData({
         name: "",
         email: "",
@@ -44,12 +98,42 @@ const ContactPage = () => {
         subject: "",
         message: ""
       });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission Error",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
+
+  // Default business hours if not available from database
+  const defaultBusinessHours = {
+    monday: "8:30 AM - 5:30 PM",
+    tuesday: "8:30 AM - 5:30 PM",
+    wednesday: "8:30 AM - 5:30 PM",
+    thursday: "8:30 AM - 5:30 PM",
+    friday: "8:30 AM - 12:00 PM",
+    saturday: "9:00 AM - 5:00 PM",
+    sunday: "Closed"
+  };
+
+  // Use business hours from database or defaults
+  const businessHours = contactInfo?.business_hours_json || defaultBusinessHours;
 
   return (
     <>
+      <Helmet>
+        <title>Contact Us | Nawakhdha Woodcraft</title>
+        <meta name="description" content="Contact Nawakhdha Woodcraft for custom wooden furniture, doors, cabinets, and civil maintenance services in Bahrain." />
+        <meta property="og:title" content="Contact Us | Nawakhdha Woodcraft" />
+        <meta property="og:description" content="Contact Nawakhdha Woodcraft for custom wooden furniture, doors, cabinets, and civil maintenance services in Bahrain." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="relative">
         <div className="absolute inset-0 bg-black/40 z-10"></div>
@@ -159,65 +243,89 @@ const ContactPage = () => {
             
             <div>
               <div className="sticky top-24">
-                <div className="bg-secondary/50 border border-border rounded-lg p-6 mb-6">
-                  <h3 className="font-playfair font-bold text-xl mb-4">Contact Information</h3>
-                  <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                      <MapPin className="h-5 w-5 text-primary shrink-0 mt-1" />
-                      <div>
-                        <p className="font-medium">Address</p>
-                        <p className="text-sm text-muted-foreground">
-                          Building 1234, Road 5678, Block 123
-                          <br />
-                          Manama, Kingdom of Bahrain
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Phone className="h-5 w-5 text-primary shrink-0 mt-1" />
-                      <div>
-                        <p className="font-medium">Phone</p>
-                        <a
-                          href="tel:+97317777777"
-                          className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          +973 1777 7777
-                        </a>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Mail className="h-5 w-5 text-primary shrink-0 mt-1" />
-                      <div>
-                        <p className="font-medium">Email</p>
-                        <a
-                          href="mailto:nawakhdha2058@gmail.com"
-                          className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          nawakhdha2058@gmail.com
-                        </a>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+                {isLoading ? (
+                  <div className="bg-secondary/50 border border-border rounded-lg p-6 mb-6 text-center">
+                    Loading contact information...
+                  </div>
+                ) : (
+                  <div className="bg-secondary/50 border border-border rounded-lg p-6 mb-6">
+                    <h3 className="font-playfair font-bold text-xl mb-4">Contact Information</h3>
+                    <ul className="space-y-4">
+                      <li className="flex items-start gap-3">
+                        <MapPin className="h-5 w-5 text-primary shrink-0 mt-1" />
+                        <div>
+                          <p className="font-medium">Address</p>
+                          <p className="text-sm text-muted-foreground">
+                            {contactInfo?.address || "Address not available"}
+                          </p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Phone className="h-5 w-5 text-primary shrink-0 mt-1" />
+                        <div>
+                          <p className="font-medium">Phone</p>
+                          {contactInfo?.phone ? (
+                            <a
+                              href={`tel:${contactInfo.phone}`}
+                              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              {contactInfo.phone}
+                            </a>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">Phone not available</p>
+                          )}
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <Mail className="h-5 w-5 text-primary shrink-0 mt-1" />
+                        <div>
+                          <p className="font-medium">Email</p>
+                          {contactInfo?.email ? (
+                            <a
+                              href={`mailto:${contactInfo.email}`}
+                              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              {contactInfo.email}
+                            </a>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">Email not available</p>
+                          )}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                )}
                 
                 <div className="bg-white border border-border rounded-lg p-6">
                   <h3 className="font-playfair font-bold text-xl mb-4">Business Hours</h3>
                   <ul className="space-y-2">
                     <li className="flex justify-between">
-                      <span className="text-muted-foreground">Monday - Thursday</span>
-                      <span>8:30 AM - 5:30 PM</span>
+                      <span className="text-muted-foreground">Monday</span>
+                      <span>{businessHours.monday || "Not available"}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Tuesday</span>
+                      <span>{businessHours.tuesday || "Not available"}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Wednesday</span>
+                      <span>{businessHours.wednesday || "Not available"}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Thursday</span>
+                      <span>{businessHours.thursday || "Not available"}</span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-muted-foreground">Friday</span>
-                      <span>8:30 AM - 12:00 PM</span>
+                      <span>{businessHours.friday || "Not available"}</span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-muted-foreground">Saturday</span>
-                      <span>9:00 AM - 5:00 PM</span>
+                      <span>{businessHours.saturday || "Not available"}</span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-muted-foreground">Sunday</span>
-                      <span>Closed</span>
+                      <span>{businessHours.sunday || "Not available"}</span>
                     </li>
                   </ul>
                 </div>

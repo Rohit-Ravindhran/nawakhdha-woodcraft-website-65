@@ -7,7 +7,7 @@ import SectionTitle from "@/components/ui/section-title";
 import { BlogCard } from "@/components/ui/blog-card";
 
 interface BlogPost {
-  id?: number;
+  id?: number | string;
   title: string;
   excerpt?: string;
   image: string;
@@ -22,11 +22,14 @@ interface BlogSectionProps {
     section_title?: string;
     items?: BlogPost[];
   } | null;
-  defaultBlogPosts: BlogPost[];
+  defaultBlogPosts?: BlogPost[];
 }
 
-const BlogSection: React.FC<BlogSectionProps> = ({ blogData, defaultBlogPosts }) => {
-  // Use admin-defined blog posts or default if not available
+const BlogSection: React.FC<BlogSectionProps> = ({ 
+  blogData, 
+  defaultBlogPosts = [] 
+}) => {
+  // Use blog posts from props, ensuring we have valid data
   const blogPosts = blogData?.items && blogData.items.length > 0
     ? blogData.items.filter(item => item.title && item.image) 
     : defaultBlogPosts;

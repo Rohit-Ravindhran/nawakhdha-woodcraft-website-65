@@ -14,13 +14,16 @@ interface ServicesSectionProps {
     section_title?: string;
     items?: Service[];
   } | null;
-  defaultServices: Service[];
+  defaultServices?: Service[];
 }
 
-const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesData, defaultServices }) => {
-  // Use admin-defined services or default if not available
+const ServicesSection: React.FC<ServicesSectionProps> = ({ 
+  servicesData, 
+  defaultServices = [] 
+}) => {
+  // Use services from props, ensuring we have valid data
   const services = servicesData?.items && servicesData.items.length > 0
-    ? servicesData.items.filter(item => item.title && item.image) 
+    ? servicesData.items.filter(item => item.title) 
     : defaultServices;
 
   return (
@@ -37,13 +40,13 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesData, default
               key={index}
               className="bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1"
             >
-              <div className="w-16 h-16 rounded-md overflow-hidden mb-4">
+              <figure className="mb-4">
                 <img
                   src={service.image}
                   alt={service.image_alt || `${service.title} service`}
-                  className="w-full h-full object-cover"
+                  className="w-16 h-16 object-cover rounded-md"
                 />
-              </div>
+              </figure>
               <h3 className="text-lg font-bold font-playfair mb-2">{service.title}</h3>
               <p className="text-muted-foreground text-sm">{service.description}</p>
             </div>

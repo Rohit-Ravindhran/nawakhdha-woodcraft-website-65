@@ -1,11 +1,87 @@
 
-import SectionTitle from "@/components/ui/section-title";
+import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import SectionTitle from "@/components/ui/section-title";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+
+interface TeamMember {
+  id: string;
+  name: string | null;
+  role: string | null;
+  bio: string | null;
+  image_url: string | null;
+  alt_text: string | null;
+}
 
 const AboutPage = () => {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('about_team')
+          .select('*');
+        
+        if (error) {
+          throw error;
+        }
+        
+        setTeamMembers(data || []);
+      } catch (error) {
+        console.error("Error fetching team members:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchTeamMembers();
+  }, []);
+
+  // Default team members if no data is returned
+  const defaultTeam = [
+    {
+      id: "1",
+      name: "Adnan Al Hamar",
+      role: "Founder & Managing Director",
+      bio: "Founding Al Nawakhdha in 1975, Adnan brings over 50 years of expertise in furniture craftsmanship and wooden design.",
+      image_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format",
+      alt_text: "Adnan Al Hamar - Founder & Managing Director"
+    },
+    {
+      id: "2",
+      name: "Fatima Al Hamar",
+      role: "Design Director",
+      bio: "Leading our design team with innovative vision and an exceptional eye for detail in custom furniture creation.",
+      image_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format",
+      alt_text: "Fatima Al Hamar - Design Director"
+    },
+    {
+      id: "3",
+      name: "Mohammed Al Hamar",
+      role: "Operations Manager",
+      bio: "Overseeing workshop operations and ensuring the highest standards of quality in every project we undertake.",
+      image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format",
+      alt_text: "Mohammed Al Hamar - Operations Manager"
+    }
+  ];
+
+  // Use data from database or fall back to defaults if needed
+  const teamToDisplay = teamMembers.length > 0 ? teamMembers : defaultTeam;
+
   return (
     <>
+      <Helmet>
+        <title>About Us | Nawakhdha Woodcraft</title>
+        <meta name="description" content="Learn about our leadership team at Nawakhdha Woodcraft, bringing decades of experience in custom furniture and wooden designs in Bahrain." />
+        <meta property="og:title" content="About Us | Nawakhdha Woodcraft" />
+        <meta property="og:description" content="Learn about our leadership team at Nawakhdha Woodcraft, bringing decades of experience in custom furniture and wooden designs in Bahrain." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="relative">
         <div className="absolute inset-0 bg-black/40 z-10"></div>
@@ -130,44 +206,28 @@ const AboutPage = () => {
           />
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-border text-center">
-              <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format"
-                  alt="Adnan Al Hamar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="font-playfair font-bold text-xl mb-1">Adnan Al Hamar</h3>
-              <p className="text-sm text-muted-foreground mb-4">Founder & Managing Director</p>
-              <p className="text-sm">Founding Al Nawakhdha in 1975, Adnan brings over 50 years of expertise in furniture craftsmanship and wooden design.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-border text-center">
-              <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format"
-                  alt="Fatima Al Hamar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="font-playfair font-bold text-xl mb-1">Fatima Al Hamar</h3>
-              <p className="text-sm text-muted-foreground mb-4">Design Director</p>
-              <p className="text-sm">Leading our design team with innovative vision and an exceptional eye for detail in custom furniture creation.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-border text-center">
-              <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format"
-                  alt="Mohammed Al Hamar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="font-playfair font-bold text-xl mb-1">Mohammed Al Hamar</h3>
-              <p className="text-sm text-muted-foreground mb-4">Operations Manager</p>
-              <p className="text-sm">Overseeing workshop operations and ensuring the highest standards of quality in every project we undertake.</p>
-            </div>
+            {isLoading ? (
+              <div className="col-span-3 text-center py-12">Loading team members...</div>
+            ) : (
+              teamToDisplay.map((member) => (
+                <div key={member.id} className="bg-white p-6 rounded-lg shadow-sm border border-border text-center">
+                  <figure className="mb-4">
+                    <div className="w-32 h-32 mx-auto rounded-full overflow-hidden">
+                      <img
+                        src={member.image_url || "https://placehold.co/400x400"}
+                        alt={member.alt_text || `${member.name} - ${member.role}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <figcaption>
+                      <h3 className="font-playfair font-bold text-xl mb-1">{member.name || "Team Member"}</h3>
+                      <p className="text-sm text-muted-foreground mb-4">{member.role || "Team Member"}</p>
+                    </figcaption>
+                  </figure>
+                  <p className="text-sm">{member.bio || "Bio information not available."}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
