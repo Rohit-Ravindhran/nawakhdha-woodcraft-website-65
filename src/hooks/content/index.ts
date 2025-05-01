@@ -8,4 +8,4 @@ export * from './useProducts';
 export * from './useBlogs';
 export * from './useGallery';
 export * from './useSettings';
-export * from '../utils/jsonHelpers';
+export * from '../../utils/jsonHelpers';

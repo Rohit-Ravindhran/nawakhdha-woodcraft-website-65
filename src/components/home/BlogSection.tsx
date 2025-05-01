@@ -7,7 +7,7 @@ import SectionTitle from "@/components/ui/section-title";
 import { BlogCard } from "@/components/ui/blog-card";
 
 interface BlogPost {
-  id?: number | string;
+  id?: string;
   title: string;
   excerpt?: string;
   image: string;

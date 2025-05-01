@@ -337,33 +337,6 @@ export type Database = {
           },
         ]
       }
-      settings: {
-        Row: {
-          background_color: string | null
-          favicon_url: string | null
-          id: string
-          site_description: string | null
-          site_keywords: string | null
-          site_title: string | null
-        }
-        Insert: {
-          background_color?: string | null
-          favicon_url?: string | null
-          id?: string
-          site_description?: string | null
-          site_keywords?: string | null
-          site_title?: string | null
-        }
-        Update: {
-          background_color?: string | null
-          favicon_url?: string | null
-          id?: string
-          site_description?: string | null
-          site_keywords?: string | null
-          site_title?: string | null
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never

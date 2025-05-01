@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Phone, Mail, MapPin } from "lucide-react";
@@ -9,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import SectionTitle from "@/components/ui/section-title";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ContactInfoData } from "@/hooks/content/types";
+import { parseJSON } from "@/utils/jsonHelpers";
 
 interface ContactInfo {
   id: string;
@@ -21,7 +22,7 @@ interface ContactInfo {
 const ContactPage = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [contactInfo, setContactInfo] = useState<ContactInfoData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
   const [formData, setFormData] = useState({
@@ -121,8 +122,13 @@ const ContactPage = () => {
     sunday: "Closed"
   };
 
-  // Use business hours from database or defaults
-  const businessHours = contactInfo?.business_hours_json || defaultBusinessHours;
+  // Parse business hours JSON or use defaults
+  const businessHours = contactInfo?.business_hours_json 
+    ? parseJSON(typeof contactInfo.business_hours_json === 'string' 
+        ? contactInfo.business_hours_json 
+        : JSON.stringify(contactInfo.business_hours_json)
+      ) || defaultBusinessHours
+    : defaultBusinessHours;
 
   return (
     <>

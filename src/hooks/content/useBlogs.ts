@@ -14,12 +14,12 @@ export function useBlogs() {
         .select('*');
 
       if (error) throw error;
-      return data;
+      return data as BlogData[];
     }
   });
 }
 
-export function useBlog(blogId?: number) {
+export function useBlog(blogId?: string) {
   return useQuery({
     queryKey: ['blog', blogId],
     queryFn: async () => {
@@ -29,10 +29,10 @@ export function useBlog(blogId?: number) {
         .from('blogs')
         .select('*')
         .eq('id', blogId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return data as BlogData;
     },
     enabled: !!blogId
   });
@@ -63,7 +63,7 @@ export function useUpdateBlog() {
           .single();
           
         if (error) throw error;
-        return data;
+        return data as BlogData;
       }
     },
     onSuccess: (data) => {
@@ -81,7 +81,7 @@ export function useDeleteBlog() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (blogId: number) => {
+    mutationFn: async (blogId: string) => {
       const { error } = await supabase
         .from('blogs')
         .delete()

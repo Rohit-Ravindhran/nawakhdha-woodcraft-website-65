@@ -2,75 +2,101 @@
 // Common types used across content hooks
 
 export interface PageData {
-  id?: number;
+  id?: string;
   page_name: string;
-  title: string;
-  content: string;
+  hero?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
-  seo_canonical_url?: string;
-  seo_image_alt?: string;
-  hero?: string;
-  services?: string;
-  products?: string;
-  blog?: string;
-  created_at?: string;
-  // About Page Fields
-  header_image?: string;
-  header_image_alt?: string;
-  company_story?: string;
-  mission?: string;
-  vision?: string;
-  since_year?: string;
-  // Contact Page Fields
-  subtitle?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  map_url?: string;
-  form_title?: string;
-  form_description?: string;
 }
 
-export interface ProductData {
-  id?: number; 
-  product_name: string; 
-  description: string;
-  category_name: string;
-  price?: string;
-  dimensions?: string;
-  material?: string;
+export interface ProductCategoryData {
+  id?: string; 
+  category_slug?: string;
+  category_name?: string;
+  category_image_url?: string;
+  alt_text?: string;
+  product_name?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
-  gallery_images?: { url: string; caption: string; alt?: string }[];
-  created_at?: string;
+}
+
+export interface ProductDetailData {
+  id?: string;
+  category_id?: string;
+  description?: string;
+  product_name?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
 }
 
 export interface BlogData {
-  id?: number; 
+  id?: string; 
   title: string; 
-  body_content: string;
+  content?: string;
+  body_content?: string;
   featured_image_url?: string;
-  featured_image_alt?: string;
+  image_url?: string;
+  alt_text?: string;
   slug: string;
   date: string;
   excerpt?: string;
-  seo_title?: string;
-  seo_description?: string;
-  seo_keywords?: string;
 }
 
 export interface GalleryImageData {
-  id?: number;
+  id?: string;
+  category_id?: string;
   image_url: string;
   caption: string;
   alt_text?: string;
+  position?: number;
+}
+
+export interface HomeServiceData {
+  id?: string;
+  title: string;
+  description: string;
+  image_url?: string;
+  alt_text?: string;
+}
+
+export interface HomeProductData {
+  id?: string;
+  category_name?: string;
+  image_url?: string;
+  alt_text?: string;
+}
+
+export interface HomeBlogCardData {
+  id?: string;
+  title: string;
+  description?: string;
+  image_url?: string;
+  alt_text?: string;
+  slug?: string;
+}
+
+export interface AboutTeamMemberData {
+  id?: string;
+  name?: string;
+  role?: string;
+  bio?: string;
+  image_url?: string;
+  alt_text?: string;
+}
+
+export interface ContactInfoData {
+  id?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  business_hours_json?: any;
 }
 
 export interface SettingsData {
-  id?: number;
+  id?: string;
   background_color: string;
   site_title: string;
   site_description: string;

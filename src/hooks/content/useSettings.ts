@@ -16,7 +16,7 @@ export function useSettings() {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return data as SettingsData;
     }
   });
 }
@@ -57,7 +57,7 @@ export function useUpdateSettings() {
           .single();
           
         if (error) throw error;
-        return data;
+        return data as SettingsData;
       }
     },
     onSuccess: () => {

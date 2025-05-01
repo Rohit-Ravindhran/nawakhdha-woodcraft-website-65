@@ -10,11 +10,11 @@ export function useGallery() {
     queryKey: ['gallery'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('gallery')
+        .from('product_gallery')
         .select('*');
 
       if (error) throw error;
-      return data;
+      return data as GalleryImageData[];
     }
   });
 }
@@ -25,13 +25,13 @@ export function useAddGalleryImage() {
   return useMutation({
     mutationFn: async (imageData: GalleryImageData) => {
       const { data, error } = await supabase
-        .from('gallery')
+        .from('product_gallery')
         .insert(imageData)
         .select()
         .single();
         
       if (error) throw error;
-      return data;
+      return data as GalleryImageData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['gallery'] });
@@ -47,9 +47,9 @@ export function useDeleteGalleryImage() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (imageId: number) => {
+    mutationFn: async (imageId: string) => {
       const { error } = await supabase
-        .from('gallery')
+        .from('product_gallery')
         .delete()
         .eq('id', imageId);
         

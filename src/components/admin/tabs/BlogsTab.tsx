@@ -14,7 +14,7 @@ import { useBlogs, useDeleteBlog } from "@/hooks/content";
 import { BlogData } from "@/hooks/content/types";
 
 export interface Blog extends BlogData {
-  id: number;
+  id: string;
 }
 
 const BlogsTab = () => {
@@ -22,7 +22,7 @@ const BlogsTab = () => {
   const deleteBlog = useDeleteBlog();
   const [isAddingBlog, setIsAddingBlog] = useState(false);
 
-  const handleDeleteBlog = (id: number) => {
+  const handleDeleteBlog = (id: string) => {
     if (confirm("Are you sure you want to delete this blog post?")) {
       deleteBlog.mutate(id);
     }
@@ -60,7 +60,7 @@ const BlogsTab = () => {
             blogs.map((blog) => (
               <BlogListItem 
                 key={blog.id}
-                blog={blog}
+                blog={blog as Blog}
                 onDelete={handleDeleteBlog}
               />
             ))
@@ -77,7 +77,7 @@ const BlogsTab = () => {
 
 interface BlogListItemProps {
   blog: Blog;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 const BlogListItem = ({ blog, onDelete }: BlogListItemProps) => {

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { usePage } from "@/hooks/content";
 import { Helmet } from "react-helmet-async";
@@ -6,13 +7,15 @@ import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
 import CallToActionSection from "@/components/home/CallToActionSection";
 import BlogSection from "@/components/home/BlogSection";
-import { supabase, safeJsonParse } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
+import { parseJSON } from "@/utils/jsonHelpers";
+import { HomeServiceData, HomeProductData, HomeBlogCardData } from "@/hooks/content/types";
 
 const HomePage = () => {
   const [pageData, setPageData] = useState<any>(null);
-  const [services, setServices] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [services, setServices] = useState<HomeServiceData[]>([]);
+  const [products, setProducts] = useState<HomeProductData[]>([]);
+  const [blogPosts, setBlogPosts] = useState<HomeBlogCardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
@@ -57,7 +60,7 @@ const HomePage = () => {
   }, []);
   
   // Parse JSON data from page if it exists, using the safe parser
-  const heroData = pageData?.hero ? safeJsonParse(pageData.hero) : null;
+  const heroData = pageData?.hero ? parseJSON(pageData.hero) : null;
   
   // Format services data for the ServicesSection component
   const formattedServices = services.map(service => ({

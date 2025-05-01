@@ -35,7 +35,8 @@ export function isJsonString(value: any): boolean {
  * @param input The JSON string to parse
  * @returns The parsed object or null if parsing fails
  */
-export function parseJSON(input: string): any | null {
+export function parseJSON(input: string | null | undefined): any | null {
+  if (!input) return null;
   try {
     return JSON.parse(input);
   } catch {

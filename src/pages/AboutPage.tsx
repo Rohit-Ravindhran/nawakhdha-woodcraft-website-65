@@ -1,10 +1,10 @@
-
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { AboutTeamMemberData } from "@/hooks/content/types";
 
 interface TeamMember {
   id: string;
@@ -16,7 +16,7 @@ interface TeamMember {
 }
 
 const AboutPage = () => {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [teamMembers, setTeamMembers] = useState<AboutTeamMemberData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

@@ -51,8 +51,8 @@ const BlogPage = () => {
             <BlogCard
               key={post.id}
               title={post.title}
-              excerpt={post.excerpt || post.body_content.substring(0, 150) + '...'}
-              image={post.featured_image_url}
+              excerpt={post.excerpt || post.body_content?.substring(0, 150) + '...' || post.content?.substring(0, 150) + '...'}
+              image={post.featured_image_url || post.image_url}
               date={post.date}
               href={`/blog/${post.slug}`}
             />
