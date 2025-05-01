@@ -31,13 +31,13 @@ export default function BasicPageEditor({ page, pageName, isLoading }: BasicPage
   const form = useForm<BasePageFormValues>({
     resolver: zodResolver(basePageSchema),
     defaultValues: {
-      title: page?.title || "",
-      content: page?.content || "",
+      title: "",
+      content: "",
       seo_title: page?.seo_title || "",
       seo_description: page?.seo_description || "",
       seo_keywords: page?.seo_keywords || "",
-      seo_canonical_url: page?.seo_canonical_url || "",
-      seo_image_alt: page?.seo_image_alt || "",
+      seo_canonical_url: "", 
+      seo_image_alt: "",
     },
   });
 
@@ -45,13 +45,10 @@ export default function BasicPageEditor({ page, pageName, isLoading }: BasicPage
     const updatedPage: PageData = {
       id: page?.id,
       page_name: pageName,
-      title: values.title,
-      content: values.content,
+      hero: page?.hero || "",
       seo_title: values.seo_title || "",
       seo_description: values.seo_description || "",
       seo_keywords: values.seo_keywords || "",
-      seo_canonical_url: values.seo_canonical_url || "",
-      seo_image_alt: values.seo_image_alt || "",
     };
     
     updatePage.mutate(updatedPage, {
@@ -89,38 +86,6 @@ export default function BasicPageEditor({ page, pageName, isLoading }: BasicPage
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Page Title</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    {...field} 
-                    rows={10}
-                    className="min-h-[200px]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
           <div className="pt-4 border-t">
             <SeoFields control={form.control} />
           </div>

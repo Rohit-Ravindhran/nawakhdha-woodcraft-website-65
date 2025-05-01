@@ -22,7 +22,7 @@ export default function GalleryManager() {
     setCaption("");
   };
 
-  const handleDeleteImage = async (id: number, url: string) => {
+  const handleDeleteImage = async (id: string, url: string) => {
     // Delete from storage
     await deleteImage(url, 'gallery');
     
@@ -79,7 +79,7 @@ export default function GalleryManager() {
                   variant="destructive"
                   size="icon"
                   className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDeleteImage(image.id, image.image_url)}
+                  onClick={() => handleDeleteImage(image.id as string, image.image_url)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
