@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -336,7 +335,7 @@ export default function ProductCategoriesTab() {
                     name="category_image_url"
                     label="Category Image"
                     altTextName="alt_text"
-                    bucket="content"
+                    bucket="product-categories"
                     folder="product_categories"
                   />
                 </div>

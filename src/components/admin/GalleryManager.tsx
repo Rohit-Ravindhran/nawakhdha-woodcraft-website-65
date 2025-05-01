@@ -23,7 +23,7 @@ export default function GalleryManager() {
   };
 
   const handleDeleteImage = async (id: string, url: string) => {
-    // Delete from storage
+    // Delete from storage - note the change from 'gallery' to 'gallery'
     await deleteImage(url, 'gallery');
     
     // Delete from database
@@ -54,7 +54,7 @@ export default function GalleryManager() {
         
         <ImageUploader 
           onImageUploaded={handleImageUploaded}
-          bucket="gallery"
+          bucket="gallery" // No change needed since this doesn't use underscore format
         />
       </div>
       

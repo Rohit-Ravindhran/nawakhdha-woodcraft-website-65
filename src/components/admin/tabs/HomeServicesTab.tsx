@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -264,7 +263,7 @@ export default function HomeServicesTab() {
                 name="image_url"
                 label="Image"
                 altTextName="alt_text"
-                bucket="content"
+                bucket="home-services"
                 folder="home_services"
               />
               

@@ -32,6 +32,9 @@ export default function EnhancedImageUploader({
   const [uploadError, setUploadError] = useState<string>("");
   const { uploadImage, deleteImage, uploading } = useStorage();
 
+  // Convert bucket name from underscore to hyphen format
+  const formattedBucket = bucket.replace(/_/g, '-');
+
   useEffect(() => {
     setImageUrl(initialImageUrl);
     setAltText(initialAltText);
@@ -68,7 +71,7 @@ export default function EnhancedImageUploader({
     
     try {
       setUploadError("");
-      const url = await uploadImage(file, bucket, folder);
+      const url = await uploadImage(file, formattedBucket, folder);
       if (url) {
         setImageUrl(url);
         onImageUploaded(url, altText);
@@ -94,7 +97,7 @@ export default function EnhancedImageUploader({
   const handleDeleteImage = async () => {
     if (imageUrl && window.confirm("Are you sure you want to delete this image?")) {
       try {
-        if (await deleteImage(imageUrl, bucket)) {
+        if (await deleteImage(imageUrl, formattedBucket)) {
           setImageUrl("");
           onImageUploaded("", "");
           toast.success("Image deleted successfully");

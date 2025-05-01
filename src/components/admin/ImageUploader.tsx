@@ -22,6 +22,9 @@ export default function ImageUploader({
   const [file, setFile] = useState<File | null>(null);
   const { uploadImage, uploading } = useStorage();
 
+  // Convert bucket name from underscore to hyphen format if needed
+  const formattedBucket = bucket.replace(/_/g, '-');
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -31,7 +34,7 @@ export default function ImageUploader({
   const handleUpload = async () => {
     if (!file) return;
     
-    const url = await uploadImage(file, bucket, folder);
+    const url = await uploadImage(file, formattedBucket, folder);
     if (url) {
       onImageUploaded(url);
       setFile(null);

@@ -74,7 +74,7 @@ export default function ProductGalleryManager({
           
           <EnhancedImageUploader
             onImageUploaded={(url, alt) => handleImageUploaded(url, alt, index)}
-            bucket="products"
+            bucket="product-gallery" // Updated from product_gallery
             folder={`product-${productId}`}
             initialImageUrl={image.url}
             initialAltText={image.alt}

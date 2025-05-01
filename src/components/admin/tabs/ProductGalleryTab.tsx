@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -173,6 +172,8 @@ export default function ProductGalleryTab() {
   
   const isLoading = loadingCategories || loadingImages;
   
+  if (isLoading) return <div>Loading...</div>;
+  
   return (
     <div>
       <div className="mb-6">
@@ -311,7 +312,7 @@ export default function ProductGalleryTab() {
                 name="image_url"
                 label="Gallery Image"
                 altTextName="alt_text"
-                bucket="content"
+                bucket="product-gallery"
                 folder="product_gallery"
               />
               
