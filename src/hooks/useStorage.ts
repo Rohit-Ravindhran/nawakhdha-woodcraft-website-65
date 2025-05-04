@@ -96,11 +96,8 @@ export function useStorage() {
       const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`;
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
-      // Convert bucket name from underscore to hyphen format
-      const formattedBucket = bucket.replace(/_/g, '-');
-
       const { error: uploadError } = await supabase.storage
-        .from(formattedBucket)
+        .from(bucket)
         .upload(filePath, fileToUpload, {
           cacheControl: '3600',
           contentType: file.type || 'image/jpeg'
@@ -111,7 +108,7 @@ export function useStorage() {
       }
 
       const { data } = supabase.storage
-        .from(formattedBucket)
+        .from(bucket)
         .getPublicUrl(filePath);
       
       return data.publicUrl;
@@ -125,11 +122,8 @@ export function useStorage() {
 
   const deleteImage = async (url: string, bucket: string): Promise<boolean> => {
     try {
-      // Convert bucket name from underscore to hyphen format
-      const formattedBucket = bucket.replace(/_/g, '-');
-      
       // Extract the file path from the URL
-      const urlParts = url.split(`${formattedBucket}/`);
+      const urlParts = url.split(`${bucket}/`);
       if (urlParts.length < 2) {
         throw new Error("Invalid file URL");
       }
@@ -137,7 +131,7 @@ export function useStorage() {
       const filePath = urlParts[1];
       
       const { error } = await supabase.storage
-        .from(formattedBucket)
+        .from(bucket)
         .remove([filePath]);
         
       if (error) {
@@ -153,11 +147,8 @@ export function useStorage() {
 
   const getImageMetadata = async (url: string, bucket: string): Promise<any | null> => {
     try {
-      // Convert bucket name from underscore to hyphen format
-      const formattedBucket = bucket.replace(/_/g, '-');
-      
       // Extract the file path from the URL
-      const urlParts = url.split(`${formattedBucket}/`);
+      const urlParts = url.split(`${bucket}/`);
       if (urlParts.length < 2) {
         throw new Error("Invalid file URL");
       }
@@ -166,7 +157,7 @@ export function useStorage() {
       
       // Updated to use list instead of getMetadata which doesn't exist in the API
       const { data, error } = await supabase.storage
-        .from(formattedBucket)
+        .from(bucket)
         .list(filePath.substring(0, filePath.lastIndexOf('/')), {
           limit: 1,
           offset: 0,
