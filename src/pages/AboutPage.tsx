@@ -25,36 +25,23 @@ const AboutPage = () => {
         const { data, error } = await supabase
           .from('about_team')
           .select('*');
-
+        
         if (error) {
           throw error;
         }
-
-        const membersWithUrls = (data || []).map(member => {
-          if (member.image_url) {
-            const { data: publicUrlData } = supabase
-              .storage
-              .from('about-team')
-              .getPublicUrl(member.image_url);
-            return {
-              ...member,
-              image_url: publicUrlData.publicUrl
-            };
-          }
-          return member;
-        });
-
-        setTeamMembers(membersWithUrls);
+        
+        setTeamMembers(data || []);
       } catch (error) {
         console.error("Error fetching team members:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
+    
     fetchTeamMembers();
   }, []);
 
+  // Default team members if no data is returned
   const defaultTeam = [
     {
       id: "1",
@@ -82,6 +69,7 @@ const AboutPage = () => {
     }
   ];
 
+  // Use data from database or fall back to defaults if needed
   const teamToDisplay = teamMembers.length > 0 ? teamMembers : defaultTeam;
 
   return (
@@ -127,33 +115,33 @@ const AboutPage = () => {
                 title="Our Story"
                 subtitle="From humble beginnings to Bahrain's premier woodcraft destination."
               />
-
+              
               <div className="prose prose-lg max-w-none">
                 <p>
                   Al Nawakhdha Furniture was incorporated by our managing director Adnan Al Hamar in the year 1975 in Bahrain. It is one of the oldest carpentry workshops on the island. We are reputed for our service, quality and workmanship. We understand the needs of our customers and work towards crafting it with our multinational work force. The perfect combination of creativity, knowledge of art and craftsmanship allow us to create any kind of inlaid and carving work of incomparable beauty.
                 </p>
-
+                
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Vision</h3>
                 <p>To carve our customer's imagination into perfection.</p>
-
+                
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Mission</h3>
                 <p>Our goal when we started Al Nawakhdha was the same as it is today: to bring life and sustainability to our customer's dream with class, perfection, and trend.</p>
-
+                
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Approach</h3>
                 <p>
                   At Al Nawakhdha, we believe that the beauty of wooden furniture lies in the details. Each piece we create is the result of careful planning, thoughtful design, and meticulous execution. Our team of skilled craftsmen combines traditional techniques with modern innovations to create furniture that stands the test of time.
                 </p>
-
+                
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Materials</h3>
                 <p>
                   We source only the finest woods from sustainable suppliers around the world. From rich mahogany to elegant oak, sturdy teak to versatile pine, we select each material with care to ensure that your furniture is not only beautiful but built to last for generations.
                 </p>
-
+                
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Commitment</h3>
                 <p>
                   Customer satisfaction isn't just a goal—it's our foundation. We work closely with each client from concept to completion, ensuring that every detail meets our high standards and your unique vision. Our commitment to quality craftsmanship and personalized service has earned us the trust of countless homeowners, businesses, and designers throughout Bahrain.
                 </p>
-
+                
                 <div className="mt-8">
                   <Button asChild>
                     <Link to="/contact">Get in Touch</Link>
@@ -161,7 +149,7 @@ const AboutPage = () => {
                 </div>
               </div>
             </div>
-
+            
             <div>
               <div className="sticky top-24">
                 <div className="mb-8">
@@ -176,7 +164,7 @@ const AboutPage = () => {
                     className="w-full h-auto rounded-lg"
                   />
                 </div>
-
+                
                 <div className="bg-secondary/50 border border-border rounded-lg p-6">
                   <h3 className="font-playfair font-bold text-xl mb-4">Quick Facts</h3>
                   <ul className="space-y-3">
@@ -216,7 +204,7 @@ const AboutPage = () => {
             subtitle="Meet the dedicated team behind Al Nawakhdha Furniture's success."
             centered
           />
-
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {isLoading ? (
               <div className="col-span-3 text-center py-12">Loading team members...</div>
@@ -227,7 +215,7 @@ const AboutPage = () => {
                     <div className="w-32 h-32 mx-auto rounded-full overflow-hidden">
                       <img
                         src={member.image_url || "https://placehold.co/400x400"}
-                        alt={member.alt_text || `${member.name} - ${member.role}`}
+                        alt={member.alt_text || ${member.name} - ${member.role}}
                         className="w-full h-full object-cover"
                       />
                     </div>
