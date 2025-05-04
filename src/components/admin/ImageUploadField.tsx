@@ -23,6 +23,9 @@ export default function ImageUploadField({
   bucket = "content",
   folder = "",
 }: ImageUploadFieldProps) {
+  // Convert bucket name from underscore to hyphen format if needed
+  const formattedBucket = bucket.replace(/_/g, '-');
+  
   return (
     <div className="space-y-4">
       <Controller
@@ -61,7 +64,7 @@ export default function ImageUploadField({
                 
                 <ImageUploader 
                   onImageUploaded={field.onChange}
-                  bucket={bucket}
+                  bucket={formattedBucket}
                   folder={folder}
                 />
               </div>

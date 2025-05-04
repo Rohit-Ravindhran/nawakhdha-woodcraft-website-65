@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -285,8 +286,8 @@ export default function AboutTeamTab() {
                 name="image_url"
                 label="Photo"
                 altTextName="alt_text"
-                bucket="about-team"
-                folder="members"
+                bucket="content"
+                folder="about_team"
               />
               
               <div className="flex justify-end space-x-2">
