@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,22 +36,22 @@ type TeamMemberFormValues = z.infer<typeof teamMemberSchema>;
 export default function AboutTeamTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentTeamMember, setCurrentTeamMember] = useState<AboutTeamMemberData | null>(null);
-  
+
   const queryClient = useQueryClient();
-  
+
   const { data: teamMembers, isLoading } = useQuery({
-    queryKey: ['about_team'],
+    queryKey: ["about_team"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('about_team')
-        .select('*')
-        .order('id');
-        
+        .from("about_team")
+        .select("*")
+        .order("id");
+
       if (error) throw error;
       return data as AboutTeamMemberData[];
     },
   });
-  
+
   const form = useForm<TeamMemberFormValues>({
     resolver: zodResolver(teamMemberSchema),
     defaultValues: {
@@ -63,7 +62,7 @@ export default function AboutTeamTab() {
       alt_text: "",
     },
   });
-  
+
   const handleEdit = (member: AboutTeamMemberData) => {
     setCurrentTeamMember(member);
     form.reset({
@@ -76,7 +75,7 @@ export default function AboutTeamTab() {
     });
     setIsDialogOpen(true);
   };
-  
+
   const handleAdd = () => {
     setCurrentTeamMember(null);
     form.reset({
@@ -88,13 +87,12 @@ export default function AboutTeamTab() {
     });
     setIsDialogOpen(true);
   };
-  
+
   const onSubmit = async (values: TeamMemberFormValues) => {
     try {
       if (values.id) {
-        // Update existing
         const { error } = await supabase
-          .from('about_team')
+          .from("about_team")
           .update({
             name: values.name,
             role: values.role,
@@ -102,14 +100,13 @@ export default function AboutTeamTab() {
             image_url: values.image_url,
             alt_text: values.alt_text,
           })
-          .eq('id', values.id);
-          
+          .eq("id", values.id);
+
         if (error) throw error;
         toast.success("Team member updated successfully");
       } else {
-        // Create new
         const { error } = await supabase
-          .from('about_team')
+          .from("about_team")
           .insert({
             name: values.name,
             role: values.role,
@@ -117,39 +114,38 @@ export default function AboutTeamTab() {
             image_url: values.image_url,
             alt_text: values.alt_text,
           });
-          
+
         if (error) throw error;
         toast.success("Team member added successfully");
       }
-      
-      // Refresh data
-      queryClient.invalidateQueries({ queryKey: ['about_team'] });
+
+      queryClient.invalidateQueries({ queryKey: ["about_team"] });
       setIsDialogOpen(false);
     } catch (error: any) {
       toast.error(`Error saving team member: ${error.message}`);
     }
   };
-  
+
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this team member?")) {
       try {
         const { error } = await supabase
-          .from('about_team')
+          .from("about_team")
           .delete()
-          .eq('id', id);
-          
+          .eq("id", id);
+
         if (error) throw error;
-        
+
         toast.success("Team member deleted successfully");
-        queryClient.invalidateQueries({ queryKey: ['about_team'] });
+        queryClient.invalidateQueries({ queryKey: ["about_team"] });
       } catch (error: any) {
         toast.error(`Error deleting team member: ${error.message}`);
       }
     }
   };
-  
+
   if (isLoading) return <div>Loading...</div>;
-  
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -159,7 +155,7 @@ export default function AboutTeamTab() {
           Add New Member
         </Button>
       </div>
-      
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -177,9 +173,9 @@ export default function AboutTeamTab() {
                 <TableCell>
                   <div className="w-16 h-16 relative bg-gray-200 rounded-full overflow-hidden">
                     {member.image_url ? (
-                      <img 
-                        src={member.image_url} 
-                        alt={member.alt_text || `${member.name} photo`} 
+                      <img
+                        src={member.image_url}
+                        alt={member.alt_text || `${member.name} photo`}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.src = "/placeholder.svg";
@@ -192,27 +188,17 @@ export default function AboutTeamTab() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{member.name || 'N/A'}</TableCell>
-                <TableCell>{member.role || 'N/A'}</TableCell>
+                <TableCell>{member.name || "N/A"}</TableCell>
+                <TableCell>{member.role || "N/A"}</TableCell>
                 <TableCell>
-                  <div className="max-w-xs truncate">
-                    {member.bio || 'N/A'}
-                  </div>
+                  <div className="max-w-xs truncate">{member.bio || "N/A"}</div>
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleEdit(member)}
-                    >
+                    <Button variant="outline" size="icon" onClick={() => handleEdit(member)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleDelete(member.id!)}
-                    >
+                    <Button variant="outline" size="icon" onClick={() => handleDelete(member.id!)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -228,15 +214,13 @@ export default function AboutTeamTab() {
           )}
         </TableBody>
       </Table>
-      
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              {currentTeamMember ? "Edit Team Member" : "Add New Team Member"}
-            </DialogTitle>
+            <DialogTitle>{currentTeamMember ? "Edit Team Member" : "Add New Team Member"}</DialogTitle>
           </DialogHeader>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -252,7 +236,7 @@ export default function AboutTeamTab() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="role"
@@ -260,13 +244,13 @@ export default function AboutTeamTab() {
                   <FormItem>
                     <FormLabel>Role</FormLabel>
                     <FormControl>
-                      <Input placeholder="Job title or role" {...field} value={field.value || ''} />
+                      <Input placeholder="Job title or role" {...field} value={field.value || ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="bio"
@@ -274,28 +258,24 @@ export default function AboutTeamTab() {
                   <FormItem>
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Short biography" {...field} rows={5} value={field.value || ''} />
+                      <Textarea placeholder="Short biography" {...field} rows={5} value={field.value || ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <ImageUploadField
                 control={form.control}
                 name="image_url"
                 label="Photo"
                 altTextName="alt_text"
-                bucket="content"
+                bucket="about-team"
                 folder="about_team"
               />
-              
+
               <div className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" className="flex items-center">
