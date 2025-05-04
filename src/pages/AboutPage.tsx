@@ -22,14 +22,12 @@ const AboutPage = () => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const { data, error } = await supabase
-          .from('about_team')
-          .select('*');
-        
+        const { data, error } = await supabase.from("about_team").select("*");
+
         if (error) {
           throw error;
         }
-        
+
         setTeamMembers(data || []);
       } catch (error) {
         console.error("Error fetching team members:", error);
@@ -37,11 +35,10 @@ const AboutPage = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchTeamMembers();
   }, []);
 
-  // Default team members if no data is returned
   const defaultTeam = [
     {
       id: "1",
@@ -49,7 +46,7 @@ const AboutPage = () => {
       role: "Founder & Managing Director",
       bio: "Founding Al Nawakhdha in 1975, Adnan brings over 50 years of expertise in furniture craftsmanship and wooden design.",
       image_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format",
-      alt_text: "Adnan Al Hamar - Founder & Managing Director"
+      alt_text: "Adnan Al Hamar - Founder & Managing Director",
     },
     {
       id: "2",
@@ -57,7 +54,7 @@ const AboutPage = () => {
       role: "Design Director",
       bio: "Leading our design team with innovative vision and an exceptional eye for detail in custom furniture creation.",
       image_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format",
-      alt_text: "Fatima Al Hamar - Design Director"
+      alt_text: "Fatima Al Hamar - Design Director",
     },
     {
       id: "3",
@@ -65,20 +62,25 @@ const AboutPage = () => {
       role: "Operations Manager",
       bio: "Overseeing workshop operations and ensuring the highest standards of quality in every project we undertake.",
       image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format",
-      alt_text: "Mohammed Al Hamar - Operations Manager"
-    }
+      alt_text: "Mohammed Al Hamar - Operations Manager",
+    },
   ];
 
-  // Use data from database or fall back to defaults if needed
   const teamToDisplay = teamMembers.length > 0 ? teamMembers : defaultTeam;
 
   return (
     <>
       <Helmet>
         <title>About Us | Nawakhdha Woodcraft</title>
-        <meta name="description" content="Learn about our leadership team at Nawakhdha Woodcraft, bringing decades of experience in custom furniture and wooden designs in Bahrain." />
+        <meta
+          name="description"
+          content="Learn about our leadership team at Nawakhdha Woodcraft, bringing decades of experience in custom furniture and wooden designs in Bahrain."
+        />
         <meta property="og:title" content="About Us | Nawakhdha Woodcraft" />
-        <meta property="og:description" content="Learn about our leadership team at Nawakhdha Woodcraft, bringing decades of experience in custom furniture and wooden designs in Bahrain." />
+        <meta
+          property="og:description"
+          content="Learn about our leadership team at Nawakhdha Woodcraft, bringing decades of experience in custom furniture and wooden designs in Bahrain."
+        />
         <meta property="og:type" content="website" />
       </Helmet>
 
@@ -89,7 +91,7 @@ const AboutPage = () => {
           className="h-[50vh] bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1579187707643-35646d22b596?q=80&w=1000&auto=format')"
+              "url('https://images.unsplash.com/photo-1579187707643-35646d22b596?q=80&w=1000&auto=format')",
           }}
         ></div>
         <div className="absolute inset-0 flex items-center z-20">
@@ -115,33 +117,35 @@ const AboutPage = () => {
                 title="Our Story"
                 subtitle="From humble beginnings to Bahrain's premier woodcraft destination."
               />
-              
+
               <div className="prose prose-lg max-w-none">
                 <p>
                   Al Nawakhdha Furniture was incorporated by our managing director Adnan Al Hamar in the year 1975 in Bahrain. It is one of the oldest carpentry workshops on the island. We are reputed for our service, quality and workmanship. We understand the needs of our customers and work towards crafting it with our multinational work force. The perfect combination of creativity, knowledge of art and craftsmanship allow us to create any kind of inlaid and carving work of incomparable beauty.
                 </p>
-                
+
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Vision</h3>
                 <p>To carve our customer's imagination into perfection.</p>
-                
+
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Mission</h3>
-                <p>Our goal when we started Al Nawakhdha was the same as it is today: to bring life and sustainability to our customer's dream with class, perfection, and trend.</p>
-                
+                <p>
+                  Our goal when we started Al Nawakhdha was the same as it is today: to bring life and sustainability to our customer's dream with class, perfection, and trend.
+                </p>
+
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Approach</h3>
                 <p>
                   At Al Nawakhdha, we believe that the beauty of wooden furniture lies in the details. Each piece we create is the result of careful planning, thoughtful design, and meticulous execution. Our team of skilled craftsmen combines traditional techniques with modern innovations to create furniture that stands the test of time.
                 </p>
-                
+
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Materials</h3>
                 <p>
                   We source only the finest woods from sustainable suppliers around the world. From rich mahogany to elegant oak, sturdy teak to versatile pine, we select each material with care to ensure that your furniture is not only beautiful but built to last for generations.
                 </p>
-                
+
                 <h3 className="font-playfair font-bold text-xl mt-8 mb-4">Our Commitment</h3>
                 <p>
                   Customer satisfaction isn't just a goal—it's our foundation. We work closely with each client from concept to completion, ensuring that every detail meets our high standards and your unique vision. Our commitment to quality craftsmanship and personalized service has earned us the trust of countless homeowners, businesses, and designers throughout Bahrain.
                 </p>
-                
+
                 <div className="mt-8">
                   <Button asChild>
                     <Link to="/contact">Get in Touch</Link>
@@ -149,7 +153,7 @@ const AboutPage = () => {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <div className="sticky top-24">
                 <div className="mb-8">
@@ -164,7 +168,7 @@ const AboutPage = () => {
                     className="w-full h-auto rounded-lg"
                   />
                 </div>
-                
+
                 <div className="bg-secondary/50 border border-border rounded-lg p-6">
                   <h3 className="font-playfair font-bold text-xl mb-4">Quick Facts</h3>
                   <ul className="space-y-3">
@@ -204,24 +208,31 @@ const AboutPage = () => {
             subtitle="Meet the dedicated team behind Al Nawakhdha Furniture's success."
             centered
           />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {isLoading ? (
               <div className="col-span-3 text-center py-12">Loading team members...</div>
             ) : (
               teamToDisplay.map((member) => (
-                <div key={member.id} className="bg-white p-6 rounded-lg shadow-sm border border-border text-center">
+                <div
+                  key={member.id}
+                  className="bg-white p-6 rounded-lg shadow-sm border border-border text-center"
+                >
                   <figure className="mb-4">
                     <div className="w-32 h-32 mx-auto rounded-full overflow-hidden">
                       <img
                         src={member.image_url || "https://placehold.co/400x400"}
-                        alt={member.alt_text || ${member.name} - ${member.role}`}
+                        alt={member.alt_text || `${member.name} - ${member.role}`}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <figcaption>
-                      <h3 className="font-playfair font-bold text-xl mb-1">{member.name || "Team Member"}</h3>
-                      <p className="text-sm text-muted-foreground mb-4">{member.role || "Team Member"}</p>
+                      <h3 className="font-playfair font-bold text-xl mb-1">
+                        {member.name || "Team Member"}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {member.role || "Team Member"}
+                      </p>
                     </figcaption>
                   </figure>
                   <p className="text-sm">{member.bio || "Bio information not available."}</p>
@@ -240,10 +251,18 @@ const AboutPage = () => {
             Contact us today to discuss your custom furniture needs or to request a quote on any of our services.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild variant="secondary" className="bg-white text-wood-dark hover:bg-white/90">
+            <Button
+              asChild
+              variant="secondary"
+              className="bg-white text-wood-dark hover:bg-white/90"
+            >
               <Link to="/contact">Contact Us</Link>
             </Button>
-            <Button asChild variant="outline" className="border-white text-white hover:bg-white/10">
+            <Button
+              asChild
+              variant="outline"
+              className="border-white text-white hover:bg-white/10"
+            >
               <Link to="/category">Browse Our Collections</Link>
             </Button>
           </div>
