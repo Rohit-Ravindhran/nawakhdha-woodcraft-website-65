@@ -215,7 +215,7 @@ const AboutPage = () => {
                     <div className="w-32 h-32 mx-auto rounded-full overflow-hidden">
                       <img
                         src={member.image_url || "https://placehold.co/400x400"}
-                        alt={member.alt_text || ${member.name} - ${member.role}}
+                        alt={member.alt_text || ${member.name} - ${member.role}`}
                         className="w-full h-full object-cover"
                       />
                     </div>
