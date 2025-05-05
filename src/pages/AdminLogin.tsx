@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +29,8 @@ const AdminLogin = () => {
   const { user, signIn, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/admin";
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -75,7 +77,7 @@ const AdminLogin = () => {
   }
 
   if (user) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={from} replace />;
   }
 
   return (

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Edit, Plus, Save, Trash2 } from "lucide-react";
 import ImageUploadField from "../ImageUploadField";
+import { useAuth } from "@/contexts/AuthContext";
 
 const teamMemberSchema = z.object({
   id: z.string().optional(),
@@ -36,12 +38,14 @@ type TeamMemberFormValues = z.infer<typeof teamMemberSchema>;
 export default function AboutTeamTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentTeamMember, setCurrentTeamMember] = useState<AboutTeamMemberData | null>(null);
+  const { session } = useAuth();
 
   const queryClient = useQueryClient();
 
   const { data: teamMembers, isLoading } = useQuery({
     queryKey: ["about_team"],
     queryFn: async () => {
+      // Using the session from auth context
       const { data, error } = await supabase
         .from("about_team")
         .select("*")
@@ -90,6 +94,12 @@ export default function AboutTeamTab() {
 
   const onSubmit = async (values: TeamMemberFormValues) => {
     try {
+      // Ensure we have a session before proceeding
+      if (!session) {
+        toast.error("You must be logged in to perform this action");
+        return;
+      }
+
       if (values.id) {
         const { error } = await supabase
           .from("about_team")
@@ -129,6 +139,12 @@ export default function AboutTeamTab() {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this team member?")) {
       try {
+        // Ensure we have a session before proceeding
+        if (!session) {
+          toast.error("You must be logged in to perform this action");
+          return;
+        }
+        
         const { error } = await supabase
           .from("about_team")
           .delete()
