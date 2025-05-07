@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
-import { ProductData } from "@/hooks/content/types";
+import { ProductCategoryData, ProductData } from "@/hooks/content/types";
 import { ProductEditorProps } from "./ProductEditorTypes";
 import { productSchema, ProductFormValues } from "./schemas/productSchema";
 import ProductGalleryManager from "./ProductGalleryManager";
@@ -22,8 +22,9 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
     resolver: zodResolver(productSchema),
     defaultValues: {
       product_name: product?.product_name || "",
-      description: product?.description || "",
       category_name: product?.category_name || "",
+      category_slug: product?.category_slug || "",
+      description: product?.description || "",
       seo_title: product?.seo_title || "",
       seo_description: product?.seo_description || "",
       seo_keywords: product?.seo_keywords || "",
@@ -89,6 +90,7 @@ export default function ProductEditor({ product, onComplete, onSave, isLoading =
       product_name: values.product_name,
       description: values.description,
       category_name: values.category_name,
+      category_slug: values.category_slug,
       seo_title: seoTitle,
       seo_description: seoDescription,
       seo_keywords: seoKeywords.join(','), // Store as comma-separated string for consistency

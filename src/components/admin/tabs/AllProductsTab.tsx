@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -14,6 +13,7 @@ import { useProducts, useDeleteProduct } from "@/hooks/content";
 import { ProductData } from "@/hooks/content/types";
 import { transformGalleryImages } from "@/utils/imageHelpers";
 import CategoryEditor from "@/components/admin/editors/CategoryEditor";
+import ProductEditor from "@/components/admin/ProductEditor";
 
 // Product categories from the website
 const PRODUCT_CATEGORIES = [
@@ -297,10 +297,23 @@ const ProductListItem = ({ product, onDelete }: ProductListItemProps) => {
   );
 };
 
-// Placeholder component for ProductForm
+// Update the ProductForm component to use our ProductEditor
 const ProductForm = ({ product, defaultCategory }: { product?: ProductData & { id: number }, defaultCategory?: string }) => {
-  // This will be replaced with the actual ProductEditor
-  return <div>Product Form Placeholder</div>;
+  const initialData = product ? {
+    ...product,
+    id: product.id.toString() // Convert ID to string for consistency
+  } : defaultCategory ? {
+    category_name: defaultCategory
+  } : undefined;
+  
+  return (
+    <ProductEditor 
+      product={initialData}
+      onComplete={() => {
+        // Dialog will close automatically through parent component
+      }}
+    />
+  );
 };
 
 export default AllProductsTab;

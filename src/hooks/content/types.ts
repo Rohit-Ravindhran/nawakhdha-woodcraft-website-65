@@ -4,10 +4,30 @@
 export interface PageData {
   id?: string;
   page_name?: string;
+  title?: string;
+  content?: string;
+  header_image?: string;
+  header_image_alt?: string;
+  company_story?: string;
+  mission?: string;
+  vision?: string;
+  since_year?: string;
+  subtitle?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  map_url?: string;
+  form_title?: string;
+  form_description?: string;
   hero?: string;
+  services?: string;
+  products?: string;
+  blog?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+  seo_canonical_url?: string;
+  seo_image_alt?: string;
 }
 
 export interface ProductCategoryData {
@@ -17,9 +37,11 @@ export interface ProductCategoryData {
   category_image_url?: string;
   alt_text?: string;
   product_name?: string;
+  description?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+  gallery_images?: { url: string; caption: string; alt?: string }[];
 }
 
 export interface ProductDetailData {
@@ -29,6 +51,10 @@ export interface ProductDetailData {
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+}
+
+export interface ProductData extends ProductCategoryData, ProductDetailData {
+  // Additional fields specific to ProductData
 }
 
 export interface BlogData {

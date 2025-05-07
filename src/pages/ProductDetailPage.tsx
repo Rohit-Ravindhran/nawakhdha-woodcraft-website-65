@@ -1,245 +1,162 @@
 
-import { useParams } from "react-router-dom";
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import SectionTitle from "@/components/ui/section-title";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { ProductCategoryData } from '@/hooks/content/types';
+import { Loader2 } from 'lucide-react';
+import SectionTitle from '@/components/ui/section-title';
 
-// Sample product database - in a real implementation, this would come from an API or CMS
-const productDatabase = {
-  "doors-western": {
-    title: "Western Design Doors",
-    description: "Experience timeless elegance with our collection of Western design wooden doors, handcrafted for Bahraini homes and villas. Combining European-inspired aesthetics with modern durability, these doors feature ornate moldings, raised panels, and premium hardwood finishes. Whether you prefer traditional opulence or contemporary classicism, each door is built with attention to grain, texture, and finish for long-lasting beauty and structural integrity. Ideal for interiors, entrances, or office spaces across Bahrain.",
-    detailedDescription: "Our Western design doors are crafted by skilled artisans with decades of experience, ensuring exceptional quality and attention to detail. Each door is made from carefully selected hardwoods that are seasoned to perfection, resulting in doors that resist warping and maintain their beauty for generations. We offer a variety of finishes from natural wood tones to custom paint colors to match any interior design scheme.",
-    images: [
-      { src: "/lovable-uploads/11fc47b9-4a23-4b1c-b6a9-a98e15a429f6.png", caption: "Elegant Western-style panel door in oak", alt: "western oak panel door Bahrain" },
-      { src: "/lovable-uploads/d779c87c-fcda-4bab-9527-b931d0aad2b7.png", caption: "French-inspired double door with glass panels", alt: "wooden double door with glass western style Bahrain" },
-      { src: "/lovable-uploads/70bd368b-f5fa-45b5-b9cb-d955cb37963c.png", caption: "Contemporary Western door with clean lines", alt: "modern western wood door design Bahrain" },
-      { src: "/lovable-uploads/cac0ea26-0826-4ffc-8412-997be7a75e56.png", caption: "Ornate crown-molded panel door", alt: "decorative western wood door with crown molding" },
-      { src: "/lovable-uploads/d04f778e-da90-4787-911f-65780ae81c91.png", caption: "Victorian-style door with golden handle", alt: "victorian style western door in Bahrain" },
-      { src: "/lovable-uploads/5b02fa26-f201-4d4d-8bf1-386cdfb2f333.png", caption: "Carved top border and matte panel finish", alt: "western wood door with carved crown and panels" },
-      { src: "/lovable-uploads/34e6092e-2511-407a-86e5-5ed7cb089702.png", caption: "Mahogany door with oval glass insert", alt: "mahogany western door with glass and floral carving" },
-      { src: "/lovable-uploads/02fd8abd-cf4c-4301-8df6-95f3da176120.png", caption: "Bronze accented floral centerpiece door", alt: "luxury bronze western wood door Bahrain" },
-      { src: "/lovable-uploads/a19634c7-490f-434e-937b-c2240dc54394.png", caption: "Walnut grain door with traditional arch frame", alt: "walnut wood western door for villa entrance" },
-      { src: "/lovable-uploads/b0466419-0e81-4862-b176-452ec96ac998.png", caption: "Minimalist deep panel Western door", alt: "classic western deep panel door in neutral tone" },
-      { src: "/lovable-uploads/f449338e-e316-4be9-bee9-40f5fb795574.png", caption: "Natural wood textured panel door", alt: "solid teak western door for indoor use in Bahrain" },
-      { src: "/lovable-uploads/f9916d2e-2955-494e-a196-287432b33f8e.png", caption: "Western arched double door with central medallion", alt: "arched carved double door for luxury homes Bahrain" },
-      { src: "/lovable-uploads/c3f9692e-7f7e-4be2-a8e0-412d6a46756a.png", caption: "Embossed crest with gold trimmed handle", alt: "ornate western interior door with gold detailing" },
-      { src: "/lovable-uploads/92c6ca48-8ef3-4d02-be15-f49242a083b1.png", caption: "Double door in rustic polished walnut", alt: "rustic double door western design in Bahrain" },
-      { src: "/lovable-uploads/0f6f9118-0736-4daf-ab85-0d729320bd45.png", caption: "Raised panel Western door with arched top", alt: "arched top raised panel wood door Bahrain" },
-      { src: "/lovable-uploads/b4143ab4-a7e6-4390-aae8-13de38530291.png", caption: "Deep framed triple panel door", alt: "triple raised panel classic western wooden door" },
-      { src: "/lovable-uploads/120b2e46-f13b-4b00-8218-4f05c138806b.png", caption: "Antique-styled arched front door", alt: "antique arched western entry door for villas Bahrain" },
-      { src: "/lovable-uploads/487b1627-660a-4ae8-9d3e-caac3c736084.png", caption: "Curved floral ironwork on dark wood finish", alt: "iron floral western style door in bronze finish" },
-      { src: "/lovable-uploads/725541b8-3dc2-4866-8b9a-9b5cf3389c39.png", caption: "Minimalist contemporary wooden door", alt: "plain contemporary western interior door" },
-      { src: "/lovable-uploads/f41aec33-a17f-4f75-b503-730cb333f132.png", caption: "Display of two carved wooden panel doors", alt: "classic woodwork display of western interior doors" }
-    ]
-  },
-  "doors-modern": {
-    title: "Modern Design Doors",
-    description: "Redefine your space with our collection of modern wooden door designs, perfect for contemporary homes and commercial properties in Bahrain. These doors blend sleek geometry, clean lines, and premium hardwoods to create a stunning minimalist look. From pivot and flush doors to bold engravings and creative glasswork, each design prioritizes innovation, durability, and aesthetic harmony. Perfect for clients seeking a modern architectural finish with lasting functionality.",
-    detailedDescription: "Modern design doors are perfect for those seeking a sleek, contemporary look. We utilize both traditional hardwoods and engineered materials to create doors with perfect geometry and exceptional durability. Features like concealed hinges, integrated handles, and flush designs create a seamless look that integrates perfectly with modern interior design concepts.",
-    images: [
-      { src: "/lovable-uploads/71aa8d6e-7f0d-4f60-a276-df8ee58b9c7a.png", caption: "Traditional geometric solid wood door with deep grains", alt: "modern geometric wooden door in Bahrain" },
-      { src: "/lovable-uploads/388418d1-a414-4bef-bacc-fc13744927ee.png", caption: "Circular bronze mandala door with twin carved panels", alt: "round pattern double entrance modern door Bahrain" },
-      { src: "/lovable-uploads/39337aa7-083c-48bc-867a-c3b38c73dd99.png", caption: "Textured bronze finish door with traditional carving", alt: "bronze textured designer modern door" },
-      { src: "/lovable-uploads/0185c8cc-c1e1-408e-b3fd-c7124284ad8e.png", caption: "Contemporary pivot door with angled grain pattern", alt: "angled grain pivot wooden door Bahrain" },
-      { src: "/lovable-uploads/e9dcbadd-f122-412c-8e5e-e05bef7be4ae.png", caption: "Circular sunburst engraved pivot door", alt: "circular sun design modern wooden pivot door" },
-      { src: "/lovable-uploads/8b505a94-7fae-4f64-9c09-501c2ec3d9e4.png", caption: "Industrial bronze double door with grid texture", alt: "industrial style bronze front door Bahrain" },
-      { src: "/lovable-uploads/a63f6e85-444f-41b2-a1c1-be01ce9fdb29.png", caption: "Mandala center design in dark polished hardwood", alt: "mandala engraved dark wood modern door Bahrain" },
-      { src: "/lovable-uploads/f0f1e646-a5e8-431c-8e24-596599f23942.png", caption: "Classic fusion door with antique bronze accents", alt: "antique-meets-modern wooden fusion door" },
-      { src: "/lovable-uploads/7c298345-4f12-4f1c-ab22-4f98f1a2a1c7.png", caption: "Recessed geometric door with deep brown panels", alt: "recessed panel dark wood modern door" },
-      { src: "/lovable-uploads/71be00fe-b0f2-489a-b7f9-55bda4853c39.png", caption: "Faceted pyramid-patterned dual panel door", alt: "pyramid carved geometric modern wood door" },
-      { src: "/lovable-uploads/6c647cf0-8488-47c5-9fe0-9e8422871f36.png", caption: "Arched dual door with golden floral wrought iron", alt: "arched luxury door with golden iron and wood" },
-      { src: "/lovable-uploads/dbbe1df3-eb9f-4c7d-a7f7-c3f236591589.png", caption: "Glossy carved teak door with floral side panels", alt: "teak modern carved entry door with floral glass" },
-      { src: "/lovable-uploads/c0d23e83-070e-4c5f-a340-ff751b937ad4.png", caption: "Diamond-patterned modern pivot door with black handle", alt: "diagonal-cut diamond grid wooden pivot door" },
-      { src: "/lovable-uploads/03a7a393-48e2-472a-bfa4-b36fa2df6312.png", caption: "Arched door with classic molding and lantern sconces", alt: "modern classic arched wooden double door Bahrain" },
-      { src: "/lovable-uploads/c7bddfba-ae2f-4a0c-90c2-6e3f6c5a1f56.png", caption: "Straight panel door with side glass frames and metallic logo", alt: "vertical panel modern front door with glass" },
-      { src: "/lovable-uploads/eaef49c0-6a37-4d1f-a2b1-0eb839aceda6.png", caption: "Circular panel door with matching frosted side panels", alt: "circular glass and wood door set Bahrain" },
-      { src: "/lovable-uploads/ea1e7147-7ddc-4d4a-9b32-7900da4ace22.png", caption: "Chevron woodgrain with triangle iron lattice", alt: "geometric iron-inlaid triangle wood door" },
-      { src: "/lovable-uploads/c74a4d41-54c4-4718-ac3c-d3feab4d0c12.png", caption: "Modern grid pattern entrance with soft brown tones", alt: "warm wood modern grid panel entry door" },
-      { src: "/lovable-uploads/373de5dd-1e47-4476-9ee1-5094a3abab03.png", caption: "Honeycomb block wooden door with pivot installation", alt: "honeycomb block modern pivot door Bahrain" },
-      { src: "/lovable-uploads/86c18c60-710b-486c-bf8e-4e1bf2fb9b13.png", caption: "Contemporary interior grid door with matte handle", alt: "minimalist wood grid door modern Bahrain" }
-    ]
-  },
-  "doors-middle-eastern": {
-    title: "Middle Eastern Design Doors",
-    description: "Discover the rich heritage and craftsmanship of our Middle Eastern design wooden doors, created for discerning clients across Bahrain. These doors feature intricate geometric patterns, ornamental carvings, and arched motifs reminiscent of Islamic architecture. Built from the finest hardwoods, they are ideal for mosques, villas, majlis entrances, or luxury residences that value artistic tradition, cultural depth, and functional durability.",
-    detailedDescription: "Each Middle Eastern door we create is a masterpiece of craftsmanship featuring geometric patterns, arabesque designs, and ornate inlay work. These doors often incorporate traditional motifs and can include metal accents, ornate carving, and sometimes colorful inlays. Perfect for creating a dramatic entrance or adding cultural richness to interior spaces.",
-    images: [
-      { src: "/lovable-uploads/56759753-02ab-4107-8ee2-065ec161f547.png", caption: "Traditional Islamic pattern inlaid wood door", alt: "hand-carved Islamic motif wooden door Bahrain" },
-      { src: "/lovable-uploads/0f759282-8762-46b6-94e4-afa18f801e6e.png", caption: "Symmetrical geometric double door with bold grains", alt: "middle eastern wood door with repeating star design Bahrain" },
-      { src: "/lovable-uploads/2e104c9d-b0f1-4d86-8466-264e0224d731.png", caption: "Detailed lattice carving on ancient-style arched door", alt: "carved lattice Islamic wooden door for homes in Bahrain" },
-      { src: "/lovable-uploads/0aab3249-fdc8-407c-8ee6-b84104e0a625.png", caption: "Ornamental inset bronze circle motif doors", alt: "contemporary Islamic bronze detail wood door Bahrain" },
-      { src: "/lovable-uploads/25d13934-3885-4415-9e3a-ca91ebee9709.png", caption: "Mosque-style arched door with intricate panel carvings", alt: "Islamic mosque-inspired carved entry door in Bahrain" },
-      { src: "/lovable-uploads/1dbf3998-10a5-4630-9cf1-58dad48d116b.png", caption: "Rustic Arabic castle-style studded wood door", alt: "castle gate style heavy wooden door with metal studs Bahrain" },
-      { src: "/lovable-uploads/d721f9b8-ab4f-445e-bcbe-f02e16e06e0a.png", caption: "Grid patterned leather-textured wood panel door", alt: "grid panel middle eastern style modern wood door" },
-      { src: "/lovable-uploads/beec8109-fbf6-4a97-9840-346f46fd833e.png", caption: "Light carved wooden double doors with star motifs", alt: "Arabian decorative wood door for villa or mosque Bahrain" },
-      { src: "/lovable-uploads/d8892851-0232-443d-9299-69b2cddd25fd.png", caption: "Sunburst star medallion design on Islamic arch door", alt: "traditional Islamic star carving arched door Bahrain" },
-      { src: "/lovable-uploads/293ee33a-2408-4dc3-8ff8-0b2c74535423.png", caption: "Grand mosque-style entry with symbolic pattern carvings", alt: "mosque door woodwork with Islamic inscriptions Bahrain" },
-      { src: "https://images.unsplash.com/photo-1582216601714-dca3dd3c6846?q=80&w=1000", caption: "Ottoman-inspired arch door with heavy floral carvings", alt: "ottoman styled Islamic double wood door in Bahrain" }
-    ]
-  },
-  "kitchen-cabinets": {
-    title: "Kitchen Cabinets",
-    description: "Our custom kitchen cabinets are designed to maximize both beauty and functionality in the heart of your home. Built with premium materials and expert craftsmanship, these cabinets offer superior storage solutions while elevating your kitchen's aesthetic.",
-    detailedDescription: "From traditional to contemporary styles, our kitchen cabinets can be customized to match any design preference. We use high-quality woods like maple, cherry, and oak, combined with precision hardware for smooth operation that will last for decades. Options include soft-close features, custom inserts for organization, and specialized storage solutions for everything from spices to large appliances.",
-    images: [
-      { src: "https://images.unsplash.com/photo-1556910103-8b5c952482a6?q=80&w=1000", caption: "Modern white and wood kitchen cabinet design", alt: "modern white and wood kitchen cabinet design Bahrain" },
-      { src: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1000", caption: "Traditional wood cabinetry with ornate details", alt: "traditional wood cabinetry with ornate details Bahrain" },
-      { src: "https://images.unsplash.com/photo-1604709177225-055f99402ea3?q=80&w=1000", caption: "Contemporary kitchen cabinet with integrated handles", alt: "contemporary kitchen cabinet with integrated handles Bahrain" },
-      { src: "https://images.unsplash.com/photo-1556909172-8c2f041fca1e?q=80&w=1000", caption: "Kitchen island with custom storage solutions", alt: "kitchen island with custom storage solutions Bahrain" },
-      { src: "https://images.unsplash.com/photo-1600125693227-050ded46c15a?q=80&w=1000", caption: "Minimalist kitchen cabinetry with clean lines", alt: "minimalist kitchen cabinetry with clean lines Bahrain" }
-    ]
-  },
-  "bedroom-furniture": {
-    title: "Bedroom Furniture",
-    description: "Our bedroom furniture collection combines comfort with timeless design to create peaceful sleeping environments. Each piece is crafted with attention to detail, from the joinery to the final finish.",
-    detailedDescription: "We offer complete bedroom sets or individual pieces that can be customized to your space and style preferences. Our bedroom furniture features solid wood construction, dovetail joinery in drawers, and premium hardware for durability. From statement bed frames to elegant nightstands and dressers with smart storage solutions, our bedroom collections are designed to stand the test of time both in style and construction.",
-    images: [
-      { src: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1000", caption: "King-size wooden platform bed", alt: "king-size wooden platform bed Bahrain" },
-      { src: "https://images.unsplash.com/photo-1505692952047-1a78307d7f52?q=80&w=1000", caption: "Custom nightstand with drawer storage", alt: "custom nightstand with drawer storage Bahrain" },
-      { src: "https://images.unsplash.com/photo-1584053595111-534e74825d2d?q=80&w=1000", caption: "Traditional six-drawer wooden dresser", alt: "traditional six-drawer wooden dresser Bahrain" },
-      { src: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?q=80&w=1000", caption: "Minimalist scandinavian style bed frame", alt: "minimalist scandinavian style bed frame Bahrain" },
-      { src: "https://images.unsplash.com/photo-1615874694520-474822394e73?q=80&w=1000", caption: "Custom wardrobe with sliding doors", alt: "custom wardrobe with sliding doors Bahrain" }
-    ]
-  }
-};
-
-const ProductDetailPage = () => {
-  const { productId } = useParams<{ productId: string }>();
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const ProductDetailPage: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
   
-  // Get product data or fallback to default
-  const product = productId && productDatabase[productId as keyof typeof productDatabase] 
-    ? productDatabase[productId as keyof typeof productDatabase]
-    : {
-        title: "Product Not Found",
-        description: "This product information is not available.",
-        detailedDescription: "",
-        images: []
+  // First, get the product category by slug
+  const { 
+    data: productCategory,
+    isLoading: loadingCategory,
+    error: categoryError 
+  } = useQuery({
+    queryKey: ['product_by_slug', slug],
+    queryFn: async () => {
+      if (!slug) return null;
+      
+      const { data, error } = await supabase
+        .from('product_categories')
+        .select('*')
+        .eq('category_slug', slug)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data as ProductCategoryData;
+    },
+    enabled: !!slug
+  });
+
+  // Then, get the product details and gallery once we have the category ID
+  const { 
+    data: productDetails, 
+    isLoading: loadingDetails
+  } = useQuery({
+    queryKey: ['product_details', productCategory?.id],
+    queryFn: async () => {
+      if (!productCategory?.id) return null;
+      
+      const { data: detailData, error: detailError } = await supabase
+        .from('product_category_details')
+        .select('*')
+        .eq('category_id', productCategory.id)
+        .maybeSingle();
+        
+      if (detailError) throw detailError;
+      
+      const { data: galleryData, error: galleryError } = await supabase
+        .from('product_gallery')
+        .select('*')
+        .eq('category_id', productCategory.id)
+        .order('position', { ascending: true });
+        
+      if (galleryError) throw galleryError;
+      
+      return {
+        details: detailData || {},
+        gallery: galleryData || []
       };
+    },
+    enabled: !!productCategory?.id
+  });
 
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-    document.body.style.overflow = 'hidden'; // Prevent scrolling when lightbox is open
-  };
+  const isLoading = loadingCategory || loadingDetails;
+  
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-  const closeLightbox = () => {
-    setLightboxOpen(false);
-    document.body.style.overflow = 'auto'; // Re-enable scrolling
-  };
+  if (categoryError || !productCategory) {
+    return (
+      <div className="container-custom py-16">
+        <h1 className="text-2xl font-bold mb-4 text-center">Product Not Found</h1>
+        <p className="text-center text-muted-foreground">
+          Sorry, we couldn't find the product you're looking for.
+        </p>
+      </div>
+    );
+  }
 
-  const navigateImage = (direction: 'next' | 'prev') => {
-    if (direction === 'next') {
-      setCurrentImageIndex((prev) => 
-        prev === product.images.length - 1 ? 0 : prev + 1
-      );
-    } else {
-      setCurrentImageIndex((prev) => 
-        prev === 0 ? product.images.length - 1 : prev - 1
-      );
-    }
-  };
-
+  const gallery = productDetails?.gallery || [];
+  const details = productDetails?.details || {};
+  
   return (
-    <>
-      <div className="section-padding">
-        <div className="container-custom">
-          <SectionTitle
-            title={product.title}
-            subtitle="Handcrafted with precision and passion"
-            centered
-          />
-          
-          <div className="mb-10">
-            <div className="prose max-w-none text-center">
-              <p className="text-lg mb-4 max-w-4xl mx-auto">{product.description}</p>
-              <p className="mb-6 max-w-4xl mx-auto">{product.detailedDescription}</p>
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-center">Product Gallery</h2>
-            {product.images.length === 0 ? (
-              <p className="text-muted-foreground text-center">No images available for this product.</p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {product.images.map((image, index) => (
-                  <Card key={index} className="cursor-pointer overflow-hidden" onClick={() => openLightbox(index)}>
-                    <figure className="relative">
-                      <div className="aspect-square overflow-hidden border-b border-border">
+    <div className="py-12">
+      <div className="container-custom">
+        <SectionTitle
+          title={productCategory.category_name || "Product Details"}
+          subtitle={productCategory.product_name || ""}
+          centered
+        />
+        
+        {/* Product Gallery */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+          <div>
+            {gallery.length > 0 ? (
+              <div className="space-y-4">
+                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                  <img 
+                    src={gallery[0]?.image_url || "/placeholder.svg"} 
+                    alt={gallery[0]?.alt_text || productCategory.category_name || "Product image"}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
+                {gallery.length > 1 && (
+                  <div className="grid grid-cols-4 gap-2">
+                    {gallery.slice(1).map((image, index) => (
+                      <div key={index} className="aspect-square bg-gray-100 rounded overflow-hidden">
                         <img 
-                          src={image.src} 
-                          alt={image.alt || image.caption} 
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          src={image.image_url || "/placeholder.svg"} 
+                          alt={image.alt_text || `${productCategory.category_name} image ${index + 2}`}
+                          className="w-full h-full object-cover"
                         />
                       </div>
-                      <figcaption className="p-3 text-sm text-center text-muted-foreground">
-                        {image.caption}
-                      </figcaption>
-                    </figure>
-                  </Card>
-                ))}
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                <p className="text-gray-500">No product images available</p>
               </div>
             )}
           </div>
           
-          <div className="text-center mt-10">
-            <Button asChild size="lg">
-              <a href="/contact">Request a Quote</a>
-            </Button>
+          {/* Product Description */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">{productCategory.product_name || productCategory.category_name}</h2>
+            
+            <div className="prose max-w-none">
+              {details.description || productCategory.description ? (
+                <div dangerouslySetInnerHTML={{ __html: details.description || productCategory.description || "" }} />
+              ) : (
+                <p>No description available for this product.</p>
+              )}
+            </div>
+            
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h3 className="text-lg font-medium mb-2">Product Details</h3>
+              <ul className="space-y-2">
+                <li><strong>Category:</strong> {productCategory.category_name}</li>
+                {productCategory.product_name && (
+                  <li><strong>Product Name:</strong> {productCategory.product_name}</li>
+                )}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Lightbox */}
-      {lightboxOpen && product.images.length > 0 && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
-          <button 
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white hover:text-gray-300"
-            aria-label="Close lightbox"
-          >
-            <X className="h-8 w-8" />
-          </button>
-          
-          <button
-            onClick={() => navigateImage('prev')}
-            className="absolute left-4 text-white hover:text-gray-300"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="h-12 w-12" />
-          </button>
-          
-          <div className="max-w-4xl max-h-[80vh] px-4">
-            <img 
-              src={product.images[currentImageIndex].src} 
-              alt={product.images[currentImageIndex].alt || product.images[currentImageIndex].caption} 
-              className="max-w-full max-h-[75vh] object-contain mx-auto"
-            />
-            <p className="text-center text-white mt-4">
-              {product.images[currentImageIndex].caption}
-            </p>
-          </div>
-          
-          <button
-            onClick={() => navigateImage('next')}
-            className="absolute right-4 text-white hover:text-gray-300"
-            aria-label="Next image"
-          >
-            <ChevronRight className="h-12 w-12" />
-          </button>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 
