@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useUpdateBlog } from "@/hooks/content";
+import { useUpdateBlog } from "@/hooks/content";  // Make sure this hook is implemented properly.
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
@@ -9,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { BlogData } from "@/hooks/content/types";
-import { BlogFormValues } from "./schemas/blogSchema";
-import { blogPostSchema } from "@/components/admin/PageSchemas";
+import { BlogFormValues } from "./schemas/blogSchema";  // Ensure this type exists and matches the form data
+import { blogPostSchema } from "@/components/admin/PageSchemas";  // Make sure this schema is correct
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 
@@ -24,8 +23,9 @@ interface BlogEditorProps {
 export default function BlogEditor({ blog, onComplete, onSave, isLoading = false }: BlogEditorProps) {
   const updateBlog = useUpdateBlog();
 
+  // Ensure useForm is configured properly
   const form = useForm<BlogFormValues>({
-    resolver: zodResolver(blogPostSchema),
+    resolver: zodResolver(blogPostSchema), // Check this schema and ensure it's correct
     defaultValues: {
       title: blog?.title || "",
       body_content: blog?.body_content || "",
@@ -42,7 +42,6 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
       return;
     }
     
-    // Ensure id is converted to string if it exists
     const blogToSubmit = {
       id: blog?.id,
       title: values.title,
@@ -58,13 +57,14 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
         if (onComplete) onComplete();
         if (onSave) onSave();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error(`Failed to save blog post: ${error.message}`);
         console.error("Blog post update error:", error);
       }
     });
   };
 
+  // Loading indicator
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -77,8 +77,11 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
     <div className="bg-white p-6 rounded-lg border">
       <h3 className="text-xl font-semibold mb-4">{blog?.id ? "Edit Blog Post" : "Add New Blog Post"}</h3>
       
+      {/* Form for creating/updating blog */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          
+          {/* Title Field */}
           <FormField
             control={form.control}
             name="title"
@@ -93,6 +96,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
             )}
           />
           
+          {/* Body Content Field */}
           <FormField
             control={form.control}
             name="body_content"
@@ -107,6 +111,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
             )}
           />
           
+          {/* Featured Image URL Field */}
           <FormField
             control={form.control}
             name="featured_image_url"
@@ -121,6 +126,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
             )}
           />
           
+          {/* Slug Field */}
           <FormField
             control={form.control}
             name="slug"
@@ -135,6 +141,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
             )}
           />
           
+          {/* Excerpt Field */}
           <FormField
             control={form.control}
             name="excerpt"
@@ -149,6 +156,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
             )}
           />
           
+          {/* Date Field */}
           <FormField
             control={form.control}
             name="date"
@@ -163,9 +171,10 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
             )}
           />
           
+          {/* Submit Button */}
           <Button 
             type="submit" 
-            disabled={updateBlog.isPending}
+            disabled={updateBlog.isPending} 
             className="mt-6"
           >
             {updateBlog.isPending ? (
