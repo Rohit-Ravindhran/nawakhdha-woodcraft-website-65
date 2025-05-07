@@ -187,8 +187,7 @@ export type AboutPageFormValues = z.infer<typeof aboutPageSchema>;
 export type ContactPageFormValues = z.infer<typeof contactPageSchema>;
 export type BasePageFormValues = z.infer<typeof basePageSchema>;
 
-
-// ✅ Schema specifically for blog post form (not homepage section)
+// Schema specifically for blog post form (not homepage section)
 export const blogPostSchema = z.object({
   id: z.number().optional(),
   title: z.string().min(1, "Title is required"),

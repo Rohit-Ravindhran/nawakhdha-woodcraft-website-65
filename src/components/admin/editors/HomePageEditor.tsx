@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { usePage, useUpdatePage, PageData } from "@/hooks/content";
+import { useUpdatePage, PageData } from "@/hooks/content";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,12 +18,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SeoFields from "@/components/admin/SeoFields";
-import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { homePageSchema, HomePageFormValues } from "@/components/admin/PageSchemas";
 import HeroSection from "@/components/admin/sections/HeroSection";
 import ServicesSection from "@/components/admin/sections/ServicesSection";
 import ProductsSection from "@/components/admin/sections/ProductsSection";
 import BlogSection from "@/components/admin/sections/BlogSection";
+import { BasicContentSection } from "@/components/admin/sections/BasicContentSection";
+import { SeoSection } from "@/components/admin/sections/SeoSection";
 
 interface HomePageEditorProps {
   page: PageData | null;
@@ -41,6 +42,18 @@ export default function HomePageEditor({ page, isLoading }: HomePageEditorProps)
     seo: false
   });
 
+  // Parse JSON fields if they are strings
+  const parseJsonField = (field: any) => {
+    if (typeof field === 'string') {
+      try {
+        return JSON.parse(field);
+      } catch (e) {
+        return {};
+      }
+    }
+    return field || {};
+  };
+
   // Initialize form with page data or default values
   const form = useForm<HomePageFormValues>({
     resolver: zodResolver(homePageSchema),
@@ -52,51 +65,10 @@ export default function HomePageEditor({ page, isLoading }: HomePageEditorProps)
       seo_keywords: page?.seo_keywords || "",
       seo_canonical_url: page?.seo_canonical_url || "",
       seo_image_alt: page?.seo_image_alt || "",
-      hero: page?.hero ? 
-        (typeof page.hero === 'string' ? JSON.parse(page.hero) : page.hero) : 
-        {
-          background_image: "",
-          background_image_alt: "",
-          headline: "",
-          subheadline: "",
-          button_text: "",
-          button_link: ""
-        },
-      services: page?.services ? 
-        (typeof page.services === 'string' ? JSON.parse(page.services) : page.services) : 
-        {
-          section_title: "Our Services",
-          items: Array(4).fill({
-            image: "", 
-            image_alt: "",
-            title: "", 
-            description: ""
-          })
-        },
-      products: page?.products ? 
-        (typeof page.products === 'string' ? JSON.parse(page.products) : page.products) : 
-        {
-          section_title: "Our Products",
-          items: Array(4).fill({
-            image: "", 
-            image_alt: "",
-            title: "", 
-            description: "",
-            link: ""
-          })
-        },
-      blog: page?.blog ? 
-        (typeof page.blog === 'string' ? JSON.parse(page.blog) : page.blog) : 
-        {
-          section_title: "From Our Workshop Blog",
-          items: Array(3).fill({
-            image: "", 
-            image_alt: "",
-            title: "", 
-            excerpt: "",
-            link: ""
-          })
-        }
+      hero: JSON.stringify(parseJsonField(page?.hero)),
+      services: JSON.stringify(parseJsonField(page?.services)),
+      products: JSON.stringify(parseJsonField(page?.products)),
+      blog: JSON.stringify(parseJsonField(page?.blog))
     },
   });
 
@@ -118,10 +90,10 @@ export default function HomePageEditor({ page, isLoading }: HomePageEditorProps)
       seo_keywords: values.seo_keywords || "",
       seo_canonical_url: values.seo_canonical_url || "",
       seo_image_alt: values.seo_image_alt || "",
-      hero: JSON.stringify(values.hero),
-      services: JSON.stringify(values.services),
-      products: JSON.stringify(values.products),
-      blog: JSON.stringify(values.blog)
+      hero: values.hero,
+      services: values.services,
+      products: values.products,
+      blog: values.blog
     };
     
     updatePage.mutate(updatedPage, {
@@ -149,48 +121,12 @@ export default function HomePageEditor({ page, isLoading }: HomePageEditorProps)
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Basic Page Info */}
-          <Collapsible open={openSections.content} onOpenChange={() => toggleSection('content')}>
-            <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
-              <span>Basic Page Information</span>
-              <Button variant="ghost" size="sm" type="button">
-                {openSections.content ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="pt-4 px-1">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Page Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel>Main Content</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        {...field} 
-                        rows={4}
-                        className="min-h-[100px]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CollapsibleContent>
-          </Collapsible>
-
+          <BasicContentSection 
+            control={form.control}
+            isOpen={openSections.content}
+            onToggle={() => toggleSection('content')}
+          />
+          
           {/* Hero Section */}
           <HeroSection 
             control={form.control}
@@ -228,17 +164,11 @@ export default function HomePageEditor({ page, isLoading }: HomePageEditorProps)
           />
           
           {/* SEO Settings */}
-          <Collapsible open={openSections.seo} onOpenChange={() => toggleSection('seo')}>
-            <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
-              <span>SEO Settings</span>
-              <Button variant="ghost" size="sm" type="button">
-                {openSections.seo ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="pt-4 px-1">
-              <SeoFields control={form.control} />
-            </CollapsibleContent>
-          </Collapsible>
+          <SeoSection
+            control={form.control}
+            isOpen={openSections.seo}
+            onToggle={() => toggleSection('seo')}
+          />
           
           <Button 
             type="submit" 

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -25,9 +25,57 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ control, isOpen, onToggle, watch, setValue }: HeroSectionProps) {
+  // Local state to handle the parsed hero data
+  const [heroData, setHeroData] = useState<{
+    background_image?: string;
+    background_image_alt?: string;
+    headline?: string;
+    subheadline?: string;
+    button_text?: string;
+    button_link?: string;
+  }>({});
+
+  // Parse the JSON string when the form value changes
+  useEffect(() => {
+    try {
+      const heroValue = watch("hero");
+      if (typeof heroValue === 'string' && heroValue) {
+        const parsed = JSON.parse(heroValue);
+        setHeroData(parsed);
+      }
+    } catch (error) {
+      console.error("Error parsing hero JSON:", error);
+    }
+  }, [watch("hero")]);
+
+  // Update the JSON string when a field changes
+  const updateHeroField = (field: string, value: string) => {
+    try {
+      const currentHero = watch("hero");
+      let heroObject = {};
+      
+      try {
+        if (typeof currentHero === 'string' && currentHero) {
+          heroObject = JSON.parse(currentHero);
+        }
+      } catch (e) {
+        console.error("Error parsing current hero:", e);
+      }
+      
+      const updatedHero = {
+        ...heroObject,
+        [field]: value
+      };
+      
+      setValue("hero", JSON.stringify(updatedHero));
+    } catch (error) {
+      console.error("Error updating hero field:", error);
+    }
+  };
+
   const handleHeroImageUploaded = (url: string, alt: string) => {
-    setValue('hero.background_image', url, { shouldValidate: true });
-    setValue('hero.background_image_alt', alt, { shouldValidate: true });
+    updateHeroField("background_image", url);
+    updateHeroField("background_image_alt", alt);
   };
 
   return (
@@ -44,67 +92,51 @@ export default function HeroSection({ control, isOpen, onToggle, watch, setValue
             onImageUploaded={handleHeroImageUploaded} 
             bucket="homepage"
             folder="hero"
-            initialImageUrl={watch('hero.background_image')}
-            initialAltText={watch('hero.background_image_alt')}
+            initialImageUrl={heroData.background_image || ""}
+            initialAltText={heroData.background_image_alt || ""}
           />
         </div>
         
-        <FormField
-          control={control}
-          name="hero.headline"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Headline</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={control}
-          name="hero.subheadline"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subheadline</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={3} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={control}
-            name="hero.button_text"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Button Text</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="space-y-4">
+          <div className="form-group">
+            <label htmlFor="headline" className="block text-gray-700 mb-1">Headline</label>
+            <Input 
+              id="headline"
+              value={heroData.headline || ""}
+              onChange={(e) => updateHeroField("headline", e.target.value)}
+            />
+          </div>
           
-          <FormField
-            control={control}
-            name="hero.button_link"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Button Link</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="/about" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="form-group">
+            <label htmlFor="subheadline" className="block text-gray-700 mb-1">Subheadline</label>
+            <Textarea 
+              id="subheadline"
+              rows={3}
+              value={heroData.subheadline || ""}
+              onChange={(e) => updateHeroField("subheadline", e.target.value)}
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label htmlFor="button_text" className="block text-gray-700 mb-1">Button Text</label>
+              <Input 
+                id="button_text"
+                value={heroData.button_text || ""}
+                onChange={(e) => updateHeroField("button_text", e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="button_link" className="block text-gray-700 mb-1">Button Link</label>
+              <Input 
+                id="button_link"
+                placeholder="/about"
+                value={heroData.button_link || ""}
+                onChange={(e) => updateHeroField("button_link", e.target.value)}
+              />
+            </div>
+          </div>
         </div>
       </CollapsibleContent>
     </Collapsible>

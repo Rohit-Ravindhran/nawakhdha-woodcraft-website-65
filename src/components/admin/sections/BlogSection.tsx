@@ -1,20 +1,26 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { HomePageFormValues } from "@/components/admin/PageSchemas";
+
+interface BlogItem {
+  image?: string;
+  image_alt?: string;
+  title?: string;
+  excerpt?: string;
+  link?: string;
+}
+
+interface BlogSectionData {
+  section_title?: string;
+  items?: BlogItem[];
+}
 
 interface BlogSectionProps {
   control: Control<HomePageFormValues>;
@@ -25,9 +31,93 @@ interface BlogSectionProps {
 }
 
 export default function BlogSection({ control, isOpen, onToggle, watch, setValue }: BlogSectionProps) {
+  const [blogData, setBlogData] = useState<BlogSectionData>({
+    section_title: "",
+    items: Array(3).fill({ image: "", image_alt: "", title: "", excerpt: "", link: "" })
+  });
+
+  // Parse the JSON string when the form value changes
+  useEffect(() => {
+    try {
+      const blogValue = watch("blog");
+      if (typeof blogValue === 'string' && blogValue) {
+        const parsed = JSON.parse(blogValue);
+        setBlogData(parsed);
+      }
+    } catch (error) {
+      console.error("Error parsing blog JSON:", error);
+    }
+  }, [watch("blog")]);
+
+  // Update the JSON string when a field changes
+  const updateBlogField = (field: string, value: any) => {
+    try {
+      const currentBlog = watch("blog");
+      let blogObject: BlogSectionData = {
+        section_title: "",
+        items: []
+      };
+      
+      try {
+        if (typeof currentBlog === 'string' && currentBlog) {
+          blogObject = JSON.parse(currentBlog);
+        }
+      } catch (e) {
+        console.error("Error parsing current blog:", e);
+      }
+      
+      const updatedBlog = {
+        ...blogObject,
+        [field]: value
+      };
+      
+      setValue("blog", JSON.stringify(updatedBlog));
+    } catch (error) {
+      console.error("Error updating blog field:", error);
+    }
+  };
+
+  const updateBlogItem = (index: number, field: string, value: string) => {
+    try {
+      const currentBlog = watch("blog");
+      let blogObject: BlogSectionData = {
+        section_title: "",
+        items: []
+      };
+      
+      try {
+        if (typeof currentBlog === 'string' && currentBlog) {
+          blogObject = JSON.parse(currentBlog);
+        }
+      } catch (e) {
+        console.error("Error parsing current blog:", e);
+      }
+      
+      // Ensure items array exists
+      if (!blogObject.items) {
+        blogObject.items = Array(3).fill({});
+      }
+      
+      // Ensure the item at this index exists
+      if (!blogObject.items[index]) {
+        blogObject.items[index] = {};
+      }
+      
+      // Update the field
+      blogObject.items[index] = {
+        ...blogObject.items[index],
+        [field]: value
+      };
+      
+      setValue("blog", JSON.stringify(blogObject));
+    } catch (error) {
+      console.error("Error updating blog item:", error);
+    }
+  };
+
   const handleBlogImageUploaded = (index: number, url: string, alt: string) => {
-    setValue(`blog.items.${index}.image`, url, { shouldValidate: true });
-    setValue(`blog.items.${index}.image_alt`, alt, { shouldValidate: true });
+    updateBlogItem(index, "image", url);
+    updateBlogItem(index, "image_alt", alt);
   };
 
   return (
@@ -39,19 +129,14 @@ export default function BlogSection({ control, isOpen, onToggle, watch, setValue
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="pt-4 px-1 space-y-6">
-        <FormField
-          control={control}
-          name="blog.section_title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Section Title</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="form-group">
+          <label htmlFor="blog_section_title" className="block text-gray-700 mb-1">Section Title</label>
+          <Input 
+            id="blog_section_title"
+            value={blogData.section_title || ""}
+            onChange={(e) => updateBlogField("section_title", e.target.value)}
+          />
+        </div>
         
         <div className="space-y-8">
           <h4 className="font-medium text-sm text-muted-foreground">Blog Post Cards</h4>
@@ -65,53 +150,37 @@ export default function BlogSection({ control, isOpen, onToggle, watch, setValue
                   onImageUploaded={(url, alt) => handleBlogImageUploaded(index, url, alt)}
                   bucket="homepage"
                   folder="blog"
-                  initialImageUrl={watch(`blog.items.${index}.image`)}
-                  initialAltText={watch(`blog.items.${index}.image_alt`)}
+                  initialImageUrl={blogData.items?.[index]?.image || ""}
+                  initialAltText={blogData.items?.[index]?.image_alt || ""}
                   imagePreviewHeight="24"
                 />
               </div>
               
-              <FormField
-                control={control}
-                name={`blog.items.${index}.title`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Blog Post Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="form-group mt-3">
+                <label className="block text-gray-700 mb-1">Blog Post Title</label>
+                <Input 
+                  value={blogData.items?.[index]?.title || ""}
+                  onChange={(e) => updateBlogItem(index, "title", e.target.value)}
+                />
+              </div>
               
-              <FormField
-                control={control}
-                name={`blog.items.${index}.excerpt`}
-                render={({ field }) => (
-                  <FormItem className="mt-3">
-                    <FormLabel>Blog Excerpt</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} rows={2} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="form-group mt-3">
+                <label className="block text-gray-700 mb-1">Blog Excerpt</label>
+                <Textarea 
+                  rows={2}
+                  value={blogData.items?.[index]?.excerpt || ""}
+                  onChange={(e) => updateBlogItem(index, "excerpt", e.target.value)}
+                />
+              </div>
               
-              <FormField
-                control={control}
-                name={`blog.items.${index}.link`}
-                render={({ field }) => (
-                  <FormItem className="mt-3">
-                    <FormLabel>Blog Post Link</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="/blog/post-slug" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="form-group mt-3">
+                <label className="block text-gray-700 mb-1">Blog Post Link</label>
+                <Input 
+                  placeholder="/blog/post-slug"
+                  value={blogData.items?.[index]?.link || ""}
+                  onChange={(e) => updateBlogItem(index, "link", e.target.value)}
+                />
+              </div>
             </div>
           ))}
         </div>
