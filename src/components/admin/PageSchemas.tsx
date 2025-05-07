@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 // Hero section schema for the home page
@@ -34,7 +33,7 @@ export const productsSchema = z.object({
   })).optional()
 });
 
-// Blog section schema
+// Blog section schema (for homepage)
 export const blogSchema = z.object({
   section_title: z.string().optional(),
   items: z.array(z.object({
@@ -186,3 +185,21 @@ export type HomePageFormValues = z.infer<typeof homePageSchema>;
 export type AboutPageFormValues = z.infer<typeof aboutPageSchema>;
 export type ContactPageFormValues = z.infer<typeof contactPageSchema>;
 export type BasePageFormValues = z.infer<typeof basePageSchema>;
+
+
+// ✅ New: Schema specifically for blog post form (not homepage section)
+export const blogPostSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "Title is required"),
+  body_content: z.string().min(1, "Content is required"),
+  featured_image_url: z.string().optional(),
+  featured_image_alt: z.string().optional(),
+  slug: z.string().min(1, "Slug is required"),
+  date: z.string().min(1, "Date is required"),
+  excerpt: z.string().optional(),
+  seo_title: z.string().optional(),
+  seo_description: z.string().optional(),
+  seo_keywords: z.string().optional(),
+});
+
+export type BlogPostFormValues = z.infer<typeof blogPostSchema>;
