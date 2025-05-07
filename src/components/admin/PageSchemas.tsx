@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 // Hero section schema for the home page
@@ -17,7 +16,7 @@ export const servicesSchema = z.object({
   items: z.array(z.object({
     image: z.string().optional(),
     image_alt: z.string().optional(),
-    title: z.string().optional(), 
+    title: z.string().optional(),
     description: z.string().optional()
   })).optional()
 });
@@ -46,6 +45,21 @@ export const blogSchema = z.object({
   })).optional()
 });
 
+// ✅ New: Blog Cards Tab schema for homepage
+export const homeBlogCardsTabSchema = z.object({
+  section_title: z.string().optional(),
+  tabs: z.array(z.object({
+    tab_label: z.string().optional(),
+    items: z.array(z.object({
+      image: z.string().optional(),
+      image_alt: z.string().optional(),
+      title: z.string().optional(),
+      excerpt: z.string().optional(),
+      link: z.string().optional(),
+    })).optional()
+  })).optional()
+});
+
 // Base page schema with common fields
 export const basePageSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -63,6 +77,7 @@ export const homePageSchema = basePageSchema.extend({
   services: servicesSchema.optional(),
   products: productsSchema.optional(),
   blog: blogSchema.optional(),
+  home_blog_cards_tab: homeBlogCardsTabSchema.optional(), // ✅ Add new section here
 });
 
 // About page schema with team members section
@@ -112,7 +127,7 @@ export function getDefaultValues(pageName: string) {
     seo_canonical_url: "",
     seo_image_alt: "",
   };
-  
+
   switch (pageName) {
     case "home":
       return {
@@ -128,18 +143,18 @@ export function getDefaultValues(pageName: string) {
         services: {
           section_title: "Our Services",
           items: Array(4).fill({
-            image: "", 
+            image: "",
             image_alt: "",
-            title: "", 
+            title: "",
             description: ""
           })
         },
         products: {
           section_title: "Our Products",
           items: Array(4).fill({
-            image: "", 
+            image: "",
             image_alt: "",
-            title: "", 
+            title: "",
             description: "",
             link: ""
           })
@@ -147,12 +162,27 @@ export function getDefaultValues(pageName: string) {
         blog: {
           section_title: "From Our Workshop Blog",
           items: Array(3).fill({
-            image: "", 
+            image: "",
             image_alt: "",
-            title: "", 
+            title: "",
             excerpt: "",
             link: ""
           })
+        },
+        home_blog_cards_tab: {
+          section_title: "Featured Blog Tabs",
+          tabs: [
+            {
+              tab_label: "Tab 1",
+              items: Array(3).fill({
+                image: "",
+                image_alt: "",
+                title: "",
+                excerpt: "",
+                link: ""
+              })
+            }
+          ]
         }
       };
     case "about":
