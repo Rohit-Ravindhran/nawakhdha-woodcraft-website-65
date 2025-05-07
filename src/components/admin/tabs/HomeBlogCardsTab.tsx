@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,9 +36,10 @@ type HomeBlogCardFormValues = z.infer<typeof homeBlogCardSchema>;
 export default function HomeBlogCardsTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentBlogCard, setCurrentBlogCard] = useState<HomeBlogCardData | null>(null);
-  
+  const [searchTerm, setSearchTerm] = useState("");
+
   const queryClient = useQueryClient();
-  
+
   const { data: blogCards, isLoading } = useQuery({
     queryKey: ['home_blog_cards'],
     queryFn: async () => {
@@ -47,12 +47,12 @@ export default function HomeBlogCardsTab() {
         .from('home_blog_cards')
         .select('*')
         .order('id');
-        
+
       if (error) throw error;
       return data as HomeBlogCardData[];
     },
   });
-  
+
   const form = useForm<HomeBlogCardFormValues>({
     resolver: zodResolver(homeBlogCardSchema),
     defaultValues: {
@@ -63,7 +63,13 @@ export default function HomeBlogCardsTab() {
       slug: "",
     },
   });
-  
+
+  const slugify = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+
   const handleEdit = (blogCard: HomeBlogCardData) => {
     setCurrentBlogCard(blogCard);
     form.reset({
@@ -76,7 +82,7 @@ export default function HomeBlogCardsTab() {
     });
     setIsDialogOpen(true);
   };
-  
+
   const handleAdd = () => {
     setCurrentBlogCard(null);
     form.reset({
@@ -88,9 +94,11 @@ export default function HomeBlogCardsTab() {
     });
     setIsDialogOpen(true);
   };
-  
+
   const onSubmit = async (values: HomeBlogCardFormValues) => {
     try {
+      const finalSlug = values.slug?.trim() || slugify(values.title);
+
       if (values.id) {
         // Update existing
         const { error } = await supabase
@@ -100,10 +108,10 @@ export default function HomeBlogCardsTab() {
             description: values.description,
             image_url: values.image_url,
             alt_text: values.alt_text,
-            slug: values.slug,
+            slug: finalSlug,
           })
           .eq('id', values.id);
-          
+
         if (error) throw error;
         toast.success("Blog card updated successfully");
       } else {
@@ -115,13 +123,13 @@ export default function HomeBlogCardsTab() {
             description: values.description,
             image_url: values.image_url,
             alt_text: values.alt_text,
-            slug: values.slug,
+            slug: finalSlug,
           });
-          
+
         if (error) throw error;
         toast.success("Blog card added successfully");
       }
-      
+
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['home_blog_cards'] });
       setIsDialogOpen(false);
@@ -129,27 +137,34 @@ export default function HomeBlogCardsTab() {
       toast.error(`Error saving blog card: ${error.message}`);
     }
   };
-  
+
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this item?")) {
+      const previousData = queryClient.getQueryData<HomeBlogCardData[]>(['home_blog_cards']);
+      queryClient.setQueryData(['home_blog_cards'], old => old?.filter(card => card.id !== id));
+
       try {
         const { error } = await supabase
           .from('home_blog_cards')
           .delete()
           .eq('id', id);
-          
+
         if (error) throw error;
-        
+
         toast.success("Blog card deleted successfully");
-        queryClient.invalidateQueries({ queryKey: ['home_blog_cards'] });
       } catch (error: any) {
         toast.error(`Error deleting blog card: ${error.message}`);
+        queryClient.setQueryData(['home_blog_cards'], previousData); // Rollback
       }
     }
   };
-  
+
   if (isLoading) return <div>Loading...</div>;
-  
+
+  const filteredBlogCards = blogCards?.filter((card) =>
+    card.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -159,7 +174,14 @@ export default function HomeBlogCardsTab() {
           Add New
         </Button>
       </div>
-      
+
+      <Input
+        placeholder="Search blog cards"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-4 w-full max-w-xs"
+      />
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -171,15 +193,15 @@ export default function HomeBlogCardsTab() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {blogCards && blogCards.length > 0 ? (
-            blogCards.map((card) => (
+          {filteredBlogCards && filteredBlogCards.length > 0 ? (
+            filteredBlogCards.map((card) => (
               <TableRow key={card.id}>
                 <TableCell>
                   <div className="w-16 h-16 relative bg-gray-200 rounded overflow-hidden">
                     {card.image_url ? (
-                      <img 
-                        src={card.image_url} 
-                        alt={card.alt_text || 'Blog image'} 
+                      <img
+                        src={card.image_url}
+                        alt={card.alt_text || 'Blog image'}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.src = "/placeholder.svg";
@@ -194,25 +216,15 @@ export default function HomeBlogCardsTab() {
                 </TableCell>
                 <TableCell>{card.title || 'N/A'}</TableCell>
                 <TableCell>
-                  <div className="max-w-xs truncate">
-                    {card.description || 'N/A'}
-                  </div>
+                  <div className="max-w-xs truncate">{card.description || 'N/A'}</div>
                 </TableCell>
                 <TableCell>{card.slug || 'N/A'}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleEdit(card)}
-                    >
+                    <Button variant="outline" size="icon" onClick={() => handleEdit(card)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleDelete(card.id!)}
-                    >
+                    <Button variant="outline" size="icon" onClick={() => handleDelete(card.id!)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -228,15 +240,13 @@ export default function HomeBlogCardsTab() {
           )}
         </TableBody>
       </Table>
-      
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              {currentBlogCard ? "Edit Blog Card" : "Add New Blog Card"}
-            </DialogTitle>
+            <DialogTitle>{currentBlogCard ? "Edit Blog Card" : "Add New Blog Card"}</DialogTitle>
           </DialogHeader>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -252,7 +262,7 @@ export default function HomeBlogCardsTab() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="description"
@@ -266,7 +276,7 @@ export default function HomeBlogCardsTab() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="slug"
@@ -280,7 +290,7 @@ export default function HomeBlogCardsTab() {
                   </FormItem>
                 )}
               />
-              
+
               <ImageUploadField
                 control={form.control}
                 name="image_url"
@@ -289,18 +299,14 @@ export default function HomeBlogCardsTab() {
                 bucket="content"
                 folder="home_blogs"
               />
-              
+
               <div className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="flex items-center">
+                <Button type="submit" className="flex items-center" disabled={form.formState.isSubmitting}>
                   <Save className="mr-2 h-4 w-4" />
-                  Save
+                  {form.formState.isSubmitting ? "Saving..." : "Save"}
                 </Button>
               </div>
             </form>
