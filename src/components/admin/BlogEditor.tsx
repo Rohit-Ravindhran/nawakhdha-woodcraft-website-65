@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { BlogData } from "@/hooks/content/types";
 import { blogSchema, BlogFormValues } from "./schemas/blogSchema";
+import { blogPostSchema } from "@/components/admin/PageSchemas";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 
@@ -23,7 +24,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
   const updateBlog = useUpdateBlog();
 
   const form = useForm<BlogFormValues>({
-    resolver: zodResolver(blogSchema),
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       title: blog?.title || "",
       body_content: blog?.body_content || "",
