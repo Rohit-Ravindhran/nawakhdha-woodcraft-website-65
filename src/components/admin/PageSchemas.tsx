@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 // Hero section schema for the home page
@@ -187,7 +188,7 @@ export type ContactPageFormValues = z.infer<typeof contactPageSchema>;
 export type BasePageFormValues = z.infer<typeof basePageSchema>;
 
 
-// ✅ New: Schema specifically for blog post form (not homepage section)
+// ✅ Schema specifically for blog post form (not homepage section)
 export const blogPostSchema = z.object({
   id: z.number().optional(),
   title: z.string().min(1, "Title is required"),

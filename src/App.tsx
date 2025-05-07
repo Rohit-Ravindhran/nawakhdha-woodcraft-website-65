@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -10,11 +11,11 @@ import ProductsPage from "@/pages/ProductsPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPostPage from "@/pages/BlogPostPage";
 import ContactPage from "@/pages/ContactPage";
-import NotFound from "@/pages/NotFoundPage";
+import NotFound from "@/pages/NotFound";
 
 // Import admin pages
-import AdminPage from "@/pages/admin/AdminPage";
-import AdminLogin from "@/pages/admin/AdminLogin";
+import AdminPage from "@/pages/AdminPage";
+import AdminLogin from "@/pages/AdminLogin";
 
 // Import components
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
