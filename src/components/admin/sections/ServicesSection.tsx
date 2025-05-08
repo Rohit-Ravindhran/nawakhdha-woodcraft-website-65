@@ -25,10 +25,47 @@ interface ServicesSectionProps {
 }
 
 export default function ServicesSection({ control, isOpen, onToggle, watch, setValue }: ServicesSectionProps) {
-  const handleServiceImageUploaded = (index: number, url: string, alt: string) => {
-    setValue(`services.items.${index}.image`, url, { shouldValidate: true });
-    setValue(`services.items.${index}.image_alt`, alt, { shouldValidate: true });
+  // Parse the services JSON if it's a string
+  const getServicesData = () => {
+    try {
+      const servicesStr = watch("services");
+      if (typeof servicesStr === 'string' && servicesStr) {
+        return JSON.parse(servicesStr);
+      }
+      return { section_title: "", items: [{}, {}, {}, {}] };
+    } catch (e) {
+      return { section_title: "", items: [{}, {}, {}, {}] };
+    }
   };
+
+  const handleServiceImageUploaded = (index: number, url: string, alt: string) => {
+    const servicesData = getServicesData();
+    servicesData.items = servicesData.items || [];
+    if (!servicesData.items[index]) {
+      servicesData.items[index] = {};
+    }
+    servicesData.items[index].image = url;
+    servicesData.items[index].image_alt = alt;
+    setValue("services", JSON.stringify(servicesData), { shouldValidate: true });
+  };
+
+  const handleInputChange = (field: string, value: string, index?: number) => {
+    const servicesData = getServicesData();
+    
+    if (index !== undefined) {
+      servicesData.items = servicesData.items || [];
+      if (!servicesData.items[index]) {
+        servicesData.items[index] = {};
+      }
+      servicesData.items[index][field] = value;
+    } else {
+      servicesData[field] = value;
+    }
+    
+    setValue("services", JSON.stringify(servicesData), { shouldValidate: true });
+  };
+
+  const servicesData = getServicesData();
 
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
@@ -39,67 +76,63 @@ export default function ServicesSection({ control, isOpen, onToggle, watch, setV
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="pt-4 px-1 space-y-6">
-        <FormField
-          control={control}
-          name="services.section_title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Section Title</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Section Title</FormLabel>
+          <FormControl>
+            <Input 
+              value={servicesData.section_title || ""} 
+              onChange={(e) => handleInputChange("section_title", e.target.value)}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
         
         <div className="space-y-8">
           <h4 className="font-medium text-sm text-muted-foreground">Service Cards</h4>
           
-          {[0, 1, 2, 3].map((index) => (
-            <div key={`service-${index}`} className="border p-4 rounded-md">
-              <h5 className="font-medium mb-3">Service Card {index + 1}</h5>
-              
-              <div className="mb-4">
-                <EnhancedImageUploader
-                  onImageUploaded={(url, alt) => handleServiceImageUploaded(index, url, alt)}
-                  bucket="homepage"
-                  folder="services"
-                  initialImageUrl={watch(`services.items.${index}.image`)}
-                  initialAltText={watch(`services.items.${index}.image_alt`)}
-                  imagePreviewHeight="24"
-                />
+          {[0, 1, 2, 3].map((index) => {
+            const item = servicesData.items?.[index] || {};
+            
+            return (
+              <div key={`service-${index}`} className="border p-4 rounded-md">
+                <h5 className="font-medium mb-3">Service Card {index + 1}</h5>
+                
+                <div className="mb-4">
+                  <EnhancedImageUploader
+                    onImageUploaded={(url, alt) => handleServiceImageUploaded(index, url, alt)}
+                    bucket="homepage"
+                    folder="services"
+                    initialImageUrl={item.image || ""}
+                    initialAltText={item.image_alt || ""}
+                    imagePreviewHeight="24"
+                  />
+                </div>
+                
+                <FormItem>
+                  <FormLabel>Service Title</FormLabel>
+                  <FormControl>
+                    <Input 
+                      value={item.title || ""} 
+                      onChange={(e) => handleInputChange("title", e.target.value, index)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+                
+                <FormItem className="mt-3">
+                  <FormLabel>Service Description</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      value={item.description || ""} 
+                      onChange={(e) => handleInputChange("description", e.target.value, index)}
+                      rows={2}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               </div>
-              
-              <FormField
-                control={control}
-                name={`services.items.${index}.title`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Service Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={control}
-                name={`services.items.${index}.description`}
-                render={({ field }) => (
-                  <FormItem className="mt-3">
-                    <FormLabel>Service Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} rows={2} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CollapsibleContent>
     </Collapsible>

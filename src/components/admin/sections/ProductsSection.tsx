@@ -25,10 +25,47 @@ interface ProductsSectionProps {
 }
 
 export default function ProductsSection({ control, isOpen, onToggle, watch, setValue }: ProductsSectionProps) {
-  const handleProductImageUploaded = (index: number, url: string, alt: string) => {
-    setValue(`products.items.${index}.image`, url, { shouldValidate: true });
-    setValue(`products.items.${index}.image_alt`, alt, { shouldValidate: true });
+  // Parse the products JSON if it's a string
+  const getProductsData = () => {
+    try {
+      const productsStr = watch("products");
+      if (typeof productsStr === 'string' && productsStr) {
+        return JSON.parse(productsStr);
+      }
+      return { section_title: "", items: [{}, {}, {}, {}] };
+    } catch (e) {
+      return { section_title: "", items: [{}, {}, {}, {}] };
+    }
   };
+
+  const handleProductImageUploaded = (index: number, url: string, alt: string) => {
+    const productsData = getProductsData();
+    productsData.items = productsData.items || [];
+    if (!productsData.items[index]) {
+      productsData.items[index] = {};
+    }
+    productsData.items[index].image = url;
+    productsData.items[index].image_alt = alt;
+    setValue("products", JSON.stringify(productsData), { shouldValidate: true });
+  };
+
+  const handleInputChange = (field: string, value: string, index?: number) => {
+    const productsData = getProductsData();
+    
+    if (index !== undefined) {
+      productsData.items = productsData.items || [];
+      if (!productsData.items[index]) {
+        productsData.items[index] = {};
+      }
+      productsData.items[index][field] = value;
+    } else {
+      productsData[field] = value;
+    }
+    
+    setValue("products", JSON.stringify(productsData), { shouldValidate: true });
+  };
+
+  const productsData = getProductsData();
 
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
@@ -39,81 +76,75 @@ export default function ProductsSection({ control, isOpen, onToggle, watch, setV
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="pt-4 px-1 space-y-6">
-        <FormField
-          control={control}
-          name="products.section_title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Section Title</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Section Title</FormLabel>
+          <FormControl>
+            <Input 
+              value={productsData.section_title || ""} 
+              onChange={(e) => handleInputChange("section_title", e.target.value)}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
         
         <div className="space-y-8">
           <h4 className="font-medium text-sm text-muted-foreground">Product Cards</h4>
           
-          {[0, 1, 2, 3].map((index) => (
-            <div key={`product-${index}`} className="border p-4 rounded-md">
-              <h5 className="font-medium mb-3">Product Card {index + 1}</h5>
-              
-              <div className="mb-4">
-                <EnhancedImageUploader
-                  onImageUploaded={(url, alt) => handleProductImageUploaded(index, url, alt)}
-                  bucket="homepage"
-                  folder="products"
-                  initialImageUrl={watch(`products.items.${index}.image`)}
-                  initialAltText={watch(`products.items.${index}.image_alt`)}
-                  imagePreviewHeight="24"
-                />
+          {[0, 1, 2, 3].map((index) => {
+            const item = productsData.items?.[index] || {};
+            
+            return (
+              <div key={`product-${index}`} className="border p-4 rounded-md">
+                <h5 className="font-medium mb-3">Product Card {index + 1}</h5>
+                
+                <div className="mb-4">
+                  <EnhancedImageUploader
+                    onImageUploaded={(url, alt) => handleProductImageUploaded(index, url, alt)}
+                    bucket="homepage"
+                    folder="products"
+                    initialImageUrl={item.image || ""}
+                    initialAltText={item.image_alt || ""}
+                    imagePreviewHeight="24"
+                  />
+                </div>
+                
+                <FormItem>
+                  <FormLabel>Product Title</FormLabel>
+                  <FormControl>
+                    <Input 
+                      value={item.title || ""} 
+                      onChange={(e) => handleInputChange("title", e.target.value, index)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+                
+                <FormItem className="mt-3">
+                  <FormLabel>Product Description</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      value={item.description || ""} 
+                      onChange={(e) => handleInputChange("description", e.target.value, index)}
+                      rows={2}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+                
+                <FormItem className="mt-3">
+                  <FormLabel>Product Link</FormLabel>
+                  <FormControl>
+                    <Input 
+                      value={item.link || ""} 
+                      onChange={(e) => handleInputChange("link", e.target.value, index)}
+                      placeholder="/products/product-slug" 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               </div>
-              
-              <FormField
-                control={control}
-                name={`products.items.${index}.title`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={control}
-                name={`products.items.${index}.description`}
-                render={({ field }) => (
-                  <FormItem className="mt-3">
-                    <FormLabel>Product Description</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} rows={2} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={control}
-                name={`products.items.${index}.link`}
-                render={({ field }) => (
-                  <FormItem className="mt-3">
-                    <FormLabel>Product Link</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="/products/product-slug" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CollapsibleContent>
     </Collapsible>

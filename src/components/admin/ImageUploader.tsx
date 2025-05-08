@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ interface ImageUploaderProps {
   bucket: string;
   folder?: string;
   accept?: string;
+  className?: string;
 }
 
 export default function ImageUploader({
@@ -17,6 +19,7 @@ export default function ImageUploader({
   bucket,
   folder = "",
   accept = "image/*",
+  className = "",
 }: ImageUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const { uploadImage, uploading } = useStorage();
@@ -38,7 +41,7 @@ export default function ImageUploader({
   };
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${className}`}>
       <div>
         <Label htmlFor="image" className="block text-sm font-medium mb-1">
           Select Image

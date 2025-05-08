@@ -45,7 +45,7 @@ export const blogSchema = z.object({
   })).optional()
 });
 
-// ✅ New: Blog Cards Tab schema for homepage
+// Blog Cards Tab schema for homepage
 export const homeBlogCardsTabSchema = z.object({
   section_title: z.string().optional(),
   tabs: z.array(z.object({
@@ -73,11 +73,11 @@ export const basePageSchema = z.object({
 
 // Define homepage-specific schema
 export const homePageSchema = basePageSchema.extend({
-  hero: heroSchema.optional(),
-  services: servicesSchema.optional(),
-  products: productsSchema.optional(),
-  blog: blogSchema.optional(),
-  home_blog_cards_tab: homeBlogCardsTabSchema.optional(), // ✅ Add new section here
+  hero: z.string().optional(),
+  services: z.string().optional(),
+  products: z.string().optional(),
+  blog: z.string().optional(),
+  home_blog_cards_tab: z.string().optional(),
 });
 
 // About page schema with team members section
@@ -100,6 +100,21 @@ export const contactPageSchema = basePageSchema.extend({
     hours: z.string().optional(),
     map_embed: z.string().optional(),
   }).optional(),
+});
+
+// Schema specifically for blog post form
+export const blogPostSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, "Title is required"),
+  body_content: z.string().min(1, "Content is required"),
+  featured_image_url: z.string().optional(),
+  featured_image_alt: z.string().optional(),
+  slug: z.string().min(1, "Slug is required"),
+  date: z.string().min(1, "Date is required"),
+  excerpt: z.string().optional(),
+  seo_title: z.string().optional(),
+  seo_description: z.string().optional(),
+  seo_keywords: z.string().optional(),
 });
 
 // Get the appropriate schema based on page name
@@ -216,20 +231,4 @@ export type HomePageFormValues = z.infer<typeof homePageSchema>;
 export type AboutPageFormValues = z.infer<typeof aboutPageSchema>;
 export type ContactPageFormValues = z.infer<typeof contactPageSchema>;
 export type BasePageFormValues = z.infer<typeof basePageSchema>;
-
-// Schema specifically for blog post form (not homepage section)
-export const blogPostSchema = z.object({
-  id: z.number().optional(),
-  title: z.string().min(1, "Title is required"),
-  body_content: z.string().min(1, "Content is required"),
-  featured_image_url: z.string().optional(),
-  featured_image_alt: z.string().optional(),
-  slug: z.string().min(1, "Slug is required"),
-  date: z.string().min(1, "Date is required"),
-  excerpt: z.string().optional(),
-  seo_title: z.string().optional(),
-  seo_description: z.string().optional(),
-  seo_keywords: z.string().optional(),
-});
-
 export type BlogPostFormValues = z.infer<typeof blogPostSchema>;
