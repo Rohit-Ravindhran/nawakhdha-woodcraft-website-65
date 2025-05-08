@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Control, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -23,9 +22,6 @@ export default function ImageUploadField({
   bucket = "content",
   folder = "",
 }: ImageUploadFieldProps) {
-  // Convert bucket name from underscore to hyphen format if needed
-  const formattedBucket = bucket.replace(/_/g, '-');
-  
   return (
     <div className="space-y-4">
       <Controller
@@ -36,7 +32,7 @@ export default function ImageUploadField({
             <FormLabel>{label}</FormLabel>
             <FormControl>
               <div className="space-y-2">
-                {field.value && (
+                {field.value ? (
                   <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden mb-2">
                     <img
                       src={field.value}
@@ -47,24 +43,22 @@ export default function ImageUploadField({
                       }}
                     />
                   </div>
-                )}
-                
-                {!field.value && (
+                ) : (
                   <div className="flex items-center justify-center w-full h-40 bg-gray-100 rounded mb-2">
                     <Image className="w-8 h-8 text-gray-400" />
                   </div>
                 )}
-                
+
                 <Input 
                   type="text" 
                   placeholder="Image URL" 
                   value={field.value || ''} 
                   onChange={field.onChange}
                 />
-                
+
                 <ImageUploader 
                   onImageUploaded={field.onChange}
-                  bucket={formattedBucket}
+                  bucket={bucket}
                   folder={folder}
                 />
               </div>
@@ -73,7 +67,7 @@ export default function ImageUploadField({
           </FormItem>
         )}
       />
-      
+
       {altTextName && (
         <Controller
           control={control}
