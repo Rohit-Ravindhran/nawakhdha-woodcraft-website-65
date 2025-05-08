@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,13 +16,10 @@ export default function ImageUploader({
   onImageUploaded,
   bucket,
   folder = "",
-  accept = "image/*"
+  accept = "image/*",
 }: ImageUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const { uploadImage, uploading } = useStorage();
-
-  // Convert bucket name from underscore to hyphen format if needed
-  const formattedBucket = bucket.replace(/_/g, '-');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -33,8 +29,8 @@ export default function ImageUploader({
 
   const handleUpload = async () => {
     if (!file) return;
-    
-    const url = await uploadImage(file, formattedBucket, folder);
+
+    const url = await uploadImage(file, bucket, folder);
     if (url) {
       onImageUploaded(url);
       setFile(null);
@@ -55,17 +51,13 @@ export default function ImageUploader({
           className="cursor-pointer"
         />
       </div>
-      
+
       {file && (
         <div className="mt-2 flex flex-col space-y-2">
           <p className="text-sm text-muted-foreground truncate">
             Selected: {file.name}
           </p>
-          <Button 
-            onClick={handleUpload} 
-            disabled={uploading}
-            type="button"
-          >
+          <Button onClick={handleUpload} disabled={uploading} type="button">
             {uploading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
