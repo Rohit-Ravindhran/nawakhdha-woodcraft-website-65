@@ -296,7 +296,7 @@ export default function HomeBlogCardsTab() {
                 name="image_url"
                 label="Image"
                 altTextName="alt_text"
-                bucket="content"
+                bucket="home-blog-cards"
                 folder="home_blogs"
               />
 
