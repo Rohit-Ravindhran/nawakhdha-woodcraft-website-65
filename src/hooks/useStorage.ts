@@ -97,7 +97,7 @@ export function useStorage() {
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
       // Convert bucket name from underscore to hyphen format
-      const formattedBucket = bucket.replace(/_/g, '-');
+      const formattedBucket = bucket;
 
       const { error: uploadError } = await supabase.storage
         .from(formattedBucket)
@@ -126,7 +126,7 @@ export function useStorage() {
   const deleteImage = async (url: string, bucket: string): Promise<boolean> => {
     try {
       // Convert bucket name from underscore to hyphen format
-      const formattedBucket = bucket.replace(/_/g, '-');
+      const formattedBucket = bucket;
       
       // Extract the file path from the URL
       const urlParts = url.split(`${formattedBucket}/`);
@@ -154,7 +154,7 @@ export function useStorage() {
   const getImageMetadata = async (url: string, bucket: string): Promise<any | null> => {
     try {
       // Convert bucket name from underscore to hyphen format
-      const formattedBucket = bucket.replace(/_/g, '-');
+      const formattedBucket = bucket;
       
       // Extract the file path from the URL
       const urlParts = url.split(`${formattedBucket}/`);
