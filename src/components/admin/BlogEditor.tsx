@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { BlogData } from "@/hooks/content/types";
 import { BlogFormValues } from "./schemas/blogSchema";  // Ensure this type exists and matches the form data
-import { blogPostSchema } from "@/components/admin/PageSchemas";  // Make sure this schema is correct
+import { blogSchema } from "@/components/admin/schemas/blogSchema";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 
