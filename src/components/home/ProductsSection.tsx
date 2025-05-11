@@ -5,7 +5,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
-import { useHomeProducts } from "@/hooks/content";
+import { useHomeProducts, useHomeProductsWithItems } from "@/hooks/content";
 
 interface Product {
   id?: string;
@@ -15,6 +15,7 @@ interface Product {
   link?: string;
   description?: string;
   slug?: string;
+  category_slug?: string;
 }
 
 interface ProductsSectionProps {
@@ -29,8 +30,12 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
   productsData, 
   defaultProducts = [] 
 }) => {
-  const { data: homeProducts, isLoading } = useHomeProducts();
-
+  // Fetch both regular home products and the ones with related items
+  const { data: homeProducts, isLoading: isLoadingBasic } = useHomeProducts();
+  const { data: homeProductsWithItems, isLoading: isLoadingWithItems } = useHomeProductsWithItems();
+  
+  const isLoading = isLoadingBasic || isLoadingWithItems;
+  
   // Map home products from database to the format expected by this component
   const mappedHomeProducts = homeProducts?.map(product => ({
     id: product.id,
@@ -65,11 +70,16 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product, index) => {
-            // Use slug if available, then link, then ID
+            // Use the appropriate routing approach based on available data
+            // First priority: slug from the product itself
+            // Second priority: category_slug if available
+            // Fallback: product ID or index-based URL
             const productUrl = product.slug 
               ? `/product/${product.slug}`
-              : product.link || `/product/${product.id || `product-${index}`}`;
-              
+              : product.category_slug
+                ? `/product/${product.category_slug}`
+                : `/product/${product.id || `product-${index}`}`;
+                
             return (
               <CategoryCard
                 key={index}

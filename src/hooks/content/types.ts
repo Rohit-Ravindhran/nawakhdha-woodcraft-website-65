@@ -1,133 +1,94 @@
-
-// Common types used across content hooks
-
+// Types for pages
 export interface PageData {
   id?: string;
-  page_name?: string;
+  page_name: string;
   title?: string;
   content?: string;
-  header_image?: string;
-  header_image_alt?: string;
-  company_story?: string;
-  mission?: string;
-  vision?: string;
-  since_year?: string;
-  subtitle?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  map_url?: string;
-  form_title?: string;
-  form_description?: string;
-  hero?: string;
-  services?: string;
-  products?: string;
-  blog?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
   seo_canonical_url?: string;
   seo_image_alt?: string;
+  hero?: string;
+  services?: string;
+  products?: string;
+  blog?: string;
+  created_at?: string;
 }
 
-export interface ProductCategoryData {
-  id?: string; 
-  category_slug?: string;
-  category_name?: string;
-  category_image_url?: string;
-  alt_text?: string;
-  product_name?: string;
-  description?: string;
-  seo_title?: string;
-  seo_description?: string;
-  seo_keywords?: string;
-  slug?: string;
-  gallery_images?: { url: string; caption: string; alt?: string }[];
-  image_url?: string; // For compatibility with HomeProductData
-}
-
-export interface ProductDetailData {
-  id?: string;
-  category_id?: string;
-  description?: string;
-  seo_title?: string;
-  seo_description?: string;
-  seo_keywords?: string;
-}
-
-export interface ProductData extends ProductCategoryData, ProductDetailData {
-  // Additional fields specific to ProductData
-}
-
-export interface BlogData {
-  id?: string; 
-  title: string; 
-  content?: string;
-  body_content?: string;
-  featured_image_url?: string;
-  image_url?: string;
-  alt_text?: string;
-  slug?: string;
-  date?: string;
-  excerpt?: string;
-}
-
-export interface GalleryImageData {
-  id?: string;
-  category_id?: string;
-  image_url: string;
-  caption: string;
-  alt_text?: string;
-  position?: number;
-}
-
-export interface HomeServiceData {
-  id?: string;
-  title: string;
-  description: string;
-  image_url?: string;
-  alt_text?: string;
-}
-
+// Types for home products
 export interface HomeProductData {
   id?: string;
   category_name?: string;
   image_url?: string;
   alt_text?: string;
-  slug?: string; // Added slug field
+  slug?: string;
 }
 
+// Types for home services
+export interface HomeServiceData {
+  id?: string;
+  title?: string;
+  description?: string;
+  image_url?: string;
+  alt_text?: string;
+}
+
+// Types for blog cards in home page
 export interface HomeBlogCardData {
   id?: string;
-  title: string;
+  title?: string;
   description?: string;
   image_url?: string;
   alt_text?: string;
   slug?: string;
 }
 
-export interface AboutTeamMemberData {
+// Types for product categories data
+export interface ProductCategoryData {
   id?: string;
-  name?: string;
-  role?: string;
-  bio?: string;
-  image_url?: string;
+  category_name?: string;
+  product_name?: string;
+  category_image_url?: string;
   alt_text?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+  category_slug?: string; // Add this field to match the DB schema
+  slug?: string; // For compatibility with home_products
 }
 
-export interface ContactInfoData {
+// Types for product category details
+export interface ProductDetailData {
   id?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  business_hours_json?: any;
+  category_id?: string;
+  description?: string;
+  product_name?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
 }
 
-export interface SettingsData {
+// Types for blog data
+export interface BlogData {
   id?: string;
-  background_color: string;
-  site_title: string;
-  site_description: string;
-  site_keywords?: string;
-  favicon_url?: string;
+  title: string;
+  body_content: string;
+  featured_image_url?: string;
+  featured_image_alt?: string;
+  slug: string;
+  date: string;
+  excerpt?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+}
+
+// Types for gallery image data
+export interface GalleryImageData {
+  id?: string;
+  image_url: string;
+  caption: string;
+  alt_text?: string;
+  category_id?: string;
 }

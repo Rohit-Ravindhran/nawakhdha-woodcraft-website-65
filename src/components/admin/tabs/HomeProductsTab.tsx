@@ -132,6 +132,13 @@ export default function HomeProductsTab() {
       }
       
       if (values.id) {
+        // Get the old category name before update (needed for updating related products)
+        const { data: oldProductData } = await supabase
+          .from('home_products')
+          .select('category_name')
+          .eq('id', values.id)
+          .single();
+        
         // Update existing
         const { error } = await supabase
           .from('home_products')
@@ -144,24 +151,61 @@ export default function HomeProductsTab() {
           .eq('id', values.id);
           
         if (error) throw error;
+        
+        // Update category_slug in all related product categories
+        // If category name changed, we need to update based on old name
+        const categoryNameToMatch = oldProductData?.category_name || values.category_name;
+        if (categoryNameToMatch) {
+          const { error: relatedError } = await supabase
+            .from('product_categories')
+            .update({ category_slug: values.slug })
+            .eq('category_name', categoryNameToMatch);
+            
+          if (relatedError) {
+            console.error('Error updating related product categories:', relatedError);
+            // Don't throw here to avoid breaking the entire operation
+          } else {
+            console.log(`Updated category_slug to '${values.slug}' for product categories with category_name='${categoryNameToMatch}'`);
+          }
+        }
+        
         toast.success("Home product updated successfully");
       } else {
         // Create new
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('home_products')
           .insert({
             category_name: values.category_name,
             slug: values.slug,
             image_url: values.image_url,
             alt_text: values.alt_text,
-          });
+          })
+          .select()
+          .single();
           
         if (error) throw error;
+        
+        // Update category_slug in all related product categories for new products too
+        const { error: relatedError } = await supabase
+          .from('product_categories')
+          .update({ category_slug: values.slug })
+          .eq('category_name', values.category_name);
+          
+        if (relatedError) {
+          console.error('Error updating related product categories:', relatedError);
+          // Don't throw here to avoid breaking the entire operation
+        } else {
+          console.log(`Updated category_slug to '${values.slug}' for product categories with category_name='${values.category_name}'`);
+        }
+        
         toast.success("Home product added successfully");
       }
       
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['home_products'] });
+      queryClient.invalidateQueries({ queryKey: ['home-products'] });
+      queryClient.invalidateQueries({ queryKey: ['home-products-with-items'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] }); // Invalidate other related queries
       setIsDialogOpen(false);
       setSlugExists(false);
     } catch (error: any) {
@@ -181,6 +225,8 @@ export default function HomeProductsTab() {
         
         toast.success("Home product deleted successfully");
         queryClient.invalidateQueries({ queryKey: ['home_products'] });
+        queryClient.invalidateQueries({ queryKey: ['home-products'] });
+        queryClient.invalidateQueries({ queryKey: ['home-products-with-items'] });
       } catch (error: any) {
         toast.error(`Error deleting home product: ${error.message}`);
       }

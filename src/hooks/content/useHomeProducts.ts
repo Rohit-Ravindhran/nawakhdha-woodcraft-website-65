@@ -18,6 +18,49 @@ export function useHomeProducts() {
   });
 }
 
+export function useHomeProductsWithItems() {
+  return useQuery({
+    queryKey: ['home-products-with-items'],
+    queryFn: async () => {
+      // Fetch home products along with their related product categories
+      const { data, error } = await supabase
+        .from('home_products')
+        .select(`
+          id,
+          category_name,
+          slug,
+          image_url,
+          alt_text,
+          product_categories:product_categories(
+            id, 
+            category_name,
+            product_name,
+            category_image_url,
+            alt_text,
+            category_slug
+          )
+        `);
+      
+      if (error) throw error;
+      
+      // Transform the data to ensure we handle null values properly
+      return data.map(item => ({
+        ...item,
+        product_categories: item.product_categories || []
+      })) as (HomeProductData & {
+        product_categories: Array<{
+          id: string;
+          category_name: string;
+          product_name: string | null;
+          category_image_url: string | null;
+          alt_text: string | null;
+          category_slug: string | null;
+        }>
+      })[];
+    }
+  });
+}
+
 export function useUpdateHomeProduct() {
   const queryClient = useQueryClient();
   
@@ -33,6 +76,20 @@ export function useUpdateHomeProduct() {
           .eq('id', id);
           
         if (error) throw error;
+        
+        // Update category_slug in all related product categories
+        if (productData.slug) {
+          const { error: relatedError } = await supabase
+            .from('product_categories')
+            .update({ category_slug: productData.slug })
+            .eq('category_name', productData.category_name || '');
+            
+          if (relatedError) {
+            console.error('Error updating related products:', relatedError);
+            // Don't throw here to avoid breaking the entire operation
+          }
+        }
+        
         return productData;
       } else {
         // Insert new product
@@ -43,11 +100,25 @@ export function useUpdateHomeProduct() {
           .single();
           
         if (error) throw error;
+        
+        // Update category_slug in all related product categories for new products too
+        if (productFields.slug && productFields.category_name) {
+          const { error: relatedError } = await supabase
+            .from('product_categories')
+            .update({ category_slug: productFields.slug })
+            .eq('category_name', productFields.category_name);
+            
+          if (relatedError) {
+            console.error('Error updating related products:', relatedError);
+          }
+        }
+        
         return data as HomeProductData;
       }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['home-products'] });
+      queryClient.invalidateQueries({ queryKey: ['home-products-with-items'] });
       toast.success(`Home product "${data.category_name || ''}" updated successfully`);
     },
     onError: (error: Error) => {
@@ -71,6 +142,7 @@ export function useDeleteHomeProduct() {
     },
     onSuccess: (productId) => {
       queryClient.invalidateQueries({ queryKey: ['home-products'] });
+      queryClient.invalidateQueries({ queryKey: ['home-products-with-items'] });
       toast.success(`Home product deleted successfully`);
     },
     onError: (error: Error) => {

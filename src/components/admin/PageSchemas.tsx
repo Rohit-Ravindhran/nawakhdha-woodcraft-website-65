@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 // Hero section schema for the home page
@@ -30,6 +31,9 @@ export const productsSchema = z.object({
     title: z.string().optional(),
     description: z.string().optional(),
     link: z.string().optional(),
+    id: z.string().optional(),
+    slug: z.string().optional(),
+    category_slug: z.string().optional()
   })).optional()
 });
 
@@ -171,7 +175,10 @@ export function getDefaultValues(pageName: string) {
             image_alt: "",
             title: "",
             description: "",
-            link: ""
+            link: "",
+            id: "",
+            slug: "",
+            category_slug: ""
           })
         },
         blog: {
