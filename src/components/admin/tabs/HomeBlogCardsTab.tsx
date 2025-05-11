@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -161,7 +162,8 @@ export default function HomeBlogCardsTab() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  const filteredBlogs = Array.isArray(homeBlogs) ? homeBlogs.filter(blog => 
+  // Fix the type error by properly typing the data and adding a null check
+  const filteredBlogs = homeBlogs ? homeBlogs.filter(blog => 
     blog.title && blog.title.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
 

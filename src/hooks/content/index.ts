@@ -9,3 +9,4 @@ export * from './useBlogs';
 export * from './useGallery';
 export * from '../../utils/jsonHelpers';
 
+// Add the useHomeProducts export if missing from the above files

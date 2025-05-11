@@ -4,10 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export interface PageData {
-  id?: number;
+  id?: string;
   page_name: string;
-  title: string;
-  content: string;
+  title?: string; // Made optional as per requirements
+  content?: string; // Made optional as per requirements
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
@@ -26,7 +26,6 @@ export function usePage(pageName: string) {
     queryKey: ['page', pageName],
     queryFn: async () => {
       // Changed from .single() to .maybeSingle() to handle the case of no rows
-      // or first() to handle the case of multiple rows
       const { data, error } = await supabase
         .from('pages')
         .select('*')
@@ -34,7 +33,8 @@ export function usePage(pageName: string) {
         .maybeSingle();
 
       if (error) throw error;
-      return data as PageData;
+      // Using type assertion with as to ensure proper type conversion
+      return data as unknown as PageData;
     }
   });
 }
@@ -64,7 +64,7 @@ export function useUpdatePage() {
           .single();
           
         if (error) throw error;
-        return data as PageData;
+        return data as unknown as PageData;
       }
     },
     onSuccess: (data) => {
@@ -77,13 +77,13 @@ export function useUpdatePage() {
   });
 }
 
-// Products
-export function useProducts() {
+// Home Products
+export function useHomeProducts() {
   return useQuery({
-    queryKey: ['products'],
+    queryKey: ['home-products'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('products')
+        .from('home_products')
         .select('*');
 
       if (error) throw error;
@@ -92,27 +92,41 @@ export function useProducts() {
   });
 }
 
-export function useProduct(productId?: number) {
+export function useProductCategories() {
   return useQuery({
-    queryKey: ['product', productId],
+    queryKey: ['product-categories'],
     queryFn: async () => {
-      if (!productId) return null;
+      const { data, error } = await supabase
+        .from('product_categories')
+        .select('*');
+
+      if (error) throw error;
+      return data;
+    }
+  });
+}
+
+export function useProductCategory(categoryId?: string) {
+  return useQuery({
+    queryKey: ['product-category', categoryId],
+    queryFn: async () => {
+      if (!categoryId) return null;
       
       const { data, error } = await supabase
-        .from('products')
+        .from('product_categories')
         .select('*')
-        .eq('id', productId)
+        .eq('id', categoryId)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!productId
+    enabled: !!categoryId
   });
 }
 
 export interface ProductData {
-  id?: number; 
+  id?: string; // Changed from number to string
   product_name: string; 
   description: string;
   category_name: string;
@@ -122,7 +136,7 @@ export interface ProductData {
   gallery_images?: { url: string; caption: string; alt?: string }[];
 }
 
-export function useUpdateProduct() {
+export function useUpdateProductCategory() {
   const queryClient = useQueryClient();
   
   return useMutation({
@@ -132,7 +146,7 @@ export function useUpdateProduct() {
       if (id) {
         // Update existing product
         const { error } = await supabase
-          .from('products')
+          .from('product_categories')
           .update(productFields)
           .eq('id', id);
           
@@ -141,7 +155,7 @@ export function useUpdateProduct() {
       } else {
         // Insert new product
         const { data, error } = await supabase
-          .from('products')
+          .from('product_categories')
           .insert(productFields)
           .select()
           .single();
@@ -151,8 +165,8 @@ export function useUpdateProduct() {
       }
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['product-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['product-category', data.id] });
       toast.success(`Product "${data.product_name}" updated successfully`);
     },
     onError: (error: Error) => {
@@ -165,9 +179,9 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (productId: number) => {
+    mutationFn: async (productId: string) => {
       const { error } = await supabase
-        .from('products')
+        .from('product_categories')
         .delete()
         .eq('id', productId);
         
@@ -175,8 +189,8 @@ export function useDeleteProduct() {
       return productId;
     },
     onSuccess: (productId) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', productId] });
+      queryClient.invalidateQueries({ queryKey: ['product-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['product-category', productId] });
       toast.success(`Product deleted successfully`);
     },
     onError: (error: Error) => {
@@ -200,7 +214,7 @@ export function useBlogs() {
   });
 }
 
-export function useBlog(blogId?: number) {
+export function useBlog(blogId?: string) {
   return useQuery({
     queryKey: ['blog', blogId],
     queryFn: async () => {
@@ -220,7 +234,7 @@ export function useBlog(blogId?: number) {
 }
 
 export interface BlogData {
-  id?: number; 
+  id?: string; // Changed from number to string
   title: string; 
   body_content: string;
   featured_image_url?: string;
@@ -276,7 +290,7 @@ export function useDeleteBlog() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (blogId: number) => {
+    mutationFn: async (blogId: string) => {
       const { error } = await supabase
         .from('blogs')
         .delete()
@@ -302,7 +316,7 @@ export function useGallery() {
     queryKey: ['gallery'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('gallery')
+        .from('product_gallery')
         .select('*');
 
       if (error) throw error;
@@ -312,10 +326,11 @@ export function useGallery() {
 }
 
 export interface GalleryImageData {
-  id?: number;
+  id?: string;
   image_url: string;
   caption: string;
   alt_text?: string;
+  category_id?: string;
 }
 
 export function useAddGalleryImage() {
@@ -324,7 +339,7 @@ export function useAddGalleryImage() {
   return useMutation({
     mutationFn: async (imageData: GalleryImageData) => {
       const { data, error } = await supabase
-        .from('gallery')
+        .from('product_gallery')
         .insert(imageData)
         .select()
         .single();
@@ -346,9 +361,9 @@ export function useDeleteGalleryImage() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (imageId: number) => {
+    mutationFn: async (imageId: string) => {
       const { error } = await supabase
-        .from('gallery')
+        .from('product_gallery')
         .delete()
         .eq('id', imageId);
         
@@ -361,81 +376,6 @@ export function useDeleteGalleryImage() {
     },
     onError: (error: Error) => {
       toast.error(`Error deleting gallery image: ${error.message}`);
-    }
-  });
-}
-
-// Settings
-export function useSettings() {
-  return useQuery({
-    queryKey: ['settings'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('settings')
-        .select('*')
-        .eq('id', 1) // Assuming settings are stored with id = 1
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      return data;
-    }
-  });
-}
-
-export interface SettingsData {
-  id?: number;
-  background_color: string;
-  site_title: string;
-  site_description: string;
-  site_keywords?: string;
-  favicon_url?: string;
-}
-
-export function useUpdateSettings() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (settingsData: SettingsData) => {
-      if (settingsData.id) {
-        // Update existing settings
-        const { error } = await supabase
-          .from('settings')
-          .update({
-            background_color: settingsData.background_color,
-            site_title: settingsData.site_title,
-            site_description: settingsData.site_description,
-            site_keywords: settingsData.site_keywords,
-            favicon_url: settingsData.favicon_url
-          })
-          .eq('id', settingsData.id);
-          
-        if (error) throw error;
-        return settingsData;
-      } else {
-        // Insert new settings with id = 1
-        const { data, error } = await supabase
-          .from('settings')
-          .insert({
-            id: 1,
-            background_color: settingsData.background_color,
-            site_title: settingsData.site_title,
-            site_description: settingsData.site_description,
-            site_keywords: settingsData.site_keywords,
-            favicon_url: settingsData.favicon_url
-          })
-          .select()
-          .single();
-          
-        if (error) throw error;
-        return data;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['settings'] });
-      toast.success('Site settings updated successfully');
-    },
-    onError: (error: Error) => {
-      toast.error(`Error updating site settings: ${error.message}`);
     }
   });
 }
