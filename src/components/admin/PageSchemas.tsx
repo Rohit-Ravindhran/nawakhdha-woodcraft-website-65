@@ -103,7 +103,7 @@ export const contactPageSchema = basePageSchema.extend({
 });
 
 // Schema specifically for blog post form
-export const blogPostSchema = z.object({
+/* export const blogPostSchema = z.object({
   id: z.number().optional(),
   title: z.string().min(1, "Title is required"),
   body_content: z.string().min(1, "Content is required"),
@@ -115,7 +115,7 @@ export const blogPostSchema = z.object({
   seo_title: z.string().optional(),
   seo_description: z.string().optional(),
   seo_keywords: z.string().optional(),
-});
+}); */
 
 // Get the appropriate schema based on page name
 export function getPageSchemaByName(pageName: string) {
@@ -231,4 +231,4 @@ export type HomePageFormValues = z.infer<typeof homePageSchema>;
 export type AboutPageFormValues = z.infer<typeof aboutPageSchema>;
 export type ContactPageFormValues = z.infer<typeof contactPageSchema>;
 export type BasePageFormValues = z.infer<typeof basePageSchema>;
-export type BlogPostFormValues = z.infer<typeof blogPostSchema>;
+/* export type BlogPostFormValues = z.infer<typeof blogPostSchema>;*/
