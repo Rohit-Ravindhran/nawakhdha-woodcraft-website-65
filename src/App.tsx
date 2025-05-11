@@ -20,6 +20,7 @@ import AdminLogin from "@/pages/AdminLogin";
 // Import components
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Layout from "@/components/layout/Layout";
 
 // Import the ProductDetailPage
 import ProductDetailPage from "@/pages/ProductDetailPage";
@@ -37,23 +38,25 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/product/:slug" element={<ProductDetailPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          {/* Public routes with Layout */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/product/:slug" element={<ProductDetailPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
           
-          {/* Admin routes */}
+          {/* Admin routes without Layout */}
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/login" element={<AdminLogin />} />
-          
-          <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
       </QueryClientProvider>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -16,7 +15,7 @@ import { ProductData } from "@/hooks/content/types";
 import { transformGalleryImages } from "@/utils/imageHelpers";
 
 export interface Product {
-  id: number;
+  id: string;
   product_name: string;
 }
 
@@ -25,7 +24,7 @@ const ProductsTab = () => {
   const deleteProduct = useDeleteProduct();
   const [isAddingProduct, setIsAddingProduct] = useState(false);
 
-  const handleDeleteProduct = (id: number) => {
+  const handleDeleteProduct = (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       deleteProduct.mutate(id);
     }
@@ -63,7 +62,7 @@ const ProductsTab = () => {
           {products && products.length > 0 ? (
             products.map((product) => {
               // Safely transform the product data to match the expected type
-              const transformedProduct: ProductData & { id: number } = {
+              const transformedProduct: ProductData & { id: string } = {
                 id: product.id,
                 product_name: product.product_name,
                 description: product.description,
@@ -96,8 +95,8 @@ const ProductsTab = () => {
 };
 
 interface ProductListItemProps {
-  product: ProductData & { id: number };
-  onDelete: (id: number) => void;
+  product: ProductData & { id: string };
+  onDelete: (id: string) => void;
 }
 
 const ProductListItem = ({ product, onDelete }: ProductListItemProps) => {

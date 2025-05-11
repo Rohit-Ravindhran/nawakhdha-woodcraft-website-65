@@ -40,7 +40,7 @@ export default function HomeBlogCardsTab() {
 
   const queryClient = useQueryClient();
 
-  const { data: blogCards, isLoading } = useQuery({
+  const { data: homeBlogs, isLoading } = useQuery({
     queryKey: ['home_blog_cards'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -161,9 +161,9 @@ export default function HomeBlogCardsTab() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  const filteredBlogCards = blogCards?.filter((card) =>
-    card.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredBlogs = Array.isArray(homeBlogs) ? homeBlogs.filter(blog => 
+    blog.title && blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
   return (
     <div>
@@ -193,15 +193,15 @@ export default function HomeBlogCardsTab() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredBlogCards && filteredBlogCards.length > 0 ? (
-            filteredBlogCards.map((card) => (
-              <TableRow key={card.id}>
+          {filteredBlogs && filteredBlogs.length > 0 ? (
+            filteredBlogs.map((blog) => (
+              <TableRow key={blog.id}>
                 <TableCell>
                   <div className="w-16 h-16 relative bg-gray-200 rounded overflow-hidden">
-                    {card.image_url ? (
+                    {blog.image_url ? (
                       <img
-                        src={card.image_url}
-                        alt={card.alt_text || 'Blog image'}
+                        src={blog.image_url}
+                        alt={blog.alt_text || 'Blog image'}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.src = "/placeholder.svg";
@@ -214,17 +214,17 @@ export default function HomeBlogCardsTab() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{card.title || 'N/A'}</TableCell>
+                <TableCell>{blog.title || 'N/A'}</TableCell>
                 <TableCell>
-                  <div className="max-w-xs truncate">{card.description || 'N/A'}</div>
+                  <div className="max-w-xs truncate">{blog.description || 'N/A'}</div>
                 </TableCell>
-                <TableCell>{card.slug || 'N/A'}</TableCell>
+                <TableCell>{blog.slug || 'N/A'}</TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="icon" onClick={() => handleEdit(card)}>
+                    <Button variant="outline" size="icon" onClick={() => handleEdit(blog)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="icon" onClick={() => handleDelete(card.id!)}>
+                    <Button variant="outline" size="icon" onClick={() => handleDelete(blog.id!)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

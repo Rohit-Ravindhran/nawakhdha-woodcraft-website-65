@@ -29,7 +29,7 @@ const Header = () => {
           : "bg-transparent"
       )}
     >
-      <div className="container-custom">
+      <div className="container mx-auto px-4 md:px-6">
         {/* Top Bar */}
         <TopBar />
 
