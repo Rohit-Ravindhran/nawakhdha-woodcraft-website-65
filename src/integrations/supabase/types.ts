@@ -162,18 +162,21 @@ export type Database = {
           category_name: string | null
           id: string
           image_url: string | null
+          slug: string | null
         }
         Insert: {
           alt_text?: string | null
           category_name?: string | null
           id?: string
           image_url?: string | null
+          slug?: string | null
         }
         Update: {
           alt_text?: string | null
           category_name?: string | null
           id?: string
           image_url?: string | null
+          slug?: string | null
         }
         Relationships: []
       }

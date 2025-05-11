@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -8,12 +9,37 @@ export function useProducts() {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get all product categories
+      const { data: categoryData, error: categoryError } = await supabase
         .from('product_categories')
         .select('*');
 
-      if (error) throw error;
-      return data as ProductCategoryData[];
+      if (categoryError) throw categoryError;
+      
+      // Then get all home products to merge in any with slugs
+      const { data: homeProductsData, error: homeProductsError } = await supabase
+        .from('home_products')
+        .select('*');
+        
+      if (homeProductsError) throw homeProductsError;
+      
+      // For categories that have matching home_products entries, merge in the slug
+      const mergedProducts = categoryData.map((category) => {
+        const matchingHomeProduct = homeProductsData.find(
+          hp => hp.category_name === category.category_name
+        );
+        
+        if (matchingHomeProduct && matchingHomeProduct.slug) {
+          return {
+            ...category,
+            slug: matchingHomeProduct.slug
+          };
+        }
+        
+        return category;
+      });
+      
+      return mergedProducts as ProductCategoryData[];
     }
   });
 }
@@ -46,6 +72,19 @@ export function useProduct(productId?: string) {
         .eq('category_id', productId);
         
       if (galleryError) throw galleryError;
+      
+      // Check if there's a slug in home_products for this category
+      if (categoryData?.category_name) {
+        const { data: homeProductData, error: homeProductError } = await supabase
+          .from('home_products')
+          .select('slug')
+          .eq('category_name', categoryData.category_name)
+          .maybeSingle();
+          
+        if (!homeProductError && homeProductData?.slug) {
+          categoryData.slug = homeProductData.slug;
+        }
+      }
       
       // Combine the data
       return {
@@ -113,6 +152,41 @@ export function useUpdateProduct() {
           }
         }
         
+        // If the product has a slug field, update it in home_products
+        if (productData.slug && productData.category_name) {
+          // Check if there's already an entry in home_products
+          const { data: existingHomeProduct } = await supabase
+            .from('home_products')
+            .select('id')
+            .eq('category_name', productData.category_name)
+            .maybeSingle();
+            
+          if (existingHomeProduct) {
+            // Update existing entry
+            const { error: homeProductError } = await supabase
+              .from('home_products')
+              .update({ 
+                slug: productData.slug,
+                category_name: productData.category_name
+              })
+              .eq('id', existingHomeProduct.id);
+              
+            if (homeProductError) throw homeProductError;
+          } else {
+            // Create new entry
+            const { error: homeProductError } = await supabase
+              .from('home_products')
+              .insert({
+                slug: productData.slug,
+                category_name: productData.category_name,
+                image_url: productData.category_image_url,
+                alt_text: productData.alt_text
+              });
+              
+            if (homeProductError) throw homeProductError;
+          }
+        }
+        
         // Handle gallery images if present
         if (gallery_images && gallery_images.length > 0) {
           // We'll implement this when needed
@@ -143,6 +217,20 @@ export function useUpdateProduct() {
           if (detailError) throw detailError;
         }
         
+        // If the product has a slug field, add it to home_products
+        if (productData.slug && productData.category_name) {
+          const { error: homeProductError } = await supabase
+            .from('home_products')
+            .insert({
+              slug: productData.slug,
+              category_name: productData.category_name,
+              image_url: productData.category_image_url,
+              alt_text: productData.alt_text
+            });
+            
+          if (homeProductError) throw homeProductError;
+        }
+        
         // Handle gallery images if present
         if (gallery_images && gallery_images.length > 0) {
           // We'll implement this when needed
@@ -167,6 +255,13 @@ export function useDeleteProduct() {
   
   return useMutation({
     mutationFn: async (productId: string) => {
+      // Get the category name before deleting
+      const { data: categoryData } = await supabase
+        .from('product_categories')
+        .select('category_name')
+        .eq('id', productId)
+        .maybeSingle();
+        
       // First delete related records in product_category_details
       const { error: detailsError } = await supabase
         .from('product_category_details')
@@ -182,6 +277,16 @@ export function useDeleteProduct() {
         .eq('category_id', productId);
         
       if (galleryError) throw galleryError;
+      
+      // Delete related home_products entry if it exists
+      if (categoryData?.category_name) {
+        const { error: homeProductError } = await supabase
+          .from('home_products')
+          .delete()
+          .eq('category_name', categoryData.category_name);
+          
+        if (homeProductError) throw homeProductError;
+      }
       
       // Now delete the main product category
       const { error } = await supabase

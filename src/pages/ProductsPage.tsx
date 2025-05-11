@@ -38,16 +38,18 @@ const ProductsPage = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => {
-            // Use the category_slug for URL if available, otherwise fall back to ID
-            const productUrl = product.category_slug 
-              ? `/product/${product.category_slug}` 
-              : `/product/${product.id}`;
+            // Use the slug for URL if available, otherwise fall back to category_slug, and finally to ID
+            const productUrl = product.slug 
+              ? `/product/${product.slug}` 
+              : product.category_slug 
+                ? `/product/${product.category_slug}` 
+                : `/product/${product.id}`;
               
             return (
               <CategoryCard
                 key={product.id}
                 title={product.category_name || product.product_name || "Product"}
-                image={product.category_image_url || "/placeholder.svg"}
+                image={product.category_image_url || product.image_url || "/placeholder.svg"}
                 imageAlt={product.alt_text || product.category_name || "Product image"}
                 href={productUrl}
               />

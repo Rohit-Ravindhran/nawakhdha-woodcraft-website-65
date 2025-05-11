@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,6 +25,13 @@ import ImageUploadField from "../ImageUploadField";
 const homeProductSchema = z.object({
   id: z.string().optional(),
   category_name: z.string().min(1, "Category name is required"),
+  slug: z.string()
+    .min(1, "URL slug is required")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 
+      "Slug must be lowercase with hyphens (e.g., wooden-chairs)")
+    .refine(val => !val.endsWith('-'), {
+      message: "Slug cannot end with a hyphen"
+    }),
   image_url: z.string().optional(),
   alt_text: z.string().optional(),
 });
@@ -33,6 +41,7 @@ type HomeProductFormValues = z.infer<typeof homeProductSchema>;
 export default function HomeProductsTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentHomeProduct, setCurrentHomeProduct] = useState<HomeProductData | null>(null);
+  const [slugExists, setSlugExists] = useState(false);
   
   const queryClient = useQueryClient();
   
@@ -53,6 +62,7 @@ export default function HomeProductsTab() {
     resolver: zodResolver(homeProductSchema),
     defaultValues: {
       category_name: "",
+      slug: "",
       image_url: "",
       alt_text: "",
     },
@@ -63,6 +73,7 @@ export default function HomeProductsTab() {
     form.reset({
       id: homeProduct.id,
       category_name: homeProduct.category_name || "",
+      slug: homeProduct.slug || "",
       image_url: homeProduct.image_url || "",
       alt_text: homeProduct.alt_text || "",
     });
@@ -73,20 +84,60 @@ export default function HomeProductsTab() {
     setCurrentHomeProduct(null);
     form.reset({
       category_name: "",
+      slug: "",
       image_url: "",
       alt_text: "",
     });
     setIsDialogOpen(true);
   };
   
+  // Generate slug from category name
+  const handleGenerateSlug = () => {
+    const categoryName = form.getValues("category_name");
+    if (categoryName) {
+      const slug = categoryName
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      form.setValue("slug", slug);
+      form.trigger("slug");
+    }
+  };
+  
+  // Check if slug is unique
+  const checkSlugUniqueness = async (slug: string, id?: string) => {
+    const { data, error } = await supabase
+      .from('home_products')
+      .select('id')
+      .eq('slug', slug)
+      .neq('id', id || ''); // Exclude current product when editing
+    
+    return !error && (!data || data.length === 0);
+  };
+  
   const onSubmit = async (values: HomeProductFormValues) => {
     try {
+      // Check if slug is unique
+      const isSlugUnique = await checkSlugUniqueness(values.slug, values.id);
+      
+      if (!isSlugUnique) {
+        setSlugExists(true);
+        form.setError("slug", {
+          type: "manual",
+          message: "This URL slug is already in use. Please choose another."
+        });
+        return;
+      }
+      
       if (values.id) {
         // Update existing
         const { error } = await supabase
           .from('home_products')
           .update({
             category_name: values.category_name,
+            slug: values.slug,
             image_url: values.image_url,
             alt_text: values.alt_text,
           })
@@ -100,6 +151,7 @@ export default function HomeProductsTab() {
           .from('home_products')
           .insert({
             category_name: values.category_name,
+            slug: values.slug,
             image_url: values.image_url,
             alt_text: values.alt_text,
           });
@@ -111,6 +163,7 @@ export default function HomeProductsTab() {
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['home_products'] });
       setIsDialogOpen(false);
+      setSlugExists(false);
     } catch (error: any) {
       toast.error(`Error saving home product: ${error.message}`);
     }
@@ -151,6 +204,7 @@ export default function HomeProductsTab() {
           <TableRow>
             <TableHead>Image</TableHead>
             <TableHead>Category Name</TableHead>
+            <TableHead>URL Slug</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -178,6 +232,11 @@ export default function HomeProductsTab() {
                 </TableCell>
                 <TableCell>{product.category_name || 'N/A'}</TableCell>
                 <TableCell>
+                  <span className="text-muted-foreground">
+                    {product.slug || 'No slug set'}
+                  </span>
+                </TableCell>
+                <TableCell>
                   <div className="flex space-x-2">
                     <Button
                       variant="outline"
@@ -199,7 +258,7 @@ export default function HomeProductsTab() {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-4">
+              <TableCell colSpan={4} className="text-center py-4">
                 No home products found
               </TableCell>
             </TableRow>
@@ -230,6 +289,36 @@ export default function HomeProductsTab() {
                   </FormItem>
                 )}
               />
+              
+              <div className="flex gap-2 items-end">
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>URL Slug</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="url-friendly-slug" 
+                          {...field}
+                          onChange={(e) => {
+                            setSlugExists(false);
+                            field.onChange(e);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGenerateSlug}
+                >
+                  Generate
+                </Button>
+              </div>
               
               <ImageUploadField
                 control={form.control}

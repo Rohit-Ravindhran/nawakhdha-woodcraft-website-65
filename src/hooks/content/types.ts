@@ -41,7 +41,9 @@ export interface ProductCategoryData {
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+  slug?: string;
   gallery_images?: { url: string; caption: string; alt?: string }[];
+  image_url?: string; // For compatibility with HomeProductData
 }
 
 export interface ProductDetailData {
@@ -92,6 +94,7 @@ export interface HomeProductData {
   category_name?: string;
   image_url?: string;
   alt_text?: string;
+  slug?: string; // Added slug field
 }
 
 export interface HomeBlogCardData {

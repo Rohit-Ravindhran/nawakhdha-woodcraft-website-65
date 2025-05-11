@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -68,7 +69,7 @@ const AllProductsTab = () => {
   // All categories (both from predefined list and existing products)
   const allCategories = [...new Set([...PRODUCT_CATEGORIES, ...existingCategories])].sort();
 
-  const handleDeleteProduct = (id: number) => {
+  const handleDeleteProduct = (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       deleteProduct.mutate(id);
     }
@@ -139,7 +140,7 @@ const AllProductsTab = () => {
                   <h3 className="text-lg font-semibold mb-4">{category}</h3>
                   <CategoryProductList 
                     category={category}
-                    products={(productsByCategory?.[category] || []) as any[]} 
+                    products={(productsByCategory?.[category] || []) as ProductData[]} 
                     onDelete={handleDeleteProduct}
                     compact
                   />
@@ -163,8 +164,8 @@ const AllProductsTab = () => {
 
 interface CategoryProductListProps {
   category: string;
-  products: any[];
-  onDelete: (id: number) => void;
+  products: ProductData[];
+  onDelete: (id: string) => void;
   compact?: boolean;
 }
 
@@ -223,24 +224,16 @@ const CategoryProductList = ({ category, products, onDelete, compact = false }: 
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         {products.map((product) => {
-          // Safely transform the product data to match the expected type
-          const transformedProduct: ProductData & { id: number } = {
-            id: product.id,
-            product_name: product.product_name,
-            description: product.description,
-            category_name: product.category_name,
-            // Add SEO fields with safe defaults
-            seo_title: product.seo_title || "",
-            seo_description: product.seo_description || "",
-            seo_keywords: product.seo_keywords || "",
-            // Safely transform gallery_images
-            gallery_images: transformGalleryImages(product.gallery_images)
+          // Convert any numeric IDs to string to fix type issues
+          const productWithStringId = {
+            ...product,
+            id: product.id?.toString() || ""
           };
           
           return (
             <ProductListItem 
-              key={transformedProduct.id} 
-              product={transformedProduct}
+              key={productWithStringId.id} 
+              product={productWithStringId}
               onDelete={onDelete}
             />
           );
@@ -251,8 +244,8 @@ const CategoryProductList = ({ category, products, onDelete, compact = false }: 
 };
 
 interface ProductListItemProps {
-  product: ProductData & { id: number };
-  onDelete: (id: number) => void;
+  product: ProductData & { id: string };
+  onDelete: (id: string) => void;
 }
 
 // Use existing ProductListItem component
@@ -298,10 +291,9 @@ const ProductListItem = ({ product, onDelete }: ProductListItemProps) => {
 };
 
 // Update the ProductForm component to use our ProductEditor
-const ProductForm = ({ product, defaultCategory }: { product?: ProductData & { id: number }, defaultCategory?: string }) => {
+const ProductForm = ({ product, defaultCategory }: { product?: ProductData & { id: string }, defaultCategory?: string }) => {
   const initialData = product ? {
-    ...product,
-    id: product.id.toString() // Convert ID to string for consistency
+    ...product
   } : defaultCategory ? {
     category_name: defaultCategory
   } : undefined;

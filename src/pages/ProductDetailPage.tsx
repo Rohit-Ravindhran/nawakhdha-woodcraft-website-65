@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductCategoryData } from '@/hooks/content/types';
@@ -10,7 +10,7 @@ import SectionTitle from '@/components/ui/section-title';
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   
-  // First, get the product category by slug
+  // Try to find the product by slug or category_slug
   const { 
     data: productCategory,
     isLoading: loadingCategory,
@@ -20,14 +20,64 @@ const ProductDetailPage: React.FC = () => {
     queryFn: async () => {
       if (!slug) return null;
       
-      const { data, error } = await supabase
+      // First try to find by home_products slug
+      const { data: homeProductData, error: homeProductError } = await supabase
+        .from('home_products')
+        .select('*')
+        .eq('slug', slug)
+        .maybeSingle();
+        
+      if (!homeProductError && homeProductData) {
+        // We found a match in home_products
+        // Now get the corresponding product category if possible
+        if (homeProductData.category_name) {
+          const { data: categoryData, error: catError } = await supabase
+            .from('product_categories')
+            .select('*')
+            .eq('category_name', homeProductData.category_name)
+            .maybeSingle();
+            
+          if (!catError && categoryData) {
+            return categoryData as ProductCategoryData;
+          }
+          
+          // If we can't find a matching category, return the home product data
+          // with some properties mapped to match ProductCategoryData interface
+          return {
+            id: homeProductData.id,
+            category_name: homeProductData.category_name,
+            category_image_url: homeProductData.image_url,
+            alt_text: homeProductData.alt_text,
+            slug: homeProductData.slug
+          } as ProductCategoryData;
+        }
+      }
+      
+      // If we didn't find a home product by slug, try product categories
+      const { data: categoryBySlug, error: slugError } = await supabase
         .from('product_categories')
         .select('*')
         .eq('category_slug', slug)
         .maybeSingle();
+        
+      if (!slugError && categoryBySlug) {
+        return categoryBySlug as ProductCategoryData;
+      }
       
-      if (error) throw error;
-      return data as ProductCategoryData;
+      // Finally, try by ID (for backwards compatibility)
+      if (slug.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+        const { data: categoryById, error: idError } = await supabase
+          .from('product_categories')
+          .select('*')
+          .eq('id', slug)
+          .maybeSingle();
+          
+        if (!idError && categoryById) {
+          return categoryById as ProductCategoryData;
+        }
+      }
+      
+      return null;
     },
     enabled: !!slug
   });
@@ -127,7 +177,15 @@ const ProductDetailPage: React.FC = () => {
               </div>
             ) : (
               <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                <p className="text-gray-500">No product images available</p>
+                {productCategory.category_image_url ? (
+                  <img 
+                    src={productCategory.category_image_url} 
+                    alt={productCategory.alt_text || "Product image"}
+                    className="w-full h-full object-cover" 
+                  />
+                ) : (
+                  <p className="text-gray-500">No product images available</p>
+                )}
               </div>
             )}
           </div>
@@ -150,6 +208,9 @@ const ProductDetailPage: React.FC = () => {
                 <li><strong>Category:</strong> {productCategory.category_name}</li>
                 {productCategory.product_name && (
                   <li><strong>Product Name:</strong> {productCategory.product_name}</li>
+                )}
+                {productCategory.slug && (
+                  <li><strong>Slug:</strong> {productCategory.slug}</li>
                 )}
               </ul>
             </div>

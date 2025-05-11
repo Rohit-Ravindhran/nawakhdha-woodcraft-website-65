@@ -13,6 +13,7 @@ interface Product {
   image_alt?: string;
   link?: string;
   description?: string;
+  slug?: string;
 }
 
 interface ProductsSectionProps {
@@ -41,15 +42,22 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
           centered
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
-            <CategoryCard
-              key={index}
-              title={product.title}
-              image={product.image}
-              href={product.link || `/product/${product.id || `product-${index}`}`}
-              imageAlt={product.image_alt || `${product.title} product`}
-            />
-          ))}
+          {products.map((product, index) => {
+            // Use slug if available, then link, then ID
+            const productUrl = product.slug 
+              ? `/product/${product.slug}`
+              : product.link || `/product/${product.id || `product-${index}`}`;
+              
+            return (
+              <CategoryCard
+                key={index}
+                title={product.title}
+                image={product.image}
+                href={productUrl}
+                imageAlt={product.image_alt || `${product.title} product`}
+              />
+            );
+          })}
         </div>
         <div className="text-center mt-10">
           <Button asChild variant="outline">
