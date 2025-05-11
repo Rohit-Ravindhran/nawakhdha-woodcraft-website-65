@@ -142,7 +142,10 @@ export default function HomeBlogCardsTab() {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this item?")) {
       const previousData = queryClient.getQueryData<HomeBlogCardData[]>(['home_blog_cards']);
-      queryClient.setQueryData(['home_blog_cards'], old => old?.filter(card => card.id !== id));
+      queryClient.setQueryData(['home_blog_cards'], old => {
+        if (!old || !Array.isArray(old)) return [];
+        return old.filter(card => card.id !== id);
+      });
 
       try {
         const { error } = await supabase
@@ -162,7 +165,7 @@ export default function HomeBlogCardsTab() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  // Fix the type error by properly typing the data and adding a null check
+  // Fix the type error by using a type guard and proper typing
   const filteredBlogs = homeBlogs ? homeBlogs.filter(blog => 
     blog.title && blog.title.toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];

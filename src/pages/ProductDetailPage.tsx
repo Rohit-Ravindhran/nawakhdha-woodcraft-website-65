@@ -7,6 +7,31 @@ import { ProductCategoryData } from '@/hooks/content/types';
 import { Loader2 } from 'lucide-react';
 import SectionTitle from '@/components/ui/section-title';
 
+// Define interfaces for the response data
+interface ProductGalleryItem {
+  id: string;
+  image_url: string;
+  caption: string;
+  alt_text?: string;
+  position?: number;
+  category_id: string;
+}
+
+interface ProductDetails {
+  id?: string;
+  category_id?: string;
+  description?: string;
+  product_name?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+}
+
+interface QueryResult {
+  details: ProductDetails;
+  gallery: ProductGalleryItem[];
+}
+
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   
@@ -89,7 +114,7 @@ const ProductDetailPage: React.FC = () => {
   } = useQuery({
     queryKey: ['product_details', productCategory?.id],
     queryFn: async () => {
-      if (!productCategory?.id) return null;
+      if (!productCategory?.id) return { details: {}, gallery: [] } as QueryResult;
       
       const { data: detailData, error: detailError } = await supabase
         .from('product_category_details')
@@ -110,7 +135,7 @@ const ProductDetailPage: React.FC = () => {
       return {
         details: detailData || {},
         gallery: galleryData || []
-      };
+      } as QueryResult;
     },
     enabled: !!productCategory?.id
   });
@@ -138,6 +163,7 @@ const ProductDetailPage: React.FC = () => {
 
   const gallery = productDetails?.gallery || [];
   const details = productDetails?.details || {};
+  const description = details.description || productCategory.description || "";
   
   return (
     <div className="py-12">
@@ -195,8 +221,8 @@ const ProductDetailPage: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4">{productCategory.product_name || productCategory.category_name}</h2>
             
             <div className="prose max-w-none">
-              {details.description || productCategory.description ? (
-                <div dangerouslySetInnerHTML={{ __html: details.description || productCategory.description || "" }} />
+              {description ? (
+                <div dangerouslySetInnerHTML={{ __html: description }} />
               ) : (
                 <p>No description available for this product.</p>
               )}

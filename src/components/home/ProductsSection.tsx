@@ -1,10 +1,11 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
+import { useHomeProducts } from "@/hooks/content";
 
 interface Product {
   id?: string;
@@ -28,10 +29,31 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
   productsData, 
   defaultProducts = [] 
 }) => {
-  // Use products from props, ensuring we have valid data
+  const { data: homeProducts, isLoading } = useHomeProducts();
+
+  // Map home products from database to the format expected by this component
+  const mappedHomeProducts = homeProducts?.map(product => ({
+    id: product.id,
+    title: product.category_name || 'Product',
+    image: product.image_url || '/placeholder.svg',
+    image_alt: product.alt_text,
+    slug: product.slug
+  })) || [];
+
+  // Use products from props if provided, otherwise use home products from DB
   const products = productsData?.items && productsData.items.length > 0
     ? productsData.items.filter(item => item.title && item.image) 
-    : defaultProducts;
+    : mappedHomeProducts.length > 0 ? mappedHomeProducts : defaultProducts;
+
+  if (isLoading) {
+    return (
+      <section className="section-padding bg-white">
+        <div className="container-custom text-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="section-padding bg-white">
