@@ -25,7 +25,7 @@ export default function BlogEditor({ blog, onComplete, onSave, isLoading = false
 
   // Ensure useForm is configured properly
   const form = useForm<BlogFormValues>({
-    resolver: zodResolver(blogPostSchema), // Check this schema and ensure it's correct
+    resolver: zodResolver(blogSchema), // Check this schema and ensure it's correct
     defaultValues: {
       title: blog?.title || "",
       body_content: blog?.body_content || "",
