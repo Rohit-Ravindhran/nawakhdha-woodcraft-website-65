@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -185,12 +186,12 @@ export default function ProductGalleryTab() {
       
       <div className="mb-6 flex items-center justify-between">
         <div className="w-72">
-          <Select value={selectedCategory || ''} onValueChange={(value) => setSelectedCategory(value || null)}>
+          <Select value={selectedCategory || undefined} onValueChange={(value) => setSelectedCategory(value || null)}>
             <SelectTrigger>
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all-categories">All Categories</SelectItem>
               {productCategories?.map(category => (
                 <SelectItem key={category.id} value={category.id!}>
                   {category.category_name}
