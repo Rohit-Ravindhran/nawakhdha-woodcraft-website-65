@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { HomeProductData } from './types';
+import { HomeProductData, ProductCategoryData } from './types';
 
 export function useHomeProducts() {
   return useQuery({
@@ -37,7 +37,8 @@ export function useHomeProductsWithItems() {
             product_name,
             category_image_url,
             alt_text,
-            category_slug
+            category_slug,
+            description
           )
         `);
       
@@ -55,6 +56,7 @@ export function useHomeProductsWithItems() {
           category_image_url: string | null;
           alt_text: string | null;
           category_slug: string | null;
+          description: string | null;
         }>
       })[];
     }
