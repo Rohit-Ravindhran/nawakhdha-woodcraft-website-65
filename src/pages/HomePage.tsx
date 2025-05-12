@@ -99,7 +99,7 @@ const HomePage = () => {
   const pageKeywords = pageData?.seo_keywords || "wooden furniture, doors, civil maintenance, Bahrain, custom furniture, carpentry, plumbing, drainage";
 
   const isLoadingAny = isLoading || isLoadingProducts;
-  const anyError = error || productsError;
+  const anyError = error || (productsError ? String(productsError) : null);
 
   return (
     <>

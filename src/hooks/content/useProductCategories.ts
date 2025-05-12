@@ -1,7 +1,6 @@
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { ProductCategoryData } from './types';
 
 // Get all product categories with their slugs from home_products
@@ -31,30 +30,6 @@ export function useProductCategories() {
           slug: matchingHomeProduct?.slug
         };
       });
-    }
-  });
-}
-
-export function useDeleteProductCategory() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (productId: string) => {
-      const { error } = await supabase
-        .from('product_categories')
-        .delete()
-        .eq('id', productId);
-        
-      if (error) throw error;
-      return productId;
-    },
-    onSuccess: (productId) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', productId] });
-      toast.success(`Product deleted successfully`);
-    },
-    onError: (error: Error) => {
-      toast.error(`Error deleting product: ${error.message}`);
     }
   });
 }
