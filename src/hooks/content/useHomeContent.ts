@@ -66,7 +66,11 @@ export function useHomeContent() {
         // Set data only if we received it
         if (pageResult) setPageData(pageResult);
         if (servicesData) setServices(servicesData);
-        if (blogData) setBlogPosts(blogData);
+        if (blogData) setBlogPosts(blogData.map(post => ({
+          ...post,
+          // If image_url is empty string or null, set it to null
+          image_url: post.image_url || null
+        })));
 
         // Log for debugging
         console.log("Home page data loaded:", {

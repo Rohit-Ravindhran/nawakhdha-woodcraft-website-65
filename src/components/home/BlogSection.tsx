@@ -37,7 +37,8 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   // Use blog posts from props, ensuring we have valid data
   const blogPosts = React.useMemo(() => {
     if (blogData?.items && blogData.items.length > 0) {
-      return blogData.items.filter(item => item.title && item.image);
+      // Filter to make sure each item has at least a title
+      return blogData.items.filter(item => item.title);
     }
     return defaultBlogPosts;
   }, [blogData, defaultBlogPosts]);
@@ -126,17 +127,22 @@ const BlogSection: React.FC<BlogSectionProps> = ({
           centered
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogPosts.map((post, index) => (
-            <BlogCard
-              key={post.id || index}
-              title={post.title}
-              excerpt={post.excerpt || ""}
-              image={post.image}
-              imageAlt={post.image_alt || `Blog post about ${post.title}`}
-              date={post.date || "Recent"}
-              href={post.link || `/blog/${post.slug || `post-${index}`}`}
-            />
-          ))}
+          {blogPosts.map((post, index) => {
+            // Set default values for missing fields to prevent errors
+            const imageUrl = post.image || "https://placehold.co/600x400?text=Blog+Image";
+            
+            return (
+              <BlogCard
+                key={post.id || index}
+                title={post.title}
+                excerpt={post.excerpt || ""}
+                image={imageUrl}
+                imageAlt={post.image_alt || `Blog post about ${post.title}`}
+                date={post.date || "Recent"}
+                href={post.link || `/blog/${post.slug || `post-${index}`}`}
+              />
+            );
+          })}
         </div>
         <div className="text-center mt-10">
           <Button asChild variant="outline">

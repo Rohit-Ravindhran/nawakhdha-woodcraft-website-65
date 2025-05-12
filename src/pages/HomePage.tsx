@@ -154,8 +154,8 @@ const HomePage = () => {
       <HeroSection heroData={heroData} />
       <ServicesSection servicesData={{ items: formattedServices }} />
       <ProductsSection 
-        productsData={{ items: [] }} 
-        homeProductsWithItems={homeProductsWithItems}
+        productsData={null}
+        homeProductsWithItems={homeProductsWithItems || []}
         isLoading={isLoading}
         error={error ? String(error) : null}
       />
