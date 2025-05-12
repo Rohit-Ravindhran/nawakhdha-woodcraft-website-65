@@ -1,15 +1,12 @@
+
 import React, { useEffect, useState } from "react";
-import { usePage } from "@/hooks/content";
 import { Helmet } from "react-helmet-async";
 import HeroSection from "@/components/home/HeroSection";
 import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
 import CallToActionSection from "@/components/home/CallToActionSection";
 import BlogSection from "@/components/home/BlogSection";
-import { useHomeProductsWithItems } from "@/hooks/content/useHomeProducts";
-import { supabase } from "@/integrations/supabase/client";
-import { parseJSON } from "@/utils/jsonHelpers";
-import { HomeServiceData, HomeBlogCardData } from "@/hooks/content/types";
+import { useHomeContent } from "@/hooks/content/useHomeContent";
 import { Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -21,13 +18,16 @@ declare global {
 }
 
 const HomePage = () => {
-  const [pageData, setPageData] = useState<any>(null);
-  const [services, setServices] = useState<HomeServiceData[]>([]);
-  const [blogPosts, setBlogPosts] = useState<HomeBlogCardData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  
+  const { 
+    pageData, 
+    services, 
+    blogPosts, 
+    homeProductsWithItems, 
+    isLoading, 
+    error, 
+    refetch 
+  } = useHomeContent();
+
   // Performance monitoring
   useEffect(() => {
     // Report page loading performance metrics
@@ -75,7 +75,7 @@ const HomePage = () => {
         
         // Send to analytics if available
         if (window.ga) {
-          window.ga('send', 'event', 'Performance', 'CLS', '', clsValue);
+          window.ga('send', 'event', 'Performance', 'CLS', clsValue);
         }
       });
       
@@ -92,83 +92,7 @@ const HomePage = () => {
       };
     }
   }, []);
-  
-  // Use the hook to fetch home products with their related items
-  const { 
-    data: homeProductsWithItems, 
-    isLoading: isLoadingProducts,
-    error: productsError,
-    refetch: refetchProducts
-  } = useHomeProductsWithItems();
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Fetch page data with retry logic
-        const { data: pageResult, error: pageError } = await supabase
-          .from('pages')
-          .select('*')
-          .eq('page_name', 'home')
-          .maybeSingle();
-        
-        if (pageError) throw pageError;
 
-        // Fetch services from home_services table
-        const { data: servicesData, error: servicesError } = await supabase
-          .from('home_services')
-          .select('*');
-        
-        if (servicesError) throw servicesError;
-
-        // Fetch blog posts from home_blog_cards table
-        const { data: blogData, error: blogError } = await supabase
-          .from('home_blog_cards')
-          .select('*');
-        
-        if (blogError) throw blogError;
-
-        // Check for empty data
-        if (!pageResult) {
-          console.warn("No home page data found in database");
-        }
-        
-        if (!servicesData || servicesData.length === 0) {
-          console.warn("No services data found in database");
-        }
-        
-        if (!blogData || blogData.length === 0) {
-          console.warn("No blog data found in database");
-        }
-
-        // Set data only if we received it
-        if (pageResult) setPageData(pageResult);
-        if (servicesData) setServices(servicesData);
-        if (blogData) setBlogPosts(blogData);
-
-        // Log for debugging
-        console.log("Home page data loaded:", {
-          pageData: !!pageResult,
-          servicesCount: servicesData?.length || 0,
-          blogPostsCount: blogData?.length || 0
-        });
-
-      } catch (error: any) {
-        console.error("Error fetching data:", error);
-        setError(error.message || "Failed to load data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, [retryCount]);
-  
-  // Parse JSON data from page if it exists, using the safe parser
-  const heroData = pageData?.hero ? parseJSON(pageData.hero) : null;
-  
   // Format services data for the ServicesSection component
   const formattedServices = services.map(service => ({
     title: service.title || "",
@@ -192,13 +116,9 @@ const HomePage = () => {
   const pageDescription = pageData?.seo_description || "Expert wooden furniture, doors, and civil maintenance services tailored for homes and businesses across Bahrain. Handcrafted quality and modern design.";
   const pageKeywords = pageData?.seo_keywords || "wooden furniture, doors, civil maintenance, Bahrain, custom furniture, carpentry, plumbing, drainage";
 
-  const isLoadingAny = isLoading || isLoadingProducts;
-  const anyError = error || (productsError ? String(productsError) : null);
-
-  // Function to handle retry for all data fetching
+  // Handle retry for all data fetching
   const handleRetry = () => {
-    setRetryCount(prev => prev + 1);
-    refetchProducts();
+    refetch();
   };
 
   return (
@@ -216,8 +136,8 @@ const HomePage = () => {
         <link rel="canonical" href="https://nawakhdha-woodcraft.com/" />
         
         {/* Preload critical assets */}
-        {heroData?.background_image && (
-          <link rel="preload" href={heroData.background_image} as="image" />
+        {pageData?.hero?.background_image && (
+          <link rel="preload" href={pageData.hero.background_image} as="image" />
         )}
         
         {/* Preconnect to your CDN domain */}
@@ -227,13 +147,13 @@ const HomePage = () => {
         <link rel="dns-prefetch" href="https://enqplizqtwvquxliiygz.supabase.co" />
       </Helmet>
 
-      <HeroSection heroData={heroData} />
+      <HeroSection heroData={pageData?.hero ? JSON.parse(pageData.hero) : null} />
       <ServicesSection servicesData={{ items: formattedServices }} />
       <ProductsSection 
         productsData={{ items: [] }} 
         homeProductsWithItems={homeProductsWithItems}
-        isLoading={isLoadingProducts}
-        error={productsError ? String(productsError) : null}
+        isLoading={isLoading}
+        error={error ? String(error) : null}
       />
       <CallToActionSection />
       <BlogSection 
@@ -242,7 +162,7 @@ const HomePage = () => {
         error={error} 
       />
 
-      {isLoadingAny && (
+      {isLoading && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
             <Loader2 className="animate-spin h-8 w-8 mx-auto mb-4 text-primary" />
@@ -254,7 +174,7 @@ const HomePage = () => {
         </div>
       )}
 
-      {anyError && (
+      {error && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
             <div className="flex flex-col items-center">
@@ -264,7 +184,7 @@ const HomePage = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold mb-2">Error Loading Data</h3>
-              <p className="text-center text-red-600 mb-4">{anyError}</p>
+              <p className="text-center text-red-600 mb-4">{String(error)}</p>
               <Button 
                 onClick={handleRetry}
                 className="w-full flex items-center justify-center"
