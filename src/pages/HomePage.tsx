@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import HeroSection from "@/components/home/HeroSection";
 import ServicesSection from "@/components/home/ServicesSection";
@@ -9,6 +9,7 @@ import BlogSection from "@/components/home/BlogSection";
 import { useHomeContent } from "@/hooks/content/useHomeContent";
 import { Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { safeJsonParse } from "@/utils/jsonHelpers";
 
 // Declare a global interface to add the ga property to the Window object
 declare global {
@@ -116,6 +117,9 @@ const HomePage = () => {
   const pageDescription = pageData?.seo_description || "Expert wooden furniture, doors, and civil maintenance services tailored for homes and businesses across Bahrain. Handcrafted quality and modern design.";
   const pageKeywords = pageData?.seo_keywords || "wooden furniture, doors, civil maintenance, Bahrain, custom furniture, carpentry, plumbing, drainage";
 
+  // Parse hero data safely
+  const heroData = safeJsonParse(pageData?.hero);
+
   // Handle retry for all data fetching
   const handleRetry = () => {
     refetch();
@@ -136,8 +140,8 @@ const HomePage = () => {
         <link rel="canonical" href="https://nawakhdha-woodcraft.com/" />
         
         {/* Preload critical assets */}
-        {pageData?.hero?.background_image && (
-          <link rel="preload" href={pageData.hero.background_image} as="image" />
+        {heroData?.background_image && (
+          <link rel="preload" href={heroData.background_image} as="image" />
         )}
         
         {/* Preconnect to your CDN domain */}
@@ -147,7 +151,7 @@ const HomePage = () => {
         <link rel="dns-prefetch" href="https://enqplizqtwvquxliiygz.supabase.co" />
       </Helmet>
 
-      <HeroSection heroData={pageData?.hero ? JSON.parse(pageData.hero) : null} />
+      <HeroSection heroData={heroData} />
       <ServicesSection servicesData={{ items: formattedServices }} />
       <ProductsSection 
         productsData={{ items: [] }} 

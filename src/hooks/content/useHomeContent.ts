@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useHomeProductsWithItems } from "./useHomeProducts";
 import { HomeServiceData, HomeBlogCardData } from "./types";
-import { parseJSON } from "@/utils/jsonHelpers";
+import { safeJsonParse } from "@/utils/jsonHelpers";
 
 export function useHomeContent() {
   const [pageData, setPageData] = useState<any>(null);
