@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useHomeProductsWithCategories } from "./products/useHomeProductsWithCategories";
@@ -72,8 +73,9 @@ export function useHomeContent() {
             ...post,
             // If image_url is empty string or null, set it to null
             image_url: post.image_url || null,
-            // Ensure published_at has a default value
-            published_at: post.published_at || new Date().toISOString(),
+            // Add a default published_at field since it doesn't exist in the table
+            // Use current date as fallback
+            published_at: new Date().toISOString(),
             // Ensure title has a default value for filtering
             title: post.title || "Untitled Post"
           }));

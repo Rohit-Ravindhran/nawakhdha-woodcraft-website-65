@@ -57,7 +57,7 @@ export interface HomeBlogCardData {
   image_url?: string;
   alt_text?: string;
   slug?: string;
-  published_at?: string;
+  published_at?: string; // Added this field which doesn't exist in DB but is used in UI
 }
 
 // Types for product categories data

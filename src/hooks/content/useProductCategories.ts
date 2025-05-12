@@ -35,3 +35,22 @@ export function useProductCategories() {
     }
   });
 }
+
+export function useProductCategory(categoryId?: string) {
+  return useQuery({
+    queryKey: ['product-category', categoryId],
+    queryFn: async () => {
+      if (!categoryId) return null;
+      
+      const { data, error } = await supabase
+        .from('product_categories')
+        .select('*')
+        .eq('id', categoryId)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as ProductCategoryData;
+    },
+    enabled: !!categoryId
+  });
+}
