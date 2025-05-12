@@ -1,79 +1,37 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
-// Declare a global interface to add the ga property to the Window object
-declare global {
-  interface Window {
-    ga?: (command: string, hitType: string, category: string, action: string, value?: number) => void;
-  }
+interface PagePerformanceTrackerProps {
+  pageName: string;
 }
 
-const PagePerformanceTracker: React.FC = () => {
+const PagePerformanceTracker: React.FC<PagePerformanceTrackerProps> = ({ pageName }) => {
   useEffect(() => {
-    // Report page loading performance metrics
-    if (typeof window !== 'undefined') {
-      // Create PerformanceObserver for LCP
-      const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const lastEntry = entries[entries.length - 1];
-        if (lastEntry) {
-          console.log('LCP:', lastEntry.startTime / 1000, 'seconds');
-          
-          // Send to analytics if available
-          if (window.ga) {
-            window.ga('send', 'timing', 'Performance', 'LCP', lastEntry.startTime);
-          }
-        }
-      });
+    try {
+      // Record navigation timing metrics
+      const timing = window.performance.timing;
+      const loadTime = timing.domContentLoadedEventEnd - timing.navigationStart;
       
-      // Create PerformanceObserver for FID
-      const fidObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const firstEntry = entries[0];
-        if (firstEntry) {
-          // Use type assertion for the FirstInputDelay entry
-          const fidEntry = firstEntry as any;
-          console.log('FID:', fidEntry.processingStart - fidEntry.startTime, 'ms');
-          
-          // Send to analytics if available
-          if (window.ga) {
-            window.ga('send', 'timing', 'Performance', 'FID', 
-              fidEntry.processingStart - fidEntry.startTime);
-          }
-        }
-      });
+      console.log(`[Performance] ${pageName} page load time:`, loadTime);
       
-      // Create PerformanceObserver for CLS
-      const clsObserver = new PerformanceObserver((entryList) => {
-        let clsValue = 0;
-        for (const entry of entryList.getEntries()) {
-          if (!(entry as any).hadRecentInput) {
-            clsValue += (entry as any).value;
-          }
-        }
-        console.log('CLS:', clsValue);
-        
-        // Send to analytics if available
-        if (window.ga) {
-          window.ga('send', 'event', 'Performance', 'CLS', clsValue);
-        }
-      });
+      // Record when the component was mounted
+      const mountTime = new Date().toISOString();
+      console.log(`[Performance] ${pageName} mounted at:`, mountTime);
       
-      // Start observing
-      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-      fidObserver.observe({ type: 'first-input', buffered: true });
-      clsObserver.observe({ type: 'layout-shift', buffered: true });
-      
-      // Cleanup
-      return () => {
-        lcpObserver.disconnect();
-        fidObserver.disconnect();
-        clsObserver.disconnect();
-      };
+      // You can send these metrics to your analytics or logging service
+      // For example: logPerformance(pageName, loadTime, mountTime);
+    } catch (error) {
+      console.error('Error tracking performance:', error);
     }
-  }, []);
-
-  return null; // This component doesn't render anything
+    
+    // Cleanup function
+    return () => {
+      console.log(`[Performance] ${pageName} unmounted at:`, new Date().toISOString());
+    };
+  }, [pageName]);
+  
+  // This component doesn't render anything visible
+  return null;
 };
 
 export default PagePerformanceTracker;

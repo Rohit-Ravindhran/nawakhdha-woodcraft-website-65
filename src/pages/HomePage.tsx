@@ -11,6 +11,7 @@ import { usePage } from '@/hooks/content';
 import { useHomeProductsWithCategories } from '@/hooks/content/products';
 import HomePageStatus from '@/components/home/HomePageStatus';
 import PagePerformanceTracker from '@/components/home/PagePerformanceTracker';
+import { parseJSON } from '@/utils/jsonHelpers';
 
 const HomePage = () => {
   // Get page data
@@ -62,20 +63,20 @@ const HomePage = () => {
         onRetry={handleRetry}
       />
 
-      <HeroSection heroData={homePageData?.hero ? JSON.parse(homePageData.hero) : null} />
+      <HeroSection heroData={parseJSON(homePageData?.hero)} />
       
       <ServicesSection 
-        servicesData={homePageData?.services ? JSON.parse(homePageData.services) : null} 
+        servicesData={parseJSON(homePageData?.services)} 
       />
       
       <ProductsSection 
-        productsData={homePageData?.products ? JSON.parse(homePageData.products) : null}
+        productsData={parseJSON(homePageData?.products)}
         isLoading={productsLoading}
         error={productsError ? String(productsError) : undefined}
       />
       
       <BlogSection 
-        blogData={homePageData?.blog ? JSON.parse(homePageData.blog) : null} 
+        blogData={parseJSON(homePageData?.blog)} 
       />
       
       <CallToActionSection />
