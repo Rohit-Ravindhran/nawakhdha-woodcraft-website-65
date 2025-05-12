@@ -5,6 +5,7 @@ import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { BlogCard } from "@/components/ui/blog-card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BlogPost {
   id?: string;
@@ -34,23 +35,24 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   error = null
 }) => {
   // Use blog posts from props, ensuring we have valid data
-  const blogPosts = blogData?.items && blogData.items.length > 0
-    ? blogData.items.filter(item => item.title && item.image) 
-    : defaultBlogPosts;
+  const blogPosts = React.useMemo(() => {
+    if (blogData?.items && blogData.items.length > 0) {
+      return blogData.items.filter(item => item.title && item.image);
+    }
+    return defaultBlogPosts;
+  }, [blogData, defaultBlogPosts]);
 
   // Debug information
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('BlogSection - Data loaded:', {
-        fromPropsCount: blogData?.items?.length || 0,
-        fromDefaultCount: defaultBlogPosts.length,
-        displayingCount: blogPosts.length,
-        error: error ? String(error) : null
-      });
-    }
+    console.log('BlogSection - Data loaded:', {
+      fromPropsCount: blogData?.items?.length || 0,
+      fromDefaultCount: defaultBlogPosts.length,
+      displayingCount: blogPosts.length,
+      error: error ? String(error) : null
+    });
   }, [blogData, defaultBlogPosts, blogPosts, error]);
 
-  // Handle loading state
+  // Handle loading state with skeleton UI
   if (isLoading) {
     return (
       <section className="section-padding bg-secondary/30">
@@ -60,8 +62,15 @@ const BlogSection: React.FC<BlogSectionProps> = ({
             subtitle="Loading our latest blog posts..."
             centered
           />
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((_, index) => (
+              <div key={`skeleton-${index}`} className="flex flex-col space-y-2">
+                <Skeleton className="h-48 w-full rounded-md" />
+                <Skeleton className="h-5 w-3/4 rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <Skeleton className="h-4 w-2/3 rounded-md" />
+              </div>
+            ))}
           </div>
         </div>
       </section>

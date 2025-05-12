@@ -11,7 +11,8 @@ import { useHomeProductsWithItems } from "@/hooks/content/useHomeProducts";
 import { supabase } from "@/integrations/supabase/client";
 import { parseJSON } from "@/utils/jsonHelpers";
 import { HomeServiceData, HomeBlogCardData } from "@/hooks/content/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const HomePage = () => {
   const [pageData, setPageData] = useState<any>(null);
@@ -19,12 +20,14 @@ const HomePage = () => {
   const [blogPosts, setBlogPosts] = useState<HomeBlogCardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Use the hook to fetch home products with their related items
   const { 
     data: homeProductsWithItems, 
     isLoading: isLoadingProducts,
-    error: productsError 
+    error: productsError,
+    refetch: refetchProducts
   } = useHomeProductsWithItems();
   
   useEffect(() => {
@@ -33,7 +36,7 @@ const HomePage = () => {
       setError(null);
       
       try {
-        // Fetch page data
+        // Fetch page data with retry logic
         const { data: pageResult, error: pageError } = await supabase
           .from('pages')
           .select('*')
@@ -56,6 +59,19 @@ const HomePage = () => {
         
         if (blogError) throw blogError;
 
+        // Check for empty data
+        if (!pageResult) {
+          console.warn("No home page data found in database");
+        }
+        
+        if (!servicesData || servicesData.length === 0) {
+          console.warn("No services data found in database");
+        }
+        
+        if (!blogData || blogData.length === 0) {
+          console.warn("No blog data found in database");
+        }
+
         // Set data only if we received it
         if (pageResult) setPageData(pageResult);
         if (servicesData) setServices(servicesData);
@@ -77,7 +93,7 @@ const HomePage = () => {
     };
     
     fetchData();
-  }, []);
+  }, [retryCount]);
   
   // Parse JSON data from page if it exists, using the safe parser
   const heroData = pageData?.hero ? parseJSON(pageData.hero) : null;
@@ -107,6 +123,12 @@ const HomePage = () => {
 
   const isLoadingAny = isLoading || isLoadingProducts;
   const anyError = error || (productsError ? String(productsError) : null);
+
+  // Function to handle retry for all data fetching
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    refetchProducts();
+  };
 
   return (
     <>
@@ -140,24 +162,36 @@ const HomePage = () => {
 
       {isLoadingAny && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-md">
-            <Loader2 className="animate-spin h-6 w-6 mx-auto mb-2" />
-            <p>Loading content...</p>
+          <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
+            <Loader2 className="animate-spin h-8 w-8 mx-auto mb-4 text-primary" />
+            <p className="text-center font-medium">Loading content...</p>
+            <p className="text-center text-muted-foreground text-sm mt-2">
+              Fetching the latest data from our servers
+            </p>
           </div>
         </div>
       )}
 
       {anyError && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-md max-w-md">
-            <p className="text-red-500 mb-2">Error loading data:</p>
-            <p className="mb-4">{anyError}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-            >
-              Try Again
-            </button>
+          <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
+            <div className="flex flex-col items-center">
+              <div className="bg-red-100 p-3 rounded-full mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-8 w-8 text-red-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Error Loading Data</h3>
+              <p className="text-center text-red-600 mb-4">{anyError}</p>
+              <Button 
+                onClick={handleRetry}
+                className="w-full flex items-center justify-center"
+                variant="default"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+              </Button>
+            </div>
           </div>
         </div>
       )}

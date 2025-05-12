@@ -12,18 +12,24 @@ export function useHomeProducts() {
         .select('*');
 
       if (error) throw error;
+      
+      // Log when no products are found for debugging
+      if (!data || data.length === 0) {
+        console.warn('No home products found in database');
+      }
+      
       return data as HomeProductData[];
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    refetchOnMount: true, // Refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gets focus
+    staleTime: 0, // Always fetch fresh data
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 
 // Type definition to make description optional
 interface ProductCategoryWithOptionalDescription {
   id: string;
-  category_name: string;
+  category_name: string | null;
   product_name: string | null;
   category_image_url: string | null;
   alt_text: string | null;
@@ -45,8 +51,9 @@ export function useHomeProductsWithItems() {
           .select('*');
         
         if (homeProductsError) throw homeProductsError;
+        
         if (!homeProducts || homeProducts.length === 0) {
-          console.log('No home products found');
+          console.warn('No home products found');
           return [];
         }
         
@@ -80,8 +87,8 @@ export function useHomeProductsWithItems() {
           })
         );
         
-        // Use type assertion to match our updated interface
-        return productsWithCategories as (HomeProductData & {
+        // Cast with type assertion
+        return productsWithCategories as unknown as (HomeProductData & {
           product_categories: ProductCategoryWithOptionalDescription[]
         })[];
       } catch (error) {
@@ -89,9 +96,9 @@ export function useHomeProductsWithItems() {
         throw error;
       }
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    refetchOnMount: true, // Refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gets focus
+    staleTime: 0, // Always fetch fresh data
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 

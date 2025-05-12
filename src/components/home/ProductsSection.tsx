@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
 import { HomeProductData } from "@/hooks/content/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Product {
   id?: string;
@@ -28,7 +29,7 @@ interface ProductsSectionProps {
   homeProductsWithItems?: (HomeProductData & {
     product_categories: Array<{
       id: string;
-      category_name: string;
+      category_name: string | null;
       product_name: string | null;
       category_image_url: string | null;
       alt_text: string | null;
@@ -48,34 +49,40 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
   error = null
 }) => {
   // Map home products from database to the format expected by this component
-  const mappedHomeProducts = homeProductsWithItems?.map(product => ({
-    id: product.id,
-    title: product.category_name || 'Product',
-    image: product.image_url || '/placeholder.svg',
-    image_alt: product.alt_text || `${product.category_name || 'Product'} image`,
-    slug: product.slug,
-    category_slug: product.slug // Use the same slug for consistency
-  })) || [];
+  const mappedHomeProducts = React.useMemo(() => {
+    return homeProductsWithItems?.map(product => ({
+      id: product.id,
+      title: product.category_name || 'Product',
+      image: product.image_url || '/placeholder.svg',
+      image_alt: product.alt_text || `${product.category_name || 'Product'} image`,
+      slug: product.slug,
+      category_slug: product.slug // Use the same slug for consistency
+    })) || [];
+  }, [homeProductsWithItems]);
 
   // Use products from props if provided, otherwise use home products from DB
-  const products = productsData?.items && productsData.items.length > 0
-    ? productsData.items.filter(item => item.title && item.image) 
-    : mappedHomeProducts.length > 0 ? mappedHomeProducts : defaultProducts;
+  const products = React.useMemo(() => {
+    if (productsData?.items && productsData.items.length > 0) {
+      return productsData.items.filter(item => item.title && item.image);
+    } else if (mappedHomeProducts.length > 0) {
+      return mappedHomeProducts;
+    } else {
+      return defaultProducts;
+    }
+  }, [productsData, mappedHomeProducts, defaultProducts]);
 
   // Debug information
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('ProductsSection - Data loaded:', {
-        fromPropsCount: productsData?.items?.length || 0,
-        fromDBCount: mappedHomeProducts.length,
-        fromDefaultCount: defaultProducts.length,
-        displayingCount: products.length,
-        error: error ? String(error) : null
-      });
-    }
+    console.log('ProductsSection - Data loaded:', {
+      fromPropsCount: productsData?.items?.length || 0,
+      fromDBCount: mappedHomeProducts.length,
+      fromDefaultCount: defaultProducts.length,
+      displayingCount: products.length,
+      error: error ? String(error) : null
+    });
   }, [productsData, mappedHomeProducts, defaultProducts, products, error]);
 
-  // Handle loading state
+  // Handle loading state with skeleton UI
   if (isLoading) {
     return (
       <section className="section-padding bg-white">
@@ -85,8 +92,13 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
             subtitle="Loading our product collection..."
             centered
           />
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((_, index) => (
+              <div key={`skeleton-${index}`} className="flex flex-col space-y-2">
+                <Skeleton className="h-48 w-full rounded-md" />
+                <Skeleton className="h-5 w-3/4 rounded-md" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -144,9 +156,6 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product, index) => {
             // Use the appropriate routing approach based on available data
-            // First priority: slug from the product itself
-            // Second priority: category_slug if available
-            // Fallback: product ID or index-based URL
             const productUrl = product.slug 
               ? `/product/${product.slug}`
               : product.category_slug
