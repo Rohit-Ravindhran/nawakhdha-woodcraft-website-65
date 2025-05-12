@@ -61,6 +61,13 @@ const HomePage = () => {
         if (servicesData) setServices(servicesData);
         if (blogData) setBlogPosts(blogData);
 
+        // Log for debugging
+        console.log("Home page data loaded:", {
+          pageData: !!pageResult,
+          servicesCount: servicesData?.length || 0,
+          blogPostsCount: blogData?.length || 0
+        });
+
       } catch (error: any) {
         console.error("Error fetching data:", error);
         setError(error.message || "Failed to load data");
@@ -121,9 +128,15 @@ const HomePage = () => {
       <ProductsSection 
         productsData={{ items: [] }} 
         homeProductsWithItems={homeProductsWithItems}
+        isLoading={isLoadingProducts}
+        error={productsError ? String(productsError) : null}
       />
       <CallToActionSection />
-      <BlogSection blogData={{ items: formattedBlogPosts }} />
+      <BlogSection 
+        blogData={{ items: formattedBlogPosts }}
+        isLoading={isLoading}
+        error={error} 
+      />
 
       {isLoadingAny && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -141,7 +154,7 @@ const HomePage = () => {
             <p className="mb-4">{anyError}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
               Try Again
             </button>

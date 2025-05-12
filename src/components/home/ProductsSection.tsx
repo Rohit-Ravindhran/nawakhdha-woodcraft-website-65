@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
@@ -18,7 +18,7 @@ interface Product {
   category_slug?: string;
 }
 
-// Update the interface to match our updated type definition
+// Interface with updated type definition
 interface ProductsSectionProps {
   productsData: {
     section_title?: string;
@@ -36,12 +36,16 @@ interface ProductsSectionProps {
       description?: string | null; // Made description optional
     }>
   })[];
+  isLoading?: boolean;
+  error?: unknown;
 }
 
 const ProductsSection: React.FC<ProductsSectionProps> = ({ 
   productsData, 
   defaultProducts = [],
-  homeProductsWithItems = []
+  homeProductsWithItems = [],
+  isLoading = false,
+  error = null
 }) => {
   // Map home products from database to the format expected by this component
   const mappedHomeProducts = homeProductsWithItems?.map(product => ({
@@ -57,6 +61,77 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
   const products = productsData?.items && productsData.items.length > 0
     ? productsData.items.filter(item => item.title && item.image) 
     : mappedHomeProducts.length > 0 ? mappedHomeProducts : defaultProducts;
+
+  // Debug information
+  React.useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('ProductsSection - Data loaded:', {
+        fromPropsCount: productsData?.items?.length || 0,
+        fromDBCount: mappedHomeProducts.length,
+        fromDefaultCount: defaultProducts.length,
+        displayingCount: products.length,
+        error: error ? String(error) : null
+      });
+    }
+  }, [productsData, mappedHomeProducts, defaultProducts, products, error]);
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <section className="section-padding bg-white">
+        <div className="container-custom">
+          <SectionTitle
+            title="Our Products"
+            subtitle="Loading our product collection..."
+            centered
+          />
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Handle error state
+  if (error && products.length === 0) {
+    return (
+      <section className="section-padding bg-white">
+        <div className="container-custom">
+          <SectionTitle
+            title="Our Products"
+            subtitle="We're having trouble loading our products. Please check back soon."
+            centered
+          />
+          <div className="flex flex-col justify-center items-center py-10 text-red-500">
+            <AlertCircle className="h-10 w-10 mb-2" />
+            <p className="text-center">Unable to load product data</p>
+            {process.env.NODE_ENV !== 'production' && (
+              <p className="text-sm text-muted-foreground mt-2">{String(error)}</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If we have no products to show
+  if (products.length === 0) {
+    return (
+      <section className="section-padding bg-white">
+        <div className="container-custom">
+          <SectionTitle
+            title={productsData?.section_title || "Our Products"}
+            subtitle="Our product collection will be available soon."
+            centered
+          />
+          <div className="flex justify-center items-center py-10">
+            <p className="text-muted-foreground">No products available at the moment</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="section-padding bg-white">

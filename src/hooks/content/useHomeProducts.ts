@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -14,11 +13,14 @@ export function useHomeProducts() {
 
       if (error) throw error;
       return data as HomeProductData[];
-    }
+    },
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window gets focus
   });
 }
 
-// Updated the type definition to make description optional
+// Type definition to make description optional
 interface ProductCategoryWithOptionalDescription {
   id: string;
   category_name: string;
@@ -43,14 +45,25 @@ export function useHomeProductsWithItems() {
           .select('*');
         
         if (homeProductsError) throw homeProductsError;
+        if (!homeProducts || homeProducts.length === 0) {
+          console.log('No home products found');
+          return [];
+        }
         
         // For each home product, find matching product categories
         const productsWithCategories = await Promise.all(
           homeProducts.map(async (homeProduct) => {
+            if (!homeProduct.category_name) {
+              return {
+                ...homeProduct,
+                product_categories: []
+              };
+            }
+            
             const { data: categories, error: categoriesError } = await supabase
               .from('product_categories')
               .select('*')
-              .eq('category_name', homeProduct.category_name || '');
+              .eq('category_name', homeProduct.category_name);
               
             if (categoriesError) {
               console.error(`Error fetching categories for ${homeProduct.category_name}:`, categoriesError);
@@ -75,7 +88,10 @@ export function useHomeProductsWithItems() {
         console.error("Error in useHomeProductsWithItems:", error);
         throw error;
       }
-    }
+    },
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window gets focus
   });
 }
 

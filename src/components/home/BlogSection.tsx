@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { BlogCard } from "@/components/ui/blog-card";
@@ -23,16 +23,90 @@ interface BlogSectionProps {
     items?: BlogPost[];
   } | null;
   defaultBlogPosts?: BlogPost[];
+  isLoading?: boolean;
+  error?: unknown;
 }
 
 const BlogSection: React.FC<BlogSectionProps> = ({ 
   blogData, 
-  defaultBlogPosts = [] 
+  defaultBlogPosts = [],
+  isLoading = false,
+  error = null
 }) => {
   // Use blog posts from props, ensuring we have valid data
   const blogPosts = blogData?.items && blogData.items.length > 0
     ? blogData.items.filter(item => item.title && item.image) 
     : defaultBlogPosts;
+
+  // Debug information
+  React.useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('BlogSection - Data loaded:', {
+        fromPropsCount: blogData?.items?.length || 0,
+        fromDefaultCount: defaultBlogPosts.length,
+        displayingCount: blogPosts.length,
+        error: error ? String(error) : null
+      });
+    }
+  }, [blogData, defaultBlogPosts, blogPosts, error]);
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <section className="section-padding bg-secondary/30">
+        <div className="container-custom">
+          <SectionTitle
+            title="From Our Workshop Blog"
+            subtitle="Loading our latest blog posts..."
+            centered
+          />
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Handle error state
+  if (error && blogPosts.length === 0) {
+    return (
+      <section className="section-padding bg-secondary/30">
+        <div className="container-custom">
+          <SectionTitle
+            title="From Our Workshop Blog"
+            subtitle="We're having trouble loading our blog posts. Please check back soon."
+            centered
+          />
+          <div className="flex flex-col justify-center items-center py-10 text-red-500">
+            <AlertCircle className="h-10 w-10 mb-2" />
+            <p className="text-center">Unable to load blog data</p>
+            {process.env.NODE_ENV !== 'production' && (
+              <p className="text-sm text-muted-foreground mt-2">{String(error)}</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If we have no blog posts to show
+  if (blogPosts.length === 0) {
+    return (
+      <section className="section-padding bg-secondary/30">
+        <div className="container-custom">
+          <SectionTitle
+            title={blogData?.section_title || "From Our Workshop Blog"}
+            subtitle="Our blog posts will be available soon."
+            centered
+          />
+          <div className="flex justify-center items-center py-10">
+            <p className="text-muted-foreground">No blog posts available at the moment</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="section-padding bg-secondary/30">
