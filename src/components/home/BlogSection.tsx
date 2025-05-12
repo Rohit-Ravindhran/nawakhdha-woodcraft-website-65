@@ -45,9 +45,9 @@ const BlogSection: React.FC<BlogSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {blogPosts.map((post, index) => (
             <BlogCard
-              key={index}
+              key={post.id || index}
               title={post.title}
-              excerpt={post.excerpt}
+              excerpt={post.excerpt || ""}
               image={post.image}
               imageAlt={post.image_alt || `Blog post about ${post.title}`}
               date={post.date || "Recent"}

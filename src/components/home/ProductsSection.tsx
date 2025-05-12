@@ -5,7 +5,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
-import { useHomeProducts, useHomeProductsWithItems } from "@/hooks/content";
+import { HomeProductData } from "@/hooks/content/types";
 
 interface Product {
   id?: string;
@@ -24,25 +24,34 @@ interface ProductsSectionProps {
     items?: Product[];
   } | null;
   defaultProducts?: Product[];
+  homeProductsWithItems?: (HomeProductData & {
+    product_categories: Array<{
+      id: string;
+      category_name: string;
+      product_name: string | null;
+      category_image_url: string | null;
+      alt_text: string | null;
+      category_slug: string | null;
+      description: string | null;
+    }>
+  })[];
 }
 
 const ProductsSection: React.FC<ProductsSectionProps> = ({ 
   productsData, 
-  defaultProducts = [] 
+  defaultProducts = [],
+  homeProductsWithItems = []
 }) => {
-  // Fetch both regular home products and the ones with related items
-  const { data: homeProducts, isLoading: isLoadingBasic } = useHomeProducts();
-  const { data: homeProductsWithItems, isLoading: isLoadingWithItems } = useHomeProductsWithItems();
-  
-  const isLoading = isLoadingBasic || isLoadingWithItems;
-  
+  const isLoading = false; // We're handling loading state at the page level now
+
   // Map home products from database to the format expected by this component
-  const mappedHomeProducts = homeProducts?.map(product => ({
+  const mappedHomeProducts = homeProductsWithItems?.map(product => ({
     id: product.id,
     title: product.category_name || 'Product',
     image: product.image_url || '/placeholder.svg',
     image_alt: product.alt_text,
-    slug: product.slug
+    slug: product.slug,
+    category_slug: product.slug // Use the same slug for consistency
   })) || [];
 
   // Use products from props if provided, otherwise use home products from DB
@@ -82,7 +91,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
                 
             return (
               <CategoryCard
-                key={index}
+                key={product.id || index}
                 title={product.title}
                 image={product.image}
                 href={productUrl}

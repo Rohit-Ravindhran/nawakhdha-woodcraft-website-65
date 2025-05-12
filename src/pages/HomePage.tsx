@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { usePage } from "@/hooks/content";
 import { Helmet } from "react-helmet-async";
@@ -6,17 +7,25 @@ import ServicesSection from "@/components/home/ServicesSection";
 import ProductsSection from "@/components/home/ProductsSection";
 import CallToActionSection from "@/components/home/CallToActionSection";
 import BlogSection from "@/components/home/BlogSection";
+import { useHomeProductsWithItems } from "@/hooks/content/useHomeProducts";
 import { supabase } from "@/integrations/supabase/client";
 import { parseJSON } from "@/utils/jsonHelpers";
-import { HomeServiceData, HomeProductData, HomeBlogCardData } from "@/hooks/content/types";
+import { HomeServiceData, HomeBlogCardData } from "@/hooks/content/types";
+import { Loader2 } from "lucide-react";
 
 const HomePage = () => {
   const [pageData, setPageData] = useState<any>(null);
   const [services, setServices] = useState<HomeServiceData[]>([]);
-  const [products, setProducts] = useState<HomeProductData[]>([]);
   const [blogPosts, setBlogPosts] = useState<HomeBlogCardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Use the hook to fetch home products with their related items
+  const { 
+    data: homeProductsWithItems, 
+    isLoading: isLoadingProducts,
+    error: productsError 
+  } = useHomeProductsWithItems();
   
   useEffect(() => {
     const fetchData = async () => {
@@ -40,13 +49,6 @@ const HomePage = () => {
         
         if (servicesError) throw servicesError;
 
-        // Fetch products from home_products table
-        const { data: productsData, error: productsError } = await supabase
-          .from('home_products')
-          .select('*');
-        
-        if (productsError) throw productsError;
-
         // Fetch blog posts from home_blog_cards table
         const { data: blogData, error: blogError } = await supabase
           .from('home_blog_cards')
@@ -57,7 +59,6 @@ const HomePage = () => {
         // Set data only if we received it
         if (pageResult) setPageData(pageResult);
         if (servicesData) setServices(servicesData);
-        if (productsData) setProducts(productsData);
         if (blogData) setBlogPosts(blogData);
 
       } catch (error: any) {
@@ -82,14 +83,6 @@ const HomePage = () => {
     image_alt: service.alt_text || `${service.title || "Service"} image`
   }));
   
-  // Format products data for the ProductsSection component
-  const formattedProducts = products.map(product => ({
-    id: product.id || "",
-    title: product.category_name || "",
-    image: product.image_url || "https://placehold.co/400x400",
-    image_alt: product.alt_text || `${product.category_name || "Product"} image`
-  }));
-  
   // Format blog posts data for the BlogSection component
   const formattedBlogPosts = blogPosts.map(post => ({
     id: post.id || "",
@@ -104,6 +97,9 @@ const HomePage = () => {
   const pageTitle = pageData?.seo_title || "Custom Wooden Furniture, Doors & Maintenance Services in Bahrain | Nawakhdha Woodcraft";
   const pageDescription = pageData?.seo_description || "Expert wooden furniture, doors, and civil maintenance services tailored for homes and businesses across Bahrain. Handcrafted quality and modern design.";
   const pageKeywords = pageData?.seo_keywords || "wooden furniture, doors, civil maintenance, Bahrain, custom furniture, carpentry, plumbing, drainage";
+
+  const isLoadingAny = isLoading || isLoadingProducts;
+  const anyError = error || productsError;
 
   return (
     <>
@@ -122,21 +118,27 @@ const HomePage = () => {
 
       <HeroSection heroData={heroData} />
       <ServicesSection servicesData={{ items: formattedServices }} />
-      <ProductsSection productsData={{ items: formattedProducts }} />
+      <ProductsSection 
+        productsData={{ items: [] }} 
+        homeProductsWithItems={homeProductsWithItems}
+      />
       <CallToActionSection />
       <BlogSection blogData={{ items: formattedBlogPosts }} />
 
-      {isLoading && (
+      {isLoadingAny && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-md">Loading content...</div>
+          <div className="bg-white p-4 rounded-md">
+            <Loader2 className="animate-spin h-6 w-6 mx-auto mb-2" />
+            <p>Loading content...</p>
+          </div>
         </div>
       )}
 
-      {error && (
+      {anyError && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-md max-w-md">
             <p className="text-red-500 mb-2">Error loading data:</p>
-            <p className="mb-4">{error}</p>
+            <p className="mb-4">{anyError}</p>
             <button 
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-blue-500 text-white rounded"
