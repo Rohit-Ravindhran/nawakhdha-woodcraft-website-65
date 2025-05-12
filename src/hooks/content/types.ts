@@ -143,5 +143,5 @@ export interface ContactInfoData {
   address?: string;
   phone?: string;
   email?: string;
-  business_hours_json?: string | object | null;
+  business_hours_json?: string | object | any; // Updated to include any type to fix build error
 }
