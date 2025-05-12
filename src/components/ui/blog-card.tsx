@@ -2,12 +2,13 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 export interface BlogCardProps {
   title: string;
   excerpt: string;
   image: string;
-  imageAlt?: string; // Added imageAlt prop
+  imageAlt?: string;
   date: string;
   href: string;
 }
@@ -17,10 +18,11 @@ export function BlogCard({ title, excerpt, image, imageAlt = "", date, href }: B
     <Card className="overflow-hidden">
       <a href={href} className="group">
         <AspectRatio ratio={16 / 9} className="overflow-hidden">
-          <img
+          <OptimizedImage
             src={image || "/placeholder.svg"}
-            alt={imageAlt || title} // Use imageAlt if provided, otherwise fallback to title
-            className="object-cover w-full h-full transition-all group-hover:scale-105"
+            alt={imageAlt || title}
+            imageType="blog"
+            className="w-full h-full transition-all group-hover:scale-105"
           />
         </AspectRatio>
       </a>

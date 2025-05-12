@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface HeroSectionProps {
   heroData: {
@@ -15,17 +16,23 @@ interface HeroSectionProps {
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
+  const backgroundImage = heroData?.background_image || "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format";
+  const imageAlt = heroData?.background_image_alt || "Carpentry workshop in Bahrain - Nawakhdha Woodcraft";
+
   return (
-    <section className="relative">
+    <section className="relative h-[85vh]">
       <div className="absolute inset-0 bg-black/20 z-10"></div>
-      <div
-        className="h-[85vh] bg-cover bg-center"
-        style={{
-          backgroundImage: `url('${heroData?.background_image || "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format"}')`
-        }}
-        role="img"
-        aria-label={heroData?.background_image_alt || "Carpentry workshop in Bahrain - Nawakhdha Woodcraft"}
-      ></div>
+      
+      <div className="absolute inset-0 overflow-hidden">
+        <OptimizedImage
+          src={backgroundImage}
+          alt={imageAlt}
+          imageType="hero"
+          priority={true}
+          className="w-full h-full"
+        />
+      </div>
+      
       <div className="absolute inset-0 flex items-center z-20">
         <div className="container-custom">
           <div className="max-w-2xl animate-fade-in">

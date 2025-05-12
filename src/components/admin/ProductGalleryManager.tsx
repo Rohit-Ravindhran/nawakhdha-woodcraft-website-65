@@ -6,6 +6,8 @@ import { FormLabel, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AlertCircle } from "lucide-react";
 import { GalleryImage } from "@/components/admin/schemas/productSchema";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { useStorage } from "@/hooks/useStorage";
 
 interface ProductGalleryManagerProps {
   images: GalleryImage[];
@@ -20,12 +22,20 @@ export default function ProductGalleryManager({
   productId = "new",
   required = true
 }: ProductGalleryManagerProps) {
+  const { purgeCDNCache } = useStorage();
+  
   const handleImageUploaded = (url: string, alt: string, index?: number) => {
     if (!url) return; // Don't add empty URLs
     
     if (index !== undefined && index >= 0 && index < images.length) {
       // Update existing image
       const updatedImages = [...images];
+      
+      // If URL changed, purge CDN cache for old URL
+      if (updatedImages[index].url !== url && updatedImages[index].url) {
+        purgeCDNCache(updatedImages[index].url);
+      }
+      
       updatedImages[index] = { ...updatedImages[index], url, alt };
       onChange(updatedImages);
     } else {
@@ -72,9 +82,19 @@ export default function ProductGalleryManager({
             </Button>
           </div>
           
+          {image.url && (
+            <div className="aspect-video w-full rounded-md overflow-hidden mb-2">
+              <OptimizedImage
+                src={image.url}
+                alt={image.alt || "Product image"}
+                imageType="productDetail"
+              />
+            </div>
+          )}
+          
           <EnhancedImageUploader
             onImageUploaded={(url, alt) => handleImageUploaded(url, alt, index)}
-            bucket="product-gallery" // Updated from product_gallery
+            bucket="product-gallery"
             folder={`product-${productId}`}
             initialImageUrl={image.url}
             initialAltText={image.alt}

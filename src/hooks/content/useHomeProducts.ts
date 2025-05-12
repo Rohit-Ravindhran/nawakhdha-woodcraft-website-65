@@ -1,7 +1,9 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { HomeProductData, ProductCategoryData } from './types';
+import { purgeCDNCache } from '@/utils/imageOptimization';
 
 export function useHomeProducts() {
   return useQuery({
@@ -87,7 +89,7 @@ export function useHomeProductsWithItems() {
           })
         );
         
-        // Cast with type assertion
+        // Cast with type assertion to fix TypeScript error
         return productsWithCategories as unknown as (HomeProductData & {
           product_categories: ProductCategoryWithOptionalDescription[]
         })[];
@@ -109,7 +111,21 @@ export function useUpdateHomeProduct() {
     mutationFn: async (productData: HomeProductData) => {
       const { id, ...productFields } = productData;
       
+      // Store old slug for cache invalidation
+      let oldSlug = '';
+      
       if (id) {
+        // Get current product data to extract old slug
+        const { data: currentProduct } = await supabase
+          .from('home_products')
+          .select('slug')
+          .eq('id', id)
+          .single();
+          
+        if (currentProduct?.slug) {
+          oldSlug = currentProduct.slug;
+        }
+        
         // Update existing product
         const { error } = await supabase
           .from('home_products')
@@ -128,6 +144,11 @@ export function useUpdateHomeProduct() {
           if (relatedError) {
             console.error('Error updating related products:', relatedError);
             // Don't throw here to avoid breaking the entire operation
+          }
+          
+          // Purge CDN cache for both old and new slugs
+          if (oldSlug && oldSlug !== productData.slug) {
+            await purgeCDNCache(`/product/${oldSlug}/images`);
           }
         }
         

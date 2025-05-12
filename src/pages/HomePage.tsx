@@ -22,6 +22,69 @@ const HomePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   
+  // Performance monitoring
+  useEffect(() => {
+    // Report page loading performance metrics
+    if (typeof window !== 'undefined') {
+      // Create PerformanceObserver for LCP
+      const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        if (lastEntry) {
+          console.log('LCP:', lastEntry.startTime / 1000, 'seconds');
+          
+          // Send to analytics if available
+          if (window.ga) {
+            window.ga('send', 'timing', 'Performance', 'LCP', lastEntry.startTime);
+          }
+        }
+      });
+      
+      // Create PerformanceObserver for FID
+      const fidObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const firstEntry = entries[0];
+        if (firstEntry) {
+          console.log('FID:', firstEntry.processingStart - firstEntry.startTime, 'ms');
+          
+          // Send to analytics if available
+          if (window.ga) {
+            window.ga('send', 'timing', 'Performance', 'FID', 
+              firstEntry.processingStart - firstEntry.startTime);
+          }
+        }
+      });
+      
+      // Create PerformanceObserver for CLS
+      const clsObserver = new PerformanceObserver((entryList) => {
+        let clsValue = 0;
+        for (const entry of entryList.getEntries()) {
+          if (!(entry as any).hadRecentInput) {
+            clsValue += (entry as any).value;
+          }
+        }
+        console.log('CLS:', clsValue);
+        
+        // Send to analytics if available
+        if (window.ga) {
+          window.ga('send', 'event', 'Performance', 'CLS', '', clsValue);
+        }
+      });
+      
+      // Start observing
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      fidObserver.observe({ type: 'first-input', buffered: true });
+      clsObserver.observe({ type: 'layout-shift', buffered: true });
+      
+      // Cleanup
+      return () => {
+        lcpObserver.disconnect();
+        fidObserver.disconnect();
+        clsObserver.disconnect();
+      };
+    }
+  }, []);
+  
   // Use the hook to fetch home products with their related items
   const { 
     data: homeProductsWithItems, 
@@ -143,6 +206,17 @@ const HomePage = () => {
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
         <link rel="canonical" href="https://nawakhdha-woodcraft.com/" />
+        
+        {/* Preload critical assets */}
+        {heroData?.background_image && (
+          <link rel="preload" href={heroData.background_image} as="image" />
+        )}
+        
+        {/* Preconnect to your CDN domain */}
+        <link rel="preconnect" href="https://enqplizqtwvquxliiygz.supabase.co" />
+        
+        {/* Add resource hints for improved performance */}
+        <link rel="dns-prefetch" href="https://enqplizqtwvquxliiygz.supabase.co" />
       </Helmet>
 
       <HeroSection heroData={heroData} />

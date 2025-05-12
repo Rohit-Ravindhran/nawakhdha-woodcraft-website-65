@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent } from "@/components/ui/card";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface CategoryCardProps {
   title: string;
@@ -19,10 +20,11 @@ export function CategoryCard({ title, image, href, imageAlt, className }: Catego
       <Link to={href}>
         <div className="relative">
           <AspectRatio ratio={4 / 3}>
-            <img
+            <OptimizedImage
               src={image || "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1000"}
               alt={imageAlt || title}
-              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+              imageType="product"
+              className="w-full h-full"
             />
           </AspectRatio>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
