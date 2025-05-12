@@ -7,9 +7,10 @@ interface HomePageStatusProps {
   isLoading: boolean;
   error: string | null;
   onRetry: () => void;
+  pageExists?: boolean; // Add this optional prop
 }
 
-const HomePageStatus: React.FC<HomePageStatusProps> = ({ isLoading, error, onRetry }) => {
+const HomePageStatus: React.FC<HomePageStatusProps> = ({ isLoading, error, onRetry, pageExists }) => {
   if (!isLoading && !error) return null;
 
   return (

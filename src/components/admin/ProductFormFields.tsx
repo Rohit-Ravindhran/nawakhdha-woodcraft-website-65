@@ -3,18 +3,18 @@ import React from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Control } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { ProductFormValues } from "./schemas/productSchema";
 
 interface ProductFormFieldsProps {
-  control: Control<ProductFormValues>;
+  form: UseFormReturn<ProductFormValues>; // Add form prop to the interface
 }
 
-export default function ProductFormFields({ control }: ProductFormFieldsProps) {
+export default function ProductFormFields({ form }: ProductFormFieldsProps) {
   return (
     <div className="space-y-6">
       <FormField
-        control={control}
+        control={form.control}
         name="product_name"
         render={({ field }) => (
           <FormItem>
@@ -28,7 +28,7 @@ export default function ProductFormFields({ control }: ProductFormFieldsProps) {
       />
       
       <FormField
-        control={control}
+        control={form.control}
         name="category_name"
         render={({ field }) => (
           <FormItem>
@@ -42,7 +42,7 @@ export default function ProductFormFields({ control }: ProductFormFieldsProps) {
       />
       
       <FormField
-        control={control}
+        control={form.control}
         name="description"
         render={({ field }) => (
           <FormItem>

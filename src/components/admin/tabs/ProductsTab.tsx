@@ -12,7 +12,7 @@ import { Loader2, PlusCircle } from "lucide-react";
 import ProductEditor from "@/components/admin/ProductEditor";
 import { useProducts, useDeleteProduct } from "@/hooks/content";
 import { toast } from "sonner";
-import { ProductData } from "@/hooks/content/types";
+import { ProductCategoryData, ProductData } from "@/hooks/content/types";
 import { transformGalleryImages } from "@/utils/imageHelpers";
 
 export interface Product {
@@ -64,13 +64,21 @@ const ProductsTab = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
           {products && products.length > 0 ? (
-            products.map((product) => (
-              <ProductListItem 
-                key={product.id} 
-                product={product}
-                onDelete={handleDeleteProduct}
-              />
-            ))
+            products.map((product) => {
+              // Ensure product has an id property
+              const productWithRequiredId = {
+                ...product,
+                id: product.id || ''
+              } as ProductData & { id: string };
+              
+              return (
+                <ProductListItem 
+                  key={productWithRequiredId.id} 
+                  product={productWithRequiredId}
+                  onDelete={handleDeleteProduct}
+                />
+              );
+            })
           ) : (
             <div className="col-span-full text-center py-8 text-muted-foreground">
               No products found. Add your first product!

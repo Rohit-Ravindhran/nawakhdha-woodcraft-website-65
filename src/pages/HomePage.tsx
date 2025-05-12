@@ -14,11 +14,12 @@ import PagePerformanceTracker from '@/components/home/PagePerformanceTracker';
 
 const HomePage = () => {
   // Get page data
-  const { data: homePageData, isLoading: loadingPage, error: pageError } = usePage('home');
+  const { data: homePageData, isLoading: loadingPage, error: pageError, refetch: refetchPage } = usePage('home');
   const { 
     data: homeProductsWithItems, 
     isLoading: productsLoading, 
-    error: productsError 
+    error: productsError,
+    refetch: refetchProducts
   } = useHomeProductsWithCategories();
 
   // Track if any section is loading
@@ -32,15 +33,33 @@ const HomePage = () => {
   // Combine errors for display
   const error = errors.length > 0 ? errors.join(', ') : null;
 
+  const handleRetry = () => {
+    refetchPage();
+    refetchProducts();
+  };
+
+  // Default SEO values in case homePageData doesn't exist
+  const defaultSeo = {
+    title: 'Nawakhdha Woodcraft | Handcrafted Furniture',
+    description: 'Premium handcrafted furniture made with passion and expert craftsmanship',
+    keywords: 'furniture, woodcraft, handcrafted, custom furniture',
+  };
+
   return (
     <Layout>
-      <HomePageSEO data={homePageData} />
+      <HomePageSEO 
+        title={defaultSeo.title}
+        description={defaultSeo.description}
+        keywords={defaultSeo.keywords}
+        data={homePageData}
+      />
+      
       <PagePerformanceTracker pageName="home" />
       
       <HomePageStatus 
         isLoading={isLoading} 
         error={error} 
-        pageExists={!!homePageData}
+        onRetry={handleRetry}
       />
 
       <HeroSection heroData={homePageData?.hero ? JSON.parse(homePageData.hero) : null} />
