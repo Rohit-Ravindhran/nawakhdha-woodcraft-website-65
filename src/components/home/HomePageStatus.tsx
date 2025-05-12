@@ -8,12 +8,18 @@ interface HomePageStatusProps {
   error: string | null;
   onRetry: () => void;
   pageExists?: boolean;
-  children?: React.ReactNode; // Adding children prop
+  children?: React.ReactNode; // Make sure children is properly typed
 }
 
-const HomePageStatus: React.FC<HomePageStatusProps> = ({ isLoading, error, onRetry, pageExists, children }) => {
+const HomePageStatus: React.FC<HomePageStatusProps> = ({ 
+  isLoading, 
+  error, 
+  onRetry, 
+  pageExists, 
+  children 
+}) => {
+  // If no loading or error, render children if provided
   if (!isLoading && !error) {
-    // If no loading or error, render children if provided
     return children ? <>{children}</> : null;
   }
 

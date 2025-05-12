@@ -39,7 +39,8 @@ export function parseJSON(input: string | null | undefined): any | null {
   if (!input || input === "NULL" || input === "null") return null;
   try {
     return JSON.parse(input);
-  } catch {
+  } catch (e) {
+    console.error(`Error parsing JSON:`, e, `Input was:`, input);
     return null;
   }
 }
