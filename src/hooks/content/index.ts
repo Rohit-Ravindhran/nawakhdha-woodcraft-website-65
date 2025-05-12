@@ -7,5 +7,5 @@ export * from './usePages';
 export * from './useProducts';
 export * from './useBlogs';
 export * from './useGallery';
-export * from './useHomeProducts';
+export * from './products';
 export * from '../../utils/jsonHelpers';

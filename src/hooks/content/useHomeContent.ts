@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useHomeProductsWithItems } from "./useHomeProducts";
+import { useHomeProductsWithCategories } from "./products/useHomeProductsWithCategories";
 import { HomeServiceData, HomeBlogCardData } from "./types";
 import { safeJsonParse } from "@/utils/jsonHelpers";
 
@@ -19,7 +18,7 @@ export function useHomeContent() {
     isLoading: isLoadingProducts,
     error: productsError,
     refetch: refetchProducts
-  } = useHomeProductsWithItems();
+  } = useHomeProductsWithCategories();
 
   useEffect(() => {
     const fetchData = async () => {
