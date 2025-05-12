@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { usePage } from "@/hooks/content";
 import { Helmet } from "react-helmet-async";
@@ -13,6 +12,13 @@ import { parseJSON } from "@/utils/jsonHelpers";
 import { HomeServiceData, HomeBlogCardData } from "@/hooks/content/types";
 import { Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Declare a global interface to add the ga property to the Window object
+declare global {
+  interface Window {
+    ga?: (command: string, hitType: string, category: string, action: string, value?: number) => void;
+  }
+}
 
 const HomePage = () => {
   const [pageData, setPageData] = useState<any>(null);
@@ -45,12 +51,14 @@ const HomePage = () => {
         const entries = entryList.getEntries();
         const firstEntry = entries[0];
         if (firstEntry) {
-          console.log('FID:', firstEntry.processingStart - firstEntry.startTime, 'ms');
+          // Use type assertion for the FirstInputDelay entry
+          const fidEntry = firstEntry as any;
+          console.log('FID:', fidEntry.processingStart - fidEntry.startTime, 'ms');
           
           // Send to analytics if available
           if (window.ga) {
             window.ga('send', 'timing', 'Performance', 'FID', 
-              firstEntry.processingStart - firstEntry.startTime);
+              fidEntry.processingStart - fidEntry.startTime);
           }
         }
       });

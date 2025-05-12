@@ -13,6 +13,7 @@ export const IMAGE_QUALITY = {
   blog: 80,
   thumbnail: 75,
   icon: 90,
+  productDetail: 90,
 };
 
 /**

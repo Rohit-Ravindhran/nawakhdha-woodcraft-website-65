@@ -7,7 +7,7 @@ import { getOptimizedImageUrl } from '@/utils/imageOptimization';
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
-  imageType?: 'hero' | 'product' | 'blog' | 'thumbnail' | 'icon';
+  imageType?: 'hero' | 'product' | 'blog' | 'thumbnail' | 'icon' | 'productDetail';
   width?: number;
   height?: number;
   className?: string;
@@ -51,15 +51,17 @@ export function OptimizedImage({
       // Report LCP to analytics when available
       const observer = new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
-          if (entry.element?.tagName === 'IMG') {
+          // Using type assertion to handle LargestContentfulPaint type
+          const lcpEntry = entry as any;
+          if (lcpEntry.element?.tagName === 'IMG') {
             console.debug('LCP image loaded:', {
-              src: entry.element.getAttribute('src'),
+              src: lcpEntry.element.getAttribute('src'),
               time: entry.startTime,
             });
             
             // Send to analytics if available
             if (window.ga) {
-              window.ga('send', 'timing', 'Images', 'LCP', entry.startTime);
+              (window as any).ga('send', 'timing', 'Images', 'LCP', entry.startTime);
             }
           }
         }
