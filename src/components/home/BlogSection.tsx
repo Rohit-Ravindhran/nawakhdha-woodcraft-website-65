@@ -11,11 +11,14 @@ interface BlogPost {
   id?: string;
   title: string;
   excerpt?: string;
-  image: string;
+  image?: string;
   image_alt?: string;
   date?: string;
   slug?: string;
   link?: string;
+  image_url?: string;
+  description?: string;
+  published_at?: string;
 }
 
 interface BlogSectionProps {
@@ -129,16 +132,30 @@ const BlogSection: React.FC<BlogSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {blogPosts.map((post, index) => {
             // Set default values for missing fields to prevent errors
-            const imageUrl = post.image || "https://placehold.co/600x400?text=Blog+Image";
+            // Support both image and image_url fields for backward compatibility
+            const imageUrl = post.image || post.image_url || "https://placehold.co/600x400?text=Blog+Image";
+            // Support both excerpt and description fields for backward compatibility
+            const excerpt = post.excerpt || post.description || "";
+            // Format date or use a default
+            const date = post.date || post.published_at || "Recent";
+            
+            // Check for critical fields - log warnings if missing
+            if (!post.slug) {
+              console.warn(`Blog post ${post.id || index} missing slug`);
+            }
+
+            if (!post.published_at && !post.date) {
+              console.warn(`Blog post ${post.id || index} missing publish date`);
+            }
             
             return (
               <BlogCard
                 key={post.id || index}
                 title={post.title}
-                excerpt={post.excerpt || ""}
+                excerpt={excerpt}
                 image={imageUrl}
                 imageAlt={post.image_alt || `Blog post about ${post.title}`}
-                date={post.date || "Recent"}
+                date={date}
                 href={post.link || `/blog/${post.slug || `post-${index}`}`}
               />
             );

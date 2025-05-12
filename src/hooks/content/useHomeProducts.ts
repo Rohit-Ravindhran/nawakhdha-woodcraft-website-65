@@ -12,7 +12,8 @@ export function useHomeProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('home_products')
-        .select('*');
+        .select('*')
+        .order('id', { ascending: false });
 
       if (error) throw error;
       
@@ -21,7 +22,15 @@ export function useHomeProducts() {
         console.warn('No home products found in database');
       }
       
-      return data as HomeProductData[];
+      // Validate slug field availability - critical field per requirements
+      const productsWithValidation = data?.map(product => {
+        if (!product.slug) {
+          console.error(`Product ${product.id} missing slug`);
+        }
+        return product;
+      }) || [];
+      
+      return productsWithValidation as HomeProductData[];
     },
     staleTime: 0, // Always fetch fresh data
     refetchOnMount: true,
@@ -60,13 +69,21 @@ async function fetchHomeProductsWithCategories() {
     // First fetch home products
     const { data: homeProducts, error: homeProductsError } = await supabase
       .from('home_products')
-      .select('*');
+      .select('*')
+      .order('id', { ascending: false });
     
     if (homeProductsError) throw homeProductsError;
     
     if (!homeProducts || homeProducts.length === 0) {
       console.warn('No home products found');
       return [];
+    }
+    
+    // Validate slug field - critical field per requirements
+    for (const product of homeProducts) {
+      if (!product.slug) {
+        console.error(`Product ${product.id} missing slug`);
+      }
     }
     
     // For each home product, find matching product categories

@@ -109,9 +109,11 @@ const HomePage = () => {
     excerpt: post.description || "",
     image: post.image_url || "https://placehold.co/400x400",
     image_alt: post.alt_text || `Blog post about ${post.title || "our workshop"}`,
-    date: new Date().toLocaleDateString(),
-    slug: post.slug || ""
-  }));
+    date: post.published_at || new Date().toLocaleDateString(),
+    slug: post.slug || "",
+    // Add validation for slug - critical field per requirements
+    ...(post.slug ? {} : { skipRender: true })
+  })).filter(post => !post.skipRender);
 
   const pageTitle = pageData?.seo_title || "Custom Wooden Furniture, Doors & Maintenance Services in Bahrain | Nawakhdha Woodcraft";
   const pageDescription = pageData?.seo_description || "Expert wooden furniture, doors, and civil maintenance services tailored for homes and businesses across Bahrain. Handcrafted quality and modern design.";
@@ -124,6 +126,20 @@ const HomePage = () => {
   const handleRetry = () => {
     refetch();
   };
+
+  // Ensure homeProductsWithItems are properly mapped and validated
+  const validatedProducts = React.useMemo(() => {
+    if (!homeProductsWithItems) return [];
+    
+    return homeProductsWithItems.map(product => {
+      // Check for critical fields - log warnings if missing
+      if (!product.slug) {
+        console.error(`Product ${product.id} missing slug`);
+        return { ...product, skipRender: true };
+      }
+      return product;
+    }).filter(product => !product.skipRender);
+  }, [homeProductsWithItems]);
 
   return (
     <>
@@ -155,7 +171,7 @@ const HomePage = () => {
       <ServicesSection servicesData={{ items: formattedServices }} />
       <ProductsSection 
         productsData={null}
-        homeProductsWithItems={homeProductsWithItems || []}
+        homeProductsWithItems={validatedProducts}
         isLoading={isLoading}
         error={error ? String(error) : null}
       />
