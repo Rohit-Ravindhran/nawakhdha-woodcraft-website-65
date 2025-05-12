@@ -18,6 +18,7 @@ interface Product {
   category_slug?: string;
 }
 
+// Update the interface to match our updated type definition
 interface ProductsSectionProps {
   productsData: {
     section_title?: string;
@@ -32,7 +33,7 @@ interface ProductsSectionProps {
       category_image_url: string | null;
       alt_text: string | null;
       category_slug: string | null;
-      description: string | null;
+      description?: string | null; // Made description optional
     }>
   })[];
 }

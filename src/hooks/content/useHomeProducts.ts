@@ -18,6 +18,20 @@ export function useHomeProducts() {
   });
 }
 
+// Updated the type definition to make description optional
+interface ProductCategoryWithOptionalDescription {
+  id: string;
+  category_name: string;
+  product_name: string | null;
+  category_image_url: string | null;
+  alt_text: string | null;
+  category_slug: string | null;
+  description?: string | null; // Made description optional
+  seo_title?: string | null;
+  seo_description?: string | null;
+  seo_keywords?: string | null;
+}
+
 export function useHomeProductsWithItems() {
   return useQuery({
     queryKey: ['home-products-with-items'],
@@ -53,16 +67,9 @@ export function useHomeProductsWithItems() {
           })
         );
         
+        // Use type assertion to match our updated interface
         return productsWithCategories as (HomeProductData & {
-          product_categories: Array<{
-            id: string;
-            category_name: string;
-            product_name: string | null;
-            category_image_url: string | null;
-            alt_text: string | null;
-            category_slug: string | null;
-            description: string | null;
-          }>
+          product_categories: ProductCategoryWithOptionalDescription[]
         })[];
       } catch (error) {
         console.error("Error in useHomeProductsWithItems:", error);
