@@ -57,6 +57,7 @@ export interface HomeBlogCardData {
   image_url?: string;
   alt_text?: string;
   slug?: string;
+  published_at?: string;
 }
 
 // Types for product categories data

@@ -80,15 +80,17 @@ async function fetchHomeProductsWithCategories() {
     }
     
     // Validate slug field - critical field per requirements
-    for (const product of homeProducts) {
+    const validProducts = homeProducts.filter(product => {
       if (!product.slug) {
         console.error(`Product ${product.id} missing slug`);
+        return false;
       }
-    }
+      return true;
+    });
     
     // For each home product, find matching product categories
     const productsWithCategories = await Promise.all(
-      homeProducts.map(async (homeProduct) => {
+      validProducts.map(async (homeProduct) => {
         if (!homeProduct.category_name) {
           return {
             ...homeProduct,

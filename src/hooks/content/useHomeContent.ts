@@ -44,7 +44,7 @@ export function useHomeContent() {
         if (servicesError) throw servicesError;
 
         // Fetch blog posts from home_blog_cards table
-        // Added orderBy to sort by newest first (assuming it has a date field)
+        // Added orderBy to sort by newest first
         const { data: blogData, error: blogError } = await supabase
           .from('home_blog_cards')
           .select('*')
@@ -68,15 +68,18 @@ export function useHomeContent() {
         // Set data only if we received it
         if (pageResult) setPageData(pageResult);
         if (servicesData) setServices(servicesData);
-        if (blogData) setBlogPosts(blogData.map(post => ({
-          ...post,
-          // If image_url is empty string or null, set it to null
-          image_url: post.image_url || null,
-          // Ensure published_at has a default value
-          published_at: post.published_at || new Date().toISOString(),
-          // Ensure title has a default value for filtering
-          title: post.title || "Untitled Post"
-        })));
+        if (blogData) {
+          const processedBlogPosts = blogData.map(post => ({
+            ...post,
+            // If image_url is empty string or null, set it to null
+            image_url: post.image_url || null,
+            // Ensure published_at has a default value
+            published_at: post.published_at || new Date().toISOString(),
+            // Ensure title has a default value for filtering
+            title: post.title || "Untitled Post"
+          }));
+          setBlogPosts(processedBlogPosts);
+        }
 
         // Log for debugging
         console.log("Home page data loaded:", {
