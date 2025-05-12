@@ -22,43 +22,52 @@ export function useHomeProductsWithItems() {
   return useQuery({
     queryKey: ['home-products-with-items'],
     queryFn: async () => {
-      // Fetch home products along with their related product categories
-      const { data, error } = await supabase
-        .from('home_products')
-        .select(`
-          id,
-          category_name,
-          slug,
-          image_url,
-          alt_text,
-          product_categories:product_categories(
-            id, 
-            category_name,
-            product_name,
-            category_image_url,
-            alt_text,
-            category_slug,
-            description
-          )
-        `);
-      
-      if (error) throw error;
-      
-      // Transform the data to ensure we handle null values properly
-      return data.map(item => ({
-        ...item,
-        product_categories: item.product_categories || []
-      })) as (HomeProductData & {
-        product_categories: Array<{
-          id: string;
-          category_name: string;
-          product_name: string | null;
-          category_image_url: string | null;
-          alt_text: string | null;
-          category_slug: string | null;
-          description: string | null;
-        }>
-      })[];
+      try {
+        // First fetch home products
+        const { data: homeProducts, error: homeProductsError } = await supabase
+          .from('home_products')
+          .select('*');
+        
+        if (homeProductsError) throw homeProductsError;
+        
+        // For each home product, find matching product categories
+        const productsWithCategories = await Promise.all(
+          homeProducts.map(async (homeProduct) => {
+            const { data: categories, error: categoriesError } = await supabase
+              .from('product_categories')
+              .select('*')
+              .eq('category_name', homeProduct.category_name || '');
+              
+            if (categoriesError) {
+              console.error(`Error fetching categories for ${homeProduct.category_name}:`, categoriesError);
+              return {
+                ...homeProduct,
+                product_categories: []
+              };
+            }
+            
+            return {
+              ...homeProduct,
+              product_categories: categories || []
+            };
+          })
+        );
+        
+        return productsWithCategories as (HomeProductData & {
+          product_categories: Array<{
+            id: string;
+            category_name: string;
+            product_name: string | null;
+            category_image_url: string | null;
+            alt_text: string | null;
+            category_slug: string | null;
+            description: string | null;
+          }>
+        })[];
+      } catch (error) {
+        console.error("Error in useHomeProductsWithItems:", error);
+        throw error;
+      }
     }
   });
 }
@@ -121,6 +130,7 @@ export function useUpdateHomeProduct() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['home-products'] });
       queryClient.invalidateQueries({ queryKey: ['home-products-with-items'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] }); // Also invalidate product categories query
       toast.success(`Home product "${data.category_name || ''}" updated successfully`);
     },
     onError: (error: Error) => {
@@ -145,6 +155,7 @@ export function useDeleteHomeProduct() {
     onSuccess: (productId) => {
       queryClient.invalidateQueries({ queryKey: ['home-products'] });
       queryClient.invalidateQueries({ queryKey: ['home-products-with-items'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] }); // Also invalidate product categories query
       toast.success(`Home product deleted successfully`);
     },
     onError: (error: Error) => {

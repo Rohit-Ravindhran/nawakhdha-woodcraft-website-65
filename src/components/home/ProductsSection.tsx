@@ -42,14 +42,12 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
   defaultProducts = [],
   homeProductsWithItems = []
 }) => {
-  const isLoading = false; // We're handling loading state at the page level now
-
   // Map home products from database to the format expected by this component
   const mappedHomeProducts = homeProductsWithItems?.map(product => ({
     id: product.id,
     title: product.category_name || 'Product',
     image: product.image_url || '/placeholder.svg',
-    image_alt: product.alt_text,
+    image_alt: product.alt_text || `${product.category_name || 'Product'} image`,
     slug: product.slug,
     category_slug: product.slug // Use the same slug for consistency
   })) || [];
@@ -58,16 +56,6 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
   const products = productsData?.items && productsData.items.length > 0
     ? productsData.items.filter(item => item.title && item.image) 
     : mappedHomeProducts.length > 0 ? mappedHomeProducts : defaultProducts;
-
-  if (isLoading) {
-    return (
-      <section className="section-padding bg-white">
-        <div className="container-custom text-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="section-padding bg-white">

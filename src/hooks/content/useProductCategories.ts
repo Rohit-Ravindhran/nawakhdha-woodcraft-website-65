@@ -14,12 +14,14 @@ export function useProductCategories() {
 
       if (categoryError) throw categoryError;
       
+      // Fetch home products to get the slugs
       const { data: homeProductsData, error: homeProductsError } = await supabase
         .from('home_products')
         .select('*');
         
       if (homeProductsError) throw homeProductsError;
       
+      // Map the categories with their corresponding home product slugs
       return categoryData.map((category): ProductCategoryData => {
         const matchingHomeProduct = homeProductsData.find(
           hp => hp.category_name === category.category_name
@@ -27,7 +29,7 @@ export function useProductCategories() {
         
         return {
           ...category,
-          slug: matchingHomeProduct?.slug
+          slug: matchingHomeProduct?.slug || category.category_slug
         };
       });
     }
