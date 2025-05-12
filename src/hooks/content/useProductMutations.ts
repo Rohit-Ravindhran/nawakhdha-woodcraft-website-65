@@ -1,68 +1,15 @@
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { ProductCategoryData, ProductData } from './types';
+// This file now re-exports hooks from separate mutation files
+// for better code organization and maintainability
 
-export function useUpdateProductCategory() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (productData: ProductData) => {
-      const { id, ...productFields } = productData;
-      
-      if (id) {
-        // Update existing product
-        const { error } = await supabase
-          .from('product_categories')
-          .update(productFields)
-          .eq('id', id);
-          
-        if (error) throw error;
-        return { ...productData, id };
-      } else {
-        // Insert new product
-        const { data, error } = await supabase
-          .from('product_categories')
-          .insert(productFields)
-          .select()
-          .single();
-          
-        if (error) throw error;
-        return data as ProductData;
-      }
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product-category', data.id] });
-      toast.success(`Product "${data.product_name}" updated successfully`);
-    },
-    onError: (error: Error) => {
-      toast.error(`Error updating product: ${error.message}`);
-    }
-  });
-}
+import { useUpdateProduct } from './mutations/useUpdateProduct';
+import { useDeleteProduct } from './mutations/useDeleteProduct';
+import { useCreateProduct } from './mutations/useCreateProduct';
 
-export function useDeleteProductCategory() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (productId: string) => {
-      const { error } = await supabase
-        .from('product_categories')
-        .delete()
-        .eq('id', productId);
-        
-      if (error) throw error;
-      return productId;
-    },
-    onSuccess: (productId) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product-category', productId] });
-      toast.success(`Product deleted successfully`);
-    },
-    onError: (error: Error) => {
-      toast.error(`Error deleting product: ${error.message}`);
-    }
-  });
-}
+// Export the hooks with their original names for backward compatibility
+export const useUpdateProductCategory = useUpdateProduct;
+export const useDeleteProductCategory = useDeleteProduct;
+export const useCreateProductCategory = useCreateProduct;
+
+// Also export the hooks with their new names for forward compatibility
+export { useUpdateProduct, useDeleteProduct, useCreateProduct };

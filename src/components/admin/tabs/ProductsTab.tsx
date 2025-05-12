@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -30,6 +31,10 @@ const ProductsTab = () => {
     }
   };
 
+  const handleProductUpdate = () => {
+    setIsAddingProduct(false);
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg border border-border mb-8">
       <div className="flex justify-between items-center mb-4">
@@ -46,8 +51,7 @@ const ProductsTab = () => {
               <DialogTitle>Add New Product</DialogTitle>
             </DialogHeader>
             <ProductEditor 
-              onSave={() => setIsAddingProduct(false)}
-              isLoading={false} 
+              onProductUpdated={handleProductUpdate}
             />
           </DialogContent>
         </Dialog>
@@ -60,29 +64,13 @@ const ProductsTab = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
           {products && products.length > 0 ? (
-            products.map((product) => {
-              // Safely transform the product data to match the expected type
-              const transformedProduct: ProductData & { id: string } = {
-                id: product.id,
-                product_name: product.product_name,
-                description: product.description,
-                category_name: product.category_name,
-                // Add SEO fields with safe defaults
-                seo_title: product.seo_title || "",
-                seo_description: product.seo_description || "",
-                seo_keywords: product.seo_keywords || "",
-                // Safely transform gallery_images
-                gallery_images: transformGalleryImages(product.gallery_images)
-              };
-              
-              return (
-                <ProductListItem 
-                  key={transformedProduct.id} 
-                  product={transformedProduct}
-                  onDelete={handleDeleteProduct}
-                />
-              );
-            })
+            products.map((product) => (
+              <ProductListItem 
+                key={product.id} 
+                product={product}
+                onDelete={handleDeleteProduct}
+              />
+            ))
           ) : (
             <div className="col-span-full text-center py-8 text-muted-foreground">
               No products found. Add your first product!
@@ -113,8 +101,7 @@ const ProductListItem = ({ product, onDelete }: ProductListItemProps) => {
               <DialogTitle>Edit Product</DialogTitle>
             </DialogHeader>
             <ProductEditor 
-              product={product}
-              isLoading={false}
+              productId={product.id}
             />
           </DialogContent>
         </Dialog>

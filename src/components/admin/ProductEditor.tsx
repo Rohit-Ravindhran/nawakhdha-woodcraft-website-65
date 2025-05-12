@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +10,7 @@ import ProductFormFields from "./ProductFormFields";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Loader2, Save, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ProductEditorProps {
   productId?: string;
@@ -47,6 +49,11 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ productId, onProductUpdat
     const productData: ProductData = {
       ...values,
       id: product?.id,
+      gallery_images: values.gallery_images?.map(img => ({
+        url: img.url || '',
+        caption: img.caption || '',
+        alt: img.alt || ''
+      }))
     };
 
     updateProduct.mutate(productData, {
