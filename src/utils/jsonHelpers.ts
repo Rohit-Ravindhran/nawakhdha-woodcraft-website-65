@@ -5,7 +5,7 @@
  * @returns The parsed object or null if parsing fails
  */
 export function safeJsonParse(jsonString: string | null | undefined) {
-  if (!jsonString || jsonString === "NULL") return null;
+  if (!jsonString || jsonString === "NULL" || jsonString === "null") return null;
   try {
     return JSON.parse(jsonString);
   } catch (e) {
@@ -21,7 +21,7 @@ export function safeJsonParse(jsonString: string | null | undefined) {
  */
 export function isJsonString(value: any): boolean {
   if (typeof value !== 'string') return false;
-  if (value === "NULL") return false;
+  if (value === "NULL" || value === "null") return false;
   try {
     JSON.parse(value);
     return true;
@@ -36,7 +36,7 @@ export function isJsonString(value: any): boolean {
  * @returns The parsed object or null if parsing fails
  */
 export function parseJSON(input: string | null | undefined): any | null {
-  if (!input) return null;
+  if (!input || input === "NULL" || input === "null") return null;
   try {
     return JSON.parse(input);
   } catch {

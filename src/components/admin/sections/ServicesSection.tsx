@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { HomePageFormValues } from "@/components/admin/PageSchemas";
+import { safeJsonParse } from "@/utils/jsonHelpers";
 
 interface ServicesSectionProps {
   control: Control<HomePageFormValues>;
@@ -30,10 +31,14 @@ export default function ServicesSection({ control, isOpen, onToggle, watch, setV
     try {
       const servicesStr = watch("services");
       if (typeof servicesStr === 'string' && servicesStr) {
-        return JSON.parse(servicesStr);
+        const parsed = safeJsonParse(servicesStr);
+        if (parsed) {
+          return parsed;
+        }
       }
       return { section_title: "", items: [{}, {}, {}, {}] };
     } catch (e) {
+      console.error("Error parsing services JSON:", e);
       return { section_title: "", items: [{}, {}, {}, {}] };
     }
   };

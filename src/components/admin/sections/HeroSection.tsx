@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { HomePageFormValues } from "@/components/admin/PageSchemas";
+import { safeJsonParse } from "@/utils/jsonHelpers";
 
 interface HeroSectionProps {
   control: Control<HomePageFormValues>;
@@ -40,8 +41,10 @@ export default function HeroSection({ control, isOpen, onToggle, watch, setValue
     try {
       const heroValue = watch("hero");
       if (typeof heroValue === 'string' && heroValue) {
-        const parsed = JSON.parse(heroValue);
-        setHeroData(parsed);
+        const parsed = safeJsonParse(heroValue);
+        if (parsed) {
+          setHeroData(parsed);
+        }
       }
     } catch (error) {
       console.error("Error parsing hero JSON:", error);
@@ -56,7 +59,10 @@ export default function HeroSection({ control, isOpen, onToggle, watch, setValue
       
       try {
         if (typeof currentHero === 'string' && currentHero) {
-          heroObject = JSON.parse(currentHero);
+          const parsed = safeJsonParse(currentHero);
+          if (parsed) {
+            heroObject = parsed;
+          }
         }
       } catch (e) {
         console.error("Error parsing current hero:", e);
