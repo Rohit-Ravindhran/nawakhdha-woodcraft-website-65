@@ -62,25 +62,15 @@ const HomePage = () => {
         error={error} 
         onRetry={handleRetry}
       >
-        <>
-          <HeroSection heroData={parseJSON(homePageData?.hero)} />
-          
-          <ServicesSection 
-            servicesData={parseJSON(homePageData?.services)} 
-          />
-          
-          <ProductsSection 
-            productsData={parseJSON(homePageData?.products)}
-            isLoading={productsLoading}
-            error={productsError ? String(productsError) : undefined}
-          />
-          
-          <BlogSection 
-            blogData={parseJSON(homePageData?.blog)} 
-          />
-          
-          <CallToActionSection />
-        </>
+        <HeroSection heroData={parseJSON(homePageData?.hero)} />
+        <ServicesSection servicesData={parseJSON(homePageData?.services)} />
+        <ProductsSection 
+          productsData={parseJSON(homePageData?.products)}
+          isLoading={productsLoading}
+          error={productsError ? String(productsError) : undefined}
+        />
+        <BlogSection blogData={parseJSON(homePageData?.blog)} />
+        <CallToActionSection />
       </HomePageStatus>
     </Layout>
   );
