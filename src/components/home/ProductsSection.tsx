@@ -7,6 +7,7 @@ import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
 import { HomeProductData } from "@/hooks/content/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useHomeProductsWithCategories } from "@/hooks/content/products";
 
 interface Product {
   id?: string;
@@ -26,17 +27,6 @@ interface ProductsSectionProps {
     items?: Product[];
   } | null;
   defaultProducts?: Product[];
-  homeProductsWithItems?: (HomeProductData & {
-    product_categories: Array<{
-      id: string;
-      category_name: string | null;
-      product_name: string | null;
-      category_image_url: string | null;
-      alt_text: string | null;
-      category_slug: string | null;
-      description?: string | null; // Made description optional
-    }>
-  })[];
   isLoading?: boolean;
   error?: unknown;
 }
@@ -44,10 +34,22 @@ interface ProductsSectionProps {
 const ProductsSection: React.FC<ProductsSectionProps> = ({ 
   productsData, 
   defaultProducts = [],
-  homeProductsWithItems = [],
-  isLoading = false,
-  error = null
+  isLoading: propsIsLoading = false,
+  error: propsError = null
 }) => {
+  // Use the refactored hook for fetching home products with categories
+  const { 
+    data: homeProductsWithItems, 
+    isLoading: homeProductsIsLoading, 
+    error: homeProductsError 
+  } = useHomeProductsWithCategories();
+
+  // Combine loading states from props and hook
+  const isLoading = propsIsLoading || homeProductsIsLoading;
+  
+  // Use first non-null error
+  const error = propsError || homeProductsError;
+  
   // Map home products from database to the format expected by this component
   const mappedHomeProducts = React.useMemo(() => {
     return homeProductsWithItems?.map(product => ({
