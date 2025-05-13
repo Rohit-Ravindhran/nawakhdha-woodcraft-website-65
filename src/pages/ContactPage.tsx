@@ -8,16 +8,8 @@ import { Label } from "@/components/ui/label";
 import SectionTitle from "@/components/ui/section-title";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ContactInfoData } from "@/hooks/content/types";
+import { ContactInfoData, BusinessHours } from "@/hooks/content/types";
 import { parseJSON } from "@/utils/jsonHelpers";
-
-interface ContactInfo {
-  id: string;
-  address: string | null;
-  phone: string | null;
-  email: string | null;
-  business_hours_json: Record<string, string> | null;
-}
 
 const ContactPage = () => {
   const { toast } = useToast();
@@ -46,7 +38,23 @@ const ContactPage = () => {
           throw error;
         }
         
-        setContactInfo(data);
+        // Convert Supabase data to ContactInfoData
+        if (data) {
+          const contactData: ContactInfoData = {
+            id: data.id,
+            address: data.address || null,
+            phone: data.phone || null,
+            email: data.email || null,
+            business_hours_json: data.business_hours_json ? 
+              (typeof data.business_hours_json === 'string' ? 
+                data.business_hours_json : 
+                JSON.stringify(data.business_hours_json)
+              ) : null
+          };
+          setContactInfo(contactData);
+        } else {
+          setContactInfo(null);
+        }
       } catch (error) {
         console.error("Error fetching contact information:", error);
       } finally {
@@ -112,7 +120,7 @@ const ContactPage = () => {
   };
 
   // Default business hours if not available from database
-  const defaultBusinessHours = {
+  const defaultBusinessHours: BusinessHours = {
     monday: "8:30 AM - 5:30 PM",
     tuesday: "8:30 AM - 5:30 PM",
     wednesday: "8:30 AM - 5:30 PM",
@@ -123,8 +131,8 @@ const ContactPage = () => {
   };
 
   // Parse business hours JSON or use defaults
-  const businessHours = contactInfo?.business_hours_json 
-    ? parseJSON(typeof contactInfo.business_hours_json === 'string' 
+  const businessHours: BusinessHours = contactInfo?.business_hours_json 
+    ? parseJSON<BusinessHours>(typeof contactInfo.business_hours_json === 'string' 
         ? contactInfo.business_hours_json 
         : JSON.stringify(contactInfo.business_hours_json)
       ) || defaultBusinessHours

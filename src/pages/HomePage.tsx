@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
@@ -13,7 +12,7 @@ import { parseJSON } from '@/utils/jsonHelpers';
 import { useHomeProductsWithCategories } from '@/hooks/content/products';
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  HomePageData, 
+  PageData,
   HomeServiceData, 
   HomeBlogCardData,
   HomeProductWithCategories,

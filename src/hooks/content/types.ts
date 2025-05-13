@@ -1,4 +1,3 @@
-
 // Types for pages
 export interface PageData {
   id?: string;
@@ -57,6 +56,7 @@ export interface HomeServiceData {
   alt_text?: string;
   // Adding image property to make it compatible with Service interface
   image?: string;
+  image_alt?: string; // Added this property to fix the error
 }
 
 // Types for home services data structure
