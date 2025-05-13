@@ -15,7 +15,6 @@ import {
   PageData,
   HomeServiceData, 
   HomeBlogCardData,
-  HomeProductWithCategories,
   ServicesSectionData
 } from '@/hooks/content/types';
 
@@ -47,6 +46,17 @@ interface SEOConfig {
   keywords: string;
   heroBackgroundImage?: string;
 }
+
+// Re-define HomePageData as PageData with the specific fields we need for HomePage
+interface HomePageData extends PageData {
+  hero?: string;
+  services?: string;
+  products?: string;
+  blog?: string;
+}
+
+// Import HomeProductWithCategories from products/types.ts
+import { HomeProductWithCategories } from '@/hooks/content/products/types';
 
 /**
  * Custom hook for fetching home page data

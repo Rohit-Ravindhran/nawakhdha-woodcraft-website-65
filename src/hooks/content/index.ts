@@ -7,5 +7,11 @@ export * from './usePages';
 export * from './useProducts';
 export * from './useBlogs';
 export * from './useGallery';
-export * from './products';
+
+// Export products without types (since they're already exported from './types')
+export * from './products/useBasicHomeProducts';
+export * from './products/useHomeProductsWithCategories';
+export * from './products/useProductMutations';
+
+// Export json helpers
 export * from '../../utils/jsonHelpers';
