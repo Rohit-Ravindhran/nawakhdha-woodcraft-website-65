@@ -7,6 +7,9 @@ import SectionTitle from "@/components/ui/section-title";
 import { BlogCard } from "@/components/ui/blog-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * Blog post data structure
+ */
 interface BlogPost {
   id?: string;
   title: string;
@@ -21,6 +24,9 @@ interface BlogPost {
   published_at?: string;
 }
 
+/**
+ * Props for the BlogSection component
+ */
 interface BlogSectionProps {
   blogData: {
     section_title?: string;
@@ -31,17 +37,20 @@ interface BlogSectionProps {
   error?: unknown;
 }
 
+/**
+ * Component for displaying the blog section on the homepage
+ */
 const BlogSection: React.FC<BlogSectionProps> = ({ 
   blogData, 
   defaultBlogPosts = [],
   isLoading = false,
-  error = null
+  error = null 
 }) => {
   // Use blog posts from props, ensuring we have valid data
   const blogPosts = React.useMemo(() => {
-    if (blogData?.items && blogData.items.length > 0) {
+    if (blogData?.items && Array.isArray(blogData.items) && blogData.items.length > 0) {
       // Filter to make sure each item has at least a title
-      return blogData.items.filter(item => item.title);
+      return blogData.items.filter(item => item && item.title);
     }
     return defaultBlogPosts;
   }, [blogData, defaultBlogPosts]);
@@ -59,7 +68,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   // Handle loading state with skeleton UI
   if (isLoading) {
     return (
-      <section className="section-padding bg-secondary/30">
+      <section className="section-padding bg-secondary/30" data-testid="blog-loading">
         <div className="container-custom">
           <SectionTitle
             title="From Our Workshop Blog"
@@ -84,7 +93,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   // Handle error state
   if (error && blogPosts.length === 0) {
     return (
-      <section className="section-padding bg-secondary/30">
+      <section className="section-padding bg-secondary/30" data-testid="blog-error">
         <div className="container-custom">
           <SectionTitle
             title="From Our Workshop Blog"
@@ -106,7 +115,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   // If we have no blog posts to show
   if (blogPosts.length === 0) {
     return (
-      <section className="section-padding bg-secondary/30">
+      <section className="section-padding bg-secondary/30" data-testid="blog-empty">
         <div className="container-custom">
           <SectionTitle
             title={blogData?.section_title || "From Our Workshop Blog"}
@@ -122,7 +131,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   }
 
   return (
-    <section className="section-padding bg-secondary/30">
+    <section className="section-padding bg-secondary/30" data-testid="blog-section">
       <div className="container-custom">
         <SectionTitle
           title={blogData?.section_title || "From Our Workshop Blog"}
@@ -157,12 +166,13 @@ const BlogSection: React.FC<BlogSectionProps> = ({
                 imageAlt={post.image_alt || `Blog post about ${post.title}`}
                 date={date}
                 href={post.link || `/blog/${post.slug || `post-${index}`}`}
+                data-testid={`blog-card-${index}`}
               />
             );
           })}
         </div>
         <div className="text-center mt-10">
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" data-testid="read-more-btn">
             <Link to="/blog">
               Read More Articles <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -173,4 +183,4 @@ const BlogSection: React.FC<BlogSectionProps> = ({
   );
 };
 
-export default BlogSection;
+export default React.memo(BlogSection);

@@ -6,7 +6,7 @@
  * @returns The parsed JSON object or default value
  */
 export const parseJSON = <T>(jsonString: any, defaultValue: T | null = null): T | null => {
-  if (jsonString === null || jsonString === undefined || jsonString === "NULL") {
+  if (jsonString === null || jsonString === undefined || jsonString === "NULL" || jsonString === "null") {
     return defaultValue;
   }
   
@@ -28,3 +28,19 @@ export const parseJSON = <T>(jsonString: any, defaultValue: T | null = null): T 
  * Alias for parseJSON for backward compatibility
  */
 export const safeJsonParse = parseJSON;
+
+/**
+ * Checks if a value is a valid JSON string
+ * @param value The value to check
+ * @returns True if the value is a valid JSON string, false otherwise
+ */
+export function isJsonString(value: any): boolean {
+  if (typeof value !== 'string') return false;
+  if (value === "NULL" || value === "null") return false;
+  try {
+    JSON.parse(value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

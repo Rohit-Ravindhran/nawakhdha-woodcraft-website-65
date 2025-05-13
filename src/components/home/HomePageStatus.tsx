@@ -8,9 +8,12 @@ interface HomePageStatusProps {
   error: string | null;
   onRetry: () => void;
   pageExists?: boolean;
-  children?: React.ReactNode; // Properly type children prop
+  children: React.ReactNode; // Make children required
 }
 
+/**
+ * Component for displaying loading/error states or children content
+ */
 const HomePageStatus: React.FC<HomePageStatusProps> = ({ 
   isLoading, 
   error, 
@@ -18,15 +21,15 @@ const HomePageStatus: React.FC<HomePageStatusProps> = ({
   pageExists, 
   children 
 }) => {
-  // If no loading or error, render children if provided
+  // If no loading or error, render children
   if (!isLoading && !error) {
-    return <>{children}</>; // Render children wrapped in a fragment
+    return <>{children}</>;
   }
 
   return (
     <>
       {isLoading && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" data-testid="loading-overlay">
           <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
             <Loader2 className="animate-spin h-8 w-8 mx-auto mb-4 text-primary" />
             <p className="text-center font-medium">Loading content...</p>
@@ -38,7 +41,7 @@ const HomePageStatus: React.FC<HomePageStatusProps> = ({
       )}
 
       {error && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" data-testid="error-overlay">
           <div className="bg-white p-6 rounded-md shadow-lg max-w-md w-full">
             <div className="flex flex-col items-center">
               <div className="bg-red-100 p-3 rounded-full mb-4">
@@ -47,11 +50,12 @@ const HomePageStatus: React.FC<HomePageStatusProps> = ({
                 </svg>
               </div>
               <h3 className="text-lg font-semibold mb-2">Error Loading Data</h3>
-              <p className="text-center text-red-600 mb-4">{String(error)}</p>
+              <p className="text-center text-red-600 mb-4" data-testid="error-message">{String(error)}</p>
               <Button 
                 onClick={onRetry}
                 className="w-full flex items-center justify-center"
                 variant="default"
+                data-testid="retry-button"
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Try Again
@@ -60,6 +64,9 @@ const HomePageStatus: React.FC<HomePageStatusProps> = ({
           </div>
         </div>
       )}
+
+      {/* When loading/error, render a hidden version of children to maintain DOM structure */}
+      {(isLoading || error) && <div className="hidden">{children}</div>}
     </>
   );
 };
