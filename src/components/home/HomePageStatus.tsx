@@ -8,7 +8,7 @@ interface HomePageStatusProps {
   error: string | null;
   onRetry: () => void;
   pageExists?: boolean;
-  children: React.ReactNode; // Make children required
+  children?: React.ReactNode;
 }
 
 /**

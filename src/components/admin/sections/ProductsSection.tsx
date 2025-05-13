@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { HomePageFormValues } from "@/components/admin/PageSchemas";
-import { useHomeProducts } from "@/hooks/content";
+import { useBasicHomeProducts } from "@/hooks/content/products/useBasicHomeProducts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ProductsSectionProps {
@@ -27,8 +27,8 @@ interface ProductsSectionProps {
 }
 
 export default function ProductsSection({ control, isOpen, onToggle, watch, setValue }: ProductsSectionProps) {
-  // Fetch home products for linking
-  const { data: homeProductsList, isLoading: isHomeProductsLoading } = useHomeProducts();
+  // Fetch home products for linking - replacing useHomeProducts with useBasicHomeProducts
+  const { data: homeProductsList, isLoading: isHomeProductsLoading } = useBasicHomeProducts();
   
   // Parse the products JSON if it's a string
   const getProductsData = () => {
