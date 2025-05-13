@@ -1,46 +1,30 @@
 
 /**
- * Safely parses a JSON string, handling null, undefined, and "NULL" values
+ * Safely parses a JSON string, returning a default value if parsing fails
  * @param jsonString The JSON string to parse
- * @returns The parsed object or null if parsing fails
+ * @param defaultValue The default value to return if parsing fails (defaults to null)
+ * @returns The parsed JSON object or default value
  */
-export function safeJsonParse(jsonString: string | null | undefined) {
-  if (!jsonString || jsonString === "NULL" || jsonString === "null") return null;
+export const parseJSON = <T>(jsonString: any, defaultValue: T | null = null): T | null => {
+  if (jsonString === null || jsonString === undefined || jsonString === "NULL") {
+    return defaultValue;
+  }
+  
+  // If it's already an object, just return it
+  if (typeof jsonString === 'object' && jsonString !== null) {
+    return jsonString as T;
+  }
+  
   try {
-    return JSON.parse(jsonString);
+    const parsed = JSON.parse(jsonString);
+    return parsed;
   } catch (e) {
     console.error("Error parsing JSON:", e);
-    return null;
+    return defaultValue;
   }
-}
+};
 
 /**
- * Checks if a value is a valid JSON string
- * @param value The value to check
- * @returns True if the value is a valid JSON string, false otherwise
+ * Alias for parseJSON for backward compatibility
  */
-export function isJsonString(value: any): boolean {
-  if (typeof value !== 'string') return false;
-  if (value === "NULL" || value === "null") return false;
-  try {
-    JSON.parse(value);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-/**
- * Safely parses a JSON string, returns null if parsing fails
- * @param input The JSON string to parse
- * @returns The parsed object or null if parsing fails
- */
-export function parseJSON(input: string | null | undefined): any | null {
-  if (!input || input === "NULL" || input === "null") return null;
-  try {
-    return JSON.parse(input);
-  } catch (e) {
-    console.error(`Error parsing JSON:`, e, `Input was:`, input);
-    return null;
-  }
-}
+export const safeJsonParse = parseJSON;

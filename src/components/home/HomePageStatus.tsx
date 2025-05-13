@@ -8,7 +8,7 @@ interface HomePageStatusProps {
   error: string | null;
   onRetry: () => void;
   pageExists?: boolean;
-  children?: React.ReactNode; // Make sure children is properly typed
+  children?: React.ReactNode; // Properly type children prop
 }
 
 const HomePageStatus: React.FC<HomePageStatusProps> = ({ 
@@ -20,7 +20,7 @@ const HomePageStatus: React.FC<HomePageStatusProps> = ({
 }) => {
   // If no loading or error, render children if provided
   if (!isLoading && !error) {
-    return children ? <>{children}</> : null;
+    return <>{children}</>; // Render children wrapped in a fragment
   }
 
   return (
