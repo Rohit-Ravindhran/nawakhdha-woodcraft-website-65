@@ -7,6 +7,7 @@ export * from './useProductDetails';
 export * from './useProductMutations';
 export * from './useBlogs';
 export * from './useGallery';
+export * from './types';
 
 // Export products by named exports to avoid type conflicts
 export { useBasicHomeProducts } from './products/useBasicHomeProducts';
@@ -14,5 +15,5 @@ export { useHomeProductsWithCategories } from './products/useHomeProductsWithCat
 export { useUpdateHomeProduct, useDeleteHomeProduct } from './products/useProductMutations';
 export { useHomeContent } from './useHomeContent';
 
-// Export json helpers
-export * from '../utils/jsonHelpers';
+// Export json helpers (with corrected import path)
+export * from '../../utils/jsonHelpers';

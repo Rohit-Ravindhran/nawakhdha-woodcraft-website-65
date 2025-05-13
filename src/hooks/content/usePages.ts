@@ -17,7 +17,8 @@ export function usePage(pageName: string) {
         .maybeSingle();
 
       if (error) throw error;
-      return data as PageData;
+      // Using type assertion with as to ensure proper type conversion
+      return data as unknown as PageData;
     }
   });
 }
@@ -47,7 +48,7 @@ export function useUpdatePage() {
           .single();
           
         if (error) throw error;
-        return data as PageData;
+        return data as unknown as PageData;
       }
     },
     onSuccess: (data) => {
