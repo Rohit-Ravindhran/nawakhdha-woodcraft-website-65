@@ -60,8 +60,12 @@ export function OptimizedImage({
             });
             
             // Send to analytics if available
-            if (window.ga) {
-              (window as any).ga('send', 'timing', 'Images', 'LCP', entry.startTime);
+            if (typeof window !== 'undefined' && window.ga) {
+              // Use type assertion for analytics
+              const windowWithGa = window as any;
+              if (typeof windowWithGa.ga === 'function') {
+                windowWithGa.ga('send', 'timing', 'Images', 'LCP', entry.startTime);
+              }
             }
           }
         }

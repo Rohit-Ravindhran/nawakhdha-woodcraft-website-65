@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
 import { HomePageFormValues } from "@/components/admin/PageSchemas";
 import { safeJsonParse } from "@/utils/jsonHelpers";
+import { ServicesSectionData } from "@/hooks/content/types";
 
 interface ServicesSectionProps {
   control: Control<HomePageFormValues>;
@@ -27,11 +28,11 @@ interface ServicesSectionProps {
 
 export default function ServicesSection({ control, isOpen, onToggle, watch, setValue }: ServicesSectionProps) {
   // Parse the services JSON if it's a string
-  const getServicesData = () => {
+  const getServicesData = (): ServicesSectionData => {
     try {
       const servicesStr = watch("services");
       if (typeof servicesStr === 'string' && servicesStr) {
-        const parsed = safeJsonParse(servicesStr);
+        const parsed = safeJsonParse<ServicesSectionData>(servicesStr);
         if (parsed) {
           return parsed;
         }
@@ -51,6 +52,7 @@ export default function ServicesSection({ control, isOpen, onToggle, watch, setV
     }
     servicesData.items[index].image = url;
     servicesData.items[index].image_alt = alt;
+    servicesData.items[index].image_url = url; // Set both image and image_url for compatibility
     setValue("services", JSON.stringify(servicesData), { shouldValidate: true });
   };
 

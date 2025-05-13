@@ -3,6 +3,7 @@ import React from "react";
 import SectionTitle from "@/components/ui/section-title";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
+import { HomeServiceData } from "@/hooks/content/types";
 
 interface Service {
   title: string;
@@ -14,7 +15,7 @@ interface Service {
 interface ServicesSectionProps {
   servicesData: {
     section_title?: string;
-    items?: Service[];
+    items?: (HomeServiceData | Service)[];
   } | null;
   defaultServices?: Service[];
   isLoading?: boolean;
@@ -79,7 +80,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
 
   // Use services from props, ensuring we have valid data
   const services = servicesData?.items && Array.isArray(servicesData.items) && servicesData.items.length > 0
-    ? servicesData.items.filter(item => item && item.title) 
+    ? servicesData.items.filter(item => item && (item.title || (item as HomeServiceData).title)) 
     : defaultServices;
 
   return (
@@ -91,24 +92,33 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
           centered={true}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className="bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1"
-              data-testid={`service-card-${index}`}
-            >
-              <figure className="mb-4">
-                <img
-                  src={service.image || "https://placehold.co/400x400"}
-                  alt={service.image_alt || `${service.title} service`}
-                  className="w-16 h-16 object-cover rounded-md"
-                  loading="lazy"
-                />
-              </figure>
-              <h3 className="text-lg font-bold font-playfair mb-2">{service.title}</h3>
-              <p className="text-muted-foreground text-sm">{service.description}</p>
-            </div>
-          ))}
+          {services.map((service, index) => {
+            // Handle both HomeServiceData and Service types
+            const title = (service as Service).title || (service as HomeServiceData).title || '';
+            const description = (service as Service).description || (service as HomeServiceData).description || '';
+            // Use either image or image_url property
+            const imageUrl = (service as Service).image || (service as HomeServiceData).image_url || "https://placehold.co/400x400";
+            const imageAlt = (service as Service).image_alt || (service as HomeServiceData).alt_text || `${title} service`;
+            
+            return (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1"
+                data-testid={`service-card-${index}`}
+              >
+                <figure className="mb-4">
+                  <img
+                    src={imageUrl}
+                    alt={imageAlt}
+                    className="w-16 h-16 object-cover rounded-md"
+                    loading="lazy"
+                  />
+                </figure>
+                <h3 className="text-lg font-bold font-playfair mb-2">{title}</h3>
+                <p className="text-muted-foreground text-sm">{description}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

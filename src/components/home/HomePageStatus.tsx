@@ -18,7 +18,7 @@ const HomePageStatus: React.FC<HomePageStatusProps> = ({
   isLoading, 
   error, 
   onRetry, 
-  pageExists, 
+  pageExists = true,
   children 
 }) => {
   // If no loading or error, render children

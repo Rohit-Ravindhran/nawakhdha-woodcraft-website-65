@@ -31,6 +31,14 @@ export interface PageData {
   form_description?: string;
 }
 
+// Making HomePageData extend PageData for HomePage.tsx
+export interface HomePageData extends PageData {
+  hero?: string;
+  services?: string;
+  products?: string;
+  blog?: string;
+}
+
 // Types for home products
 export interface HomeProductData {
   id?: string;
@@ -47,6 +55,14 @@ export interface HomeServiceData {
   description?: string;
   image_url?: string;
   alt_text?: string;
+  // Adding image property to make it compatible with Service interface
+  image?: string;
+}
+
+// Types for home services data structure
+export interface ServicesSectionData {
+  section_title?: string;
+  items?: HomeServiceData[];
 }
 
 // Types for blog cards in home page
@@ -75,6 +91,16 @@ export interface ProductCategoryData {
   description?: string;
   image_url?: string;
   gallery_images?: GalleryImage[];
+}
+
+// Define this for HomePage.tsx
+export interface HomeProductWithCategories {
+  id?: string;
+  category_name?: string;
+  image_url?: string;
+  alt_text?: string;
+  slug?: string;
+  product_categories?: ProductCategoryWithOptionalDescription[];
 }
 
 // Types for product category details
@@ -144,5 +170,31 @@ export interface ContactInfoData {
   address?: string;
   phone?: string;
   email?: string;
-  business_hours_json?: string | object | any; // Updated to include any type to fix build error
+  business_hours_json?: string | BusinessHours;
+}
+
+// Type for business hours to fix ContactPage.tsx errors
+export interface BusinessHours {
+  monday?: string;
+  tuesday?: string;
+  wednesday?: string;
+  thursday?: string;
+  friday?: string;
+  saturday?: string;
+  sunday?: string;
+  [key: string]: string | undefined;
+}
+
+// Type definition to make description optional
+export interface ProductCategoryWithOptionalDescription {
+  id: string;
+  category_name: string | null;
+  product_name: string | null;
+  category_image_url: string | null;
+  alt_text: string | null;
+  category_slug: string | null;
+  description?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  seo_keywords?: string | null;
 }

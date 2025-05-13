@@ -15,8 +15,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { 
   HomePageData, 
   HomeServiceData, 
-  HomeBlogCardData, 
-  HomeProductWithCategories
+  HomeBlogCardData,
+  HomeProductWithCategories,
+  ServicesSectionData
 } from '@/hooks/content/types';
 
 /**
@@ -194,15 +195,17 @@ const useFetchBlogPosts = (): FetchState<HomeBlogCardData[]> => {
  * @param services Raw services data from database
  * @returns Formatted services object with section title and items
  */
-const formatServices = (services: HomeServiceData[]): { section_title: string; items: HomeServiceData[] } => {
+const formatServices = (services: HomeServiceData[]): ServicesSectionData => {
   return {
     section_title: "Our Services",
     items: services.map(service => ({
-      ...service,
       title: service.title || "Service",
       description: service.description || "",
       image: service.image_url || "https://placehold.co/400x400",
-      image_alt: service.alt_text || "Service image"
+      image_alt: service.alt_text || "Service image",
+      // Add image_url for HomeServiceData compatibility
+      image_url: service.image_url || "https://placehold.co/400x400",
+      alt_text: service.alt_text || "Service image"
     }))
   };
 };
@@ -250,7 +253,7 @@ const formatBlogPosts = (posts: HomeBlogCardData[]): { section_title: string; it
  * @returns SEO configuration object
  */
 const generateSEOConfig = (pageData: HomePageData | null): SEOConfig => {
-  const heroData = parseJSON(pageData?.hero);
+  const heroData = parseJSON<{ background_image?: string }>(pageData?.hero, {});
   
   return {
     title: pageData?.seo_title || 'Nawakhdha Woodcraft | Handcrafted Furniture',
@@ -320,6 +323,29 @@ const HomePage: React.FC = () => {
   const formattedProducts = homeProductsWithItems ? formatProducts(homeProductsWithItems) : null;
   const formattedBlogPosts = blogPostsData ? formatBlogPosts(blogPostsData) : null;
 
+  // Define elements to be rendered inside HomePageStatus
+  const pageContent = (
+    <>
+      <HeroSection heroData={parseJSON(homePageData?.hero)} />
+      <ServicesSection 
+        servicesData={formattedServices}
+        isLoading={loadingServices}
+        error={servicesError}
+      />
+      <ProductsSection 
+        productsData={formattedProducts}
+        isLoading={productsLoading}
+        error={productsError ? String(productsError) : undefined}
+      />
+      <BlogSection 
+        blogData={formattedBlogPosts}
+        isLoading={loadingBlogPosts}
+        error={blogPostsError}
+      />
+      <CallToActionSection />
+    </>
+  );
+
   return (
     <Layout>
       <HomePageSEO 
@@ -336,24 +362,9 @@ const HomePage: React.FC = () => {
         isLoading={isLoading} 
         error={error} 
         onRetry={handleRetry}
+        pageExists={!!homePageData}
       >
-        <HeroSection heroData={parseJSON(homePageData?.hero)} />
-        <ServicesSection 
-          servicesData={formattedServices}
-          isLoading={loadingServices}
-          error={servicesError}
-        />
-        <ProductsSection 
-          productsData={formattedProducts}
-          isLoading={productsLoading}
-          error={productsError ? String(productsError) : undefined}
-        />
-        <BlogSection 
-          blogData={formattedBlogPosts}
-          isLoading={loadingBlogPosts}
-          error={blogPostsError}
-        />
-        <CallToActionSection />
+        {pageContent}
       </HomePageStatus>
     </Layout>
   );
