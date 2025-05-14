@@ -56,14 +56,6 @@ const ProductsPage = () => {
                 image={imageUrl}
                 imageAlt={imageAlt}
                 href={productUrl}
-                imageComponent={
-                  <OptimizedImage
-                    src={imageUrl}
-                    alt={imageAlt}
-                    imageType="product"
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                  />
-                }
               />
             );
           })}
@@ -71,6 +63,6 @@ const ProductsPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ProductsPage;
