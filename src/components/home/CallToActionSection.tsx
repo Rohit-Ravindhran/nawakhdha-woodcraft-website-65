@@ -2,20 +2,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const CallToActionSection: React.FC = () => {
   return (
     <section className="relative py-16 md:py-24">
       <div className="absolute inset-0 bg-black/60 z-0"></div>
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1560185007-5f0bb1866cab?q=80&w=1000&auto=format')"
-        }}
-        role="img"
-        aria-label="Carpentry workshop with tools and wood"
-      ></div>
+      <div className="absolute inset-0 overflow-hidden">
+        <OptimizedImage
+          src="https://images.unsplash.com/photo-1560185007-5f0bb1866cab?q=80&w=1000&auto=format"
+          alt="Carpentry workshop with tools and wood"
+          imageType="hero"
+          className="w-full h-full object-cover"
+          cacheBusting={true}
+        />
+      </div>
       <div className="container-custom relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="heading-lg text-white mb-4">

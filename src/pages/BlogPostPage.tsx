@@ -1,9 +1,12 @@
+
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface BlogPost {
   id: string;
@@ -94,13 +97,15 @@ const BlogPostPage = () => {
         
         <article className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
           {/* Featured Image */}
-          <div className="aspect-video w-full relative">
-            <img 
+          <AspectRatio ratio={16/9}>
+            <OptimizedImage 
               src={post.featured_image_url || post.image_url || "https://placehold.co/800x450"} 
               alt={post.alt_text || post.title} 
-              className="object-cover w-full h-full"
+              imageType="blog"
+              priority={true}
+              className="w-full h-full object-cover"
             />
-          </div>
+          </AspectRatio>
           
           {/* Blog Content */}
           <div className="p-6 md:p-10">

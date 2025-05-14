@@ -28,6 +28,18 @@ export const SIZE_LIMITS = {
 };
 
 /**
+ * Cache control durations (in seconds)
+ */
+export const CACHE_DURATIONS = {
+  hero: 60 * 60 * 24 * 30, // 30 days
+  product: 60 * 60 * 24 * 365, // 1 year
+  blog: 60 * 60 * 24 * 90, // 90 days
+  thumbnail: 60 * 60 * 24 * 365, // 1 year
+  icon: 60 * 60 * 24 * 365, // 1 year
+  productDetail: 60 * 60 * 24 * 180, // 180 days
+};
+
+/**
  * Gets image dimensions and format info
  */
 export const getImageInfo = async (imageUrl: string): Promise<{
@@ -69,6 +81,28 @@ export const getImageInfo = async (imageUrl: string): Promise<{
 };
 
 /**
+ * Generates a unique filename with hash for cache busting
+ */
+export const generateUniqueFilename = (url: string): string => {
+  // Extract path and filename
+  const urlPath = url.split('?')[0];
+  const lastSlashIndex = urlPath.lastIndexOf('/');
+  const path = lastSlashIndex !== -1 ? urlPath.substring(0, lastSlashIndex + 1) : '';
+  const filename = lastSlashIndex !== -1 ? urlPath.substring(lastSlashIndex + 1) : urlPath;
+  
+  // Extract name and extension
+  const dotIndex = filename.lastIndexOf('.');
+  const name = dotIndex !== -1 ? filename.substring(0, dotIndex) : filename;
+  const extension = dotIndex !== -1 ? filename.substring(dotIndex) : '';
+  
+  // Generate a random hash (6 characters)
+  const hash = Math.random().toString(36).substring(2, 8);
+  
+  // Combine everything
+  return `${path}${name}-${hash}${extension}`;
+};
+
+/**
  * Optimizes image URL for CDN delivery
  * Transforms URLs to use Cloudinary with auto-format and quality parameters
  */
@@ -93,10 +127,13 @@ export const getOptimizedImageUrl = (
       return url;
     }
     
+    // Add cache control header for Cloudinary
+    const cacheControl = `fl_attachment,fl_cache,max_age_${CACHE_DURATIONS[type]}`;
+    
     // Add transformations to existing Cloudinary URL
     return url.replace(
       '/image/upload/',
-      `/image/upload/q_auto:${IMAGE_QUALITY[type]},f_auto${options.width ? `,w_${options.width}` : ''}${
+      `/image/upload/${cacheControl},q_auto:${IMAGE_QUALITY[type]},f_auto${options.width ? `,w_${options.width}` : ''}${
         options.height ? `,h_${options.height}` : ''
       }${options.crop ? `,c_${options.crop}` : ''}/`
     );

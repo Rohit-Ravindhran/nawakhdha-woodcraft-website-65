@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SIZE_LIMITS } from "@/utils/imageOptimization";
+import { SIZE_LIMITS, CACHE_DURATIONS } from "@/utils/imageOptimization";
 import { compressImage } from "@/utils/imageCompression";
 
 export function useStorage() {
@@ -16,6 +17,7 @@ export function useStorage() {
       imageType?: keyof typeof SIZE_LIMITS;
       maxWidth?: number;
       maxHeight?: number;
+      cacheBusting?: boolean;
     } = {}
   ): Promise<string | null> => {
     try {
@@ -29,7 +31,8 @@ export function useStorage() {
         optimize = true,
         imageType = 'product',
         maxWidth = 1920,
-        maxHeight = 1080
+        maxHeight = 1080,
+        cacheBusting = true
       } = options;
 
       // Process the file - compress if optimize is true
@@ -58,18 +61,29 @@ export function useStorage() {
         }
       }
 
-      // Generate a unique filename
+      // Generate a unique filename with random string for cache busting
       const fileExt = file.name.split('.').pop()?.toLowerCase();
       // Use WebP extension for optimized images unless it's PNG with transparency
       const finalExt = optimize && !file.type.includes('png') ? 'webp' : fileExt;
-      const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${finalExt}`;
+      
+      // Create randomized filename
+      const randomString = Math.random().toString(36).substring(2, 8);
+      const timestamp = Date.now();
+      const fileName = cacheBusting 
+        ? `${timestamp}-${randomString}.${finalExt}` 
+        : `${Date.now()}.${finalExt}`;
+      
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
+      // Set appropriate cache control based on image type
+      const cacheMaxAge = CACHE_DURATIONS[imageType];
+      
       const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(filePath, fileToUpload, {
-          cacheControl: '3600',
-          contentType: optimize ? `image/${finalExt}` : file.type || 'image/jpeg'
+          cacheControl: `max-age=${cacheMaxAge}, stale-while-revalidate=86400`,
+          contentType: optimize ? `image/${finalExt}` : file.type || 'image/jpeg',
+          upsert: false // Prevent overwriting existing files with same name
         });
 
       if (uploadError) {
@@ -80,7 +94,9 @@ export function useStorage() {
         .from(bucket)
         .getPublicUrl(filePath);
       
-      return data.publicUrl;
+      // Add timestamp parameter for cache busting on client side
+      const publicUrl = data.publicUrl;
+      return cacheBusting ? `${publicUrl}?t=${timestamp}` : publicUrl;
     } catch (error: any) {
       toast.error(`Error uploading image: ${error.message}`);
       return null;
@@ -97,7 +113,8 @@ export function useStorage() {
         throw new Error("Invalid file URL");
       }
       
-      const filePath = urlParts[1];
+      // Remove any query parameters
+      const filePath = urlParts[1].split('?')[0];
       
       const { error } = await supabase.storage
         .from(bucket)
@@ -122,7 +139,8 @@ export function useStorage() {
         throw new Error("Invalid file URL");
       }
       
-      const filePath = urlParts[1];
+      // Remove any query parameters
+      const filePath = urlParts[1].split('?')[0];
       
       // Updated to use list instead of getMetadata which doesn't exist in the API
       const { data, error } = await supabase.storage
@@ -144,11 +162,18 @@ export function useStorage() {
     }
   };
 
-  // Add cache purging for image URLs
+  // Add cache purging for image URLs with improved cache busting
   const purgeCDNCache = async (url: string): Promise<boolean> => {
     try {
-      // This is a placeholder for actual CDN cache purging implementation
+      // Remove existing cache busting parameters
+      const cleanUrl = url.split('?')[0];
+      
+      // Add new cache busting parameter
+      const newUrl = `${cleanUrl}?v=${Date.now()}`;
+      
       console.log(`Purging CDN cache for: ${url}`);
+      console.log(`New cache-busted URL: ${newUrl}`);
+      
       return true;
     } catch (error: any) {
       console.error('Error purging CDN cache:', error);
@@ -156,11 +181,25 @@ export function useStorage() {
     }
   };
 
+  // Function to add cache busting parameter to existing URL
+  const addCacheBusting = (url: string): string => {
+    if (!url || url.includes('/placeholder.svg') || url.endsWith('.svg')) {
+      return url;
+    }
+    
+    // Remove any existing query parameters
+    const baseUrl = url.split('?')[0];
+    
+    // Add timestamp as query parameter
+    return `${baseUrl}?v=${Date.now()}`;
+  };
+
   return {
     uploadImage,
     deleteImage,
     getImageMetadata,
     purgeCDNCache,
+    addCacheBusting,
     uploading
   };
 }

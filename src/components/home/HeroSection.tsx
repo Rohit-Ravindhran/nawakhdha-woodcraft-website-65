@@ -30,6 +30,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           imageType="hero"
           priority={true}
           className="w-full h-full"
+          cacheBusting={true}
         />
       </div>
       

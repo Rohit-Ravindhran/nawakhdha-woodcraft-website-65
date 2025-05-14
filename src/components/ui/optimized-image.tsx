@@ -16,6 +16,7 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   onLoad?: () => void;
   onError?: () => void;
   fallbackSrc?: string;
+  cacheBusting?: boolean;
 }
 
 export function OptimizedImage({
@@ -30,20 +31,28 @@ export function OptimizedImage({
   onLoad,
   onError,
   fallbackSrc = '/placeholder.svg',
+  cacheBusting = true,
   ...props
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(!priority);
-  const [imgSrc, setImgSrc] = useState<string>(
-    getOptimizedImageUrl(src, imageType, { width, height })
-  );
+  const [imgSrc, setImgSrc] = useState<string>('');
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    // Update optimized URL when src changes
-    setImgSrc(getOptimizedImageUrl(src, imageType, { width, height }));
+    // Get optimized URL
+    let optimizedUrl = getOptimizedImageUrl(src, imageType, { width, height });
+    
+    // Add cache busting parameter if enabled
+    if (cacheBusting && optimizedUrl !== '/placeholder.svg' && !optimizedUrl.includes('.svg')) {
+      // Use a timestamp-based query parameter for cache busting
+      const separator = optimizedUrl.includes('?') ? '&' : '?';
+      optimizedUrl = `${optimizedUrl}${separator}v=${Date.now()}`;
+    }
+    
+    setImgSrc(optimizedUrl);
     setError(false);
     if (!priority) setIsLoading(true);
-  }, [src, imageType, width, height, priority]);
+  }, [src, imageType, width, height, priority, cacheBusting]);
 
   // Only measure LCP for hero images
   useEffect(() => {

@@ -4,6 +4,7 @@ import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
 import { useProducts } from "@/hooks/content";
 import { Loader2 } from "lucide-react";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const ProductsPage = () => {
   // Product categories data
@@ -45,13 +46,24 @@ const ProductsPage = () => {
                 ? `/product/${product.category_slug}` 
                 : `/product/${product.id}`;
               
+            const imageUrl = product.category_image_url || product.image_url || "/placeholder.svg";
+            const imageAlt = product.alt_text || product.category_name || "Product image";
+              
             return (
               <CategoryCard
                 key={product.id}
                 title={product.category_name || product.product_name || "Product"}
-                image={product.category_image_url || product.image_url || "/placeholder.svg"}
-                imageAlt={product.alt_text || product.category_name || "Product image"}
+                image={imageUrl}
+                imageAlt={imageAlt}
                 href={productUrl}
+                imageComponent={
+                  <OptimizedImage
+                    src={imageUrl}
+                    alt={imageAlt}
+                    imageType="product"
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  />
+                }
               />
             );
           })}

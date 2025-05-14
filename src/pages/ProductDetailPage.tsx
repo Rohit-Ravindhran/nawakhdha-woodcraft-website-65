@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -6,6 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ProductCategoryData } from '@/hooks/content/types';
 import { Loader2 } from 'lucide-react';
 import SectionTitle from '@/components/ui/section-title';
+import { OptimizedImage } from '@/components/ui/optimized-image';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 // Define interfaces for the response data
 interface ProductGalleryItem {
@@ -179,22 +180,25 @@ const ProductDetailPage: React.FC = () => {
           <div>
             {gallery.length > 0 ? (
               <div className="space-y-4">
-                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                  <img 
+                <AspectRatio ratio={16/9} className="bg-gray-100 rounded-lg overflow-hidden">
+                  <OptimizedImage 
                     src={gallery[0]?.image_url || "/placeholder.svg"} 
                     alt={gallery[0]?.alt_text || productCategory.category_name || "Product image"}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full"
+                    imageType="productDetail"
+                    priority={true}
                   />
-                </div>
+                </AspectRatio>
                 
                 {gallery.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
                     {gallery.slice(1).map((image, index) => (
                       <div key={index} className="aspect-square bg-gray-100 rounded overflow-hidden">
-                        <img 
+                        <OptimizedImage 
                           src={image.image_url || "/placeholder.svg"} 
                           alt={image.alt_text || `${productCategory.category_name} image ${index + 2}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full"
+                          imageType="product"
                         />
                       </div>
                     ))}
@@ -202,17 +206,21 @@ const ProductDetailPage: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+              <AspectRatio ratio={16/9} className="bg-gray-100 rounded-lg overflow-hidden">
                 {productCategory.category_image_url ? (
-                  <img 
+                  <OptimizedImage 
                     src={productCategory.category_image_url} 
                     alt={productCategory.alt_text || "Product image"}
-                    className="w-full h-full object-cover" 
+                    className="w-full h-full"
+                    imageType="product"
+                    priority={true}
                   />
                 ) : (
-                  <p className="text-gray-500">No product images available</p>
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p className="text-gray-500">No product images available</p>
+                  </div>
                 )}
-              </div>
+              </AspectRatio>
             )}
           </div>
           
