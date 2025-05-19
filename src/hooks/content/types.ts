@@ -171,8 +171,8 @@ export interface ContactInfoData {
   address: string | null;
   phone: string | null;
   email: string | null;
-  business_hours_json: string | null | Json;
-  map_url?: string | null;
+  business_hours_json: string | null | Record<string, any>;
+  map_url: string | null;
 }
 
 // Type for business hours to fix ContactPage.tsx errors
