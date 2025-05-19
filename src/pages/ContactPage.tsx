@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ const ContactPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactInfo, setContactInfo] = useState<ContactInfoData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const formRef = useRef<HTMLDivElement>(null);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -49,7 +51,8 @@ const ContactPage = () => {
               (typeof data.business_hours_json === 'string' ? 
                 data.business_hours_json : 
                 JSON.stringify(data.business_hours_json)
-              ) : null
+              ) : null,
+            map_url: data.map_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3581.7101700432254!2d50.5805173!3d26.142062!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e49afdc3ad3b24b%3A0xd072eb036c184a80!2sMiyami%20Limited!5e0!3m2!1sen!2sbh!4v1716388819786!5m2!1sen!2sbh"
           };
           setContactInfo(contactData);
         } else {
@@ -64,6 +67,10 @@ const ContactPage = () => {
     
     fetchContactInfo();
   }, []);
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -177,10 +184,12 @@ const ContactPage = () => {
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
-              <SectionTitle
-                title="Get In Touch"
-                subtitle="We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible."
-              />
+              <div ref={formRef}>
+                <SectionTitle
+                  title="Get In Touch"
+                  subtitle="We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible."
+                />
+              </div>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -358,10 +367,22 @@ const ContactPage = () => {
             centered
           />
           <div className="aspect-video rounded-lg overflow-hidden border border-border">
-            {/* Replace with actual Google Maps embed code */}
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <p className="text-muted-foreground">Google Maps will be embedded here</p>
-            </div>
+            {contactInfo && contactInfo.map_url ? (
+              <iframe 
+                src={contactInfo.map_url}
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Nawakhdha Woodcraft Location"
+              ></iframe>
+            ) : (
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <p className="text-muted-foreground">Google Maps will be embedded here</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -373,7 +394,11 @@ const ContactPage = () => {
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
             For large projects or specialized custom work, let us prepare a detailed quote for you.
           </p>
-          <Button variant="secondary" className="bg-white text-wood-dark hover:bg-white/90">
+          <Button 
+            variant="secondary" 
+            className="bg-white text-wood-dark hover:bg-white/90"
+            onClick={scrollToForm}
+          >
             Request a Custom Quote
           </Button>
         </div>
