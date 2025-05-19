@@ -42,21 +42,7 @@ export function ProductMainContent({
           )}
         </AspectRatio>
         
-        {/* Additional thumbnails (optional) */}
-        {galleryImages && galleryImages.length > 1 && (
-          <div className="grid grid-cols-4 gap-2 mt-4">
-            {galleryImages.slice(1, 5).map((image, index) => (
-              <div key={index} className="aspect-square bg-gray-100 rounded overflow-hidden">
-                <OptimizedImage 
-                  src={image.url || "/placeholder.svg"} 
-                  alt={image.alt || `${productName} thumbnail ${index + 2}`}
-                  className="w-full h-full"
-                  imageType="product"
-                />
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Removed the additional thumbnails section as requested */}
       </div>
       
       {/* Product Description */}
