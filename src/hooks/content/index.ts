@@ -4,6 +4,7 @@ export * from './usePages';
 export * from './useProducts';
 export * from './useProductCategories';
 export * from './useProductDetails';
+export * from './useProductBySlug';
 export * from './useProductMutations';
 export * from './useBlogs';
 export * from './useGallery';
