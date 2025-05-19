@@ -167,23 +167,23 @@ export interface AboutTeamMemberData {
 
 // Type for Contact Information data
 export interface ContactInfoData {
-  id?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  business_hours_json?: string | BusinessHours;
+  id: string;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  business_hours_json: string | null | Json;
+  map_url?: string | null;
 }
 
 // Type for business hours to fix ContactPage.tsx errors
 export interface BusinessHours {
-  monday?: string;
-  tuesday?: string;
-  wednesday?: string;
-  thursday?: string;
-  friday?: string;
-  saturday?: string;
-  sunday?: string;
-  [key: string]: string | undefined;
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
 }
 
 // Type definition to make description optional
