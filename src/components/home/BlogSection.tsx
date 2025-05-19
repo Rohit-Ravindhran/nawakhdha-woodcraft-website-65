@@ -171,13 +171,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({
             );
           })}
         </div>
-        <div className="text-center mt-10">
-          <Button asChild variant="outline" data-testid="read-more-btn">
-            <Link to="/blog">
-              Read More Articles <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
+        {/* "Read More Articles" button removed as requested */}
       </div>
     </section>
   );

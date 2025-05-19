@@ -77,7 +77,7 @@ const BlogPostPage = () => {
             <h1 className="heading-md mb-6">Blog Post Not Found</h1>
             <p className="mb-6">{error || "The blog post you're looking for doesn't exist."}</p>
             <Button asChild>
-              <Link to="/blog">Return to Blog</Link>
+              <Link to="/">Return to Home</Link>
             </Button>
           </div>
         </div>
@@ -89,9 +89,9 @@ const BlogPostPage = () => {
     <div className="section-padding bg-secondary/30">
       <div className="container-custom max-w-4xl">
         <Button variant="outline" asChild className="mb-8">
-          <Link to="/blog">
+          <Link to="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Blog
+            Back to Home
           </Link>
         </Button>
         
