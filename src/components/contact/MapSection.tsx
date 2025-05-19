@@ -8,7 +8,9 @@ interface MapSectionProps {
 }
 
 const MapSection: React.FC<MapSectionProps> = ({ mapUrl }) => {
-  const defaultMapUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3581.7101700432254!2d50.5805173!3d26.142062!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e49afdc3ad3b24b%3A0xd072eb036c184a80!2sMiyami%20Limited!5e0!3m2!1sen!2sbh!4v1716388819786!5m2!1sen!2sbh";
+  // Create a Google Maps embed URL with the provided coordinates
+  // Coordinates: 26.130824,50.5985907
+  const defaultMapUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7164.823402140004!2d50.5985907!3d26.130824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA3JzUxLjAiTiA1MMKwMzUnNTUuMCJF!5e0!3m2!1sen!2sbh!4v1716388819786!5m2!1sen!2sbh";
   
   return (
     <section className="bg-secondary/30 py-12">
