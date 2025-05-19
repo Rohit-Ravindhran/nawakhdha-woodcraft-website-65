@@ -23,7 +23,7 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({
   data 
 }) => {
   // If data is provided, use values from it
-  const seoTitle = data?.seo_title || title;
+  const seoTitle = data?.seo_title || title || "Al Nawakhdha Furniture W.L.L - Premium Woodcraft & Furniture";
   const seoDescription = data?.seo_description || description;
   const seoKeywords = data?.seo_keywords || keywords;
   
@@ -31,7 +31,7 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Nawakhdha Woodcraft",
+    "name": "Al Nawakhdha Furniture W.L.L",
     "description": seoDescription,
     "url": "https://nawakhdha-woodcraft.com/",
     "logo": "https://nawakhdha-woodcraft.com/logo.png",
@@ -46,7 +46,7 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://nawakhdha-woodcraft.com",
-    "name": "Nawakhdha Woodcraft",
+    "name": "Al Nawakhdha Furniture W.L.L",
     "image": heroBackgroundImage,
     "url": "https://nawakhdha-woodcraft.com",
     "telephone": "+973-1234-5678",
@@ -104,6 +104,10 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({
       
       {/* Canonical tag */}
       <link rel="canonical" href="https://nawakhdha-woodcraft.com/" />
+      
+      {/* Favicon */}
+      <link rel="icon" href="/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png" type="image/png" />
+      <link rel="apple-touch-icon" href="/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png" />
       
       {/* Preload critical assets */}
       {heroBackgroundImage && (

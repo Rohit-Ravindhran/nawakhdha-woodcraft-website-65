@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Helmet } from "react-helmet-async";
 
 interface BlogPost {
   id: string;
@@ -86,54 +87,63 @@ const BlogPostPage = () => {
   }
 
   return (
-    <div className="section-padding bg-secondary/30">
-      <div className="container-custom max-w-4xl">
-        <Button variant="outline" asChild className="mb-8">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-        
-        <article className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
-          {/* Featured Image */}
-          <AspectRatio ratio={16/9}>
-            <OptimizedImage 
-              src={post.featured_image_url || post.image_url || "https://placehold.co/800x450"} 
-              alt={post.alt_text || post.title} 
-              imageType="blog"
-              priority={true}
-              className="w-full h-full object-cover"
-            />
-          </AspectRatio>
+    <>
+      <Helmet>
+        <title>{post.title} | Al Nawakhdha Furniture W.L.L</title>
+        <meta name="description" content={post.excerpt || `Read about ${post.title}`} />
+        <link rel="icon" href="/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png" />
+      </Helmet>
+      
+      <div className="section-padding bg-secondary/30">
+        <div className="container-custom max-w-4xl">
+          <Button variant="outline" asChild className="mb-8">
+            <Link to="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
+          </Button>
           
-          {/* Blog Content */}
-          <div className="p-6 md:p-10">
-            <div className="mb-6">
-              <p className="text-sm text-muted-foreground mb-2">
-                {new Date(post.date).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-                {post.author && ` • By ${post.author}`}
-              </p>
-              <h1 className="heading-md">{post.title}</h1>
-              {post.excerpt && (
-                <p className="mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
-              )}
-            </div>
+          <article className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+            {/* Featured Image */}
+            <AspectRatio ratio={16/9}>
+              <OptimizedImage 
+                src={post.featured_image_url || post.image_url || "https://placehold.co/800x450"} 
+                alt={post.alt_text || post.title} 
+                imageType="blog"
+                priority={true}
+                className="w-full h-full object-cover"
+              />
+            </AspectRatio>
             
-            <div 
-              className="prose max-w-none" 
-              dangerouslySetInnerHTML={{ 
-                __html: post.body_content || post.content || '' 
-              }} 
-            />
-          </div>
-        </article>
+            {/* Blog Content */}
+            <div className="p-6 md:p-10">
+              <div className="mb-6">
+                <p className="text-sm text-muted-foreground mb-2">
+                  {new Date(post.date).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                  {post.author && ` • By ${post.author}`}
+                </p>
+                <h1 className="heading-md">{post.title}</h1>
+                {post.excerpt && (
+                  <p className="mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
+                )}
+              </div>
+              
+              <div 
+                className="prose max-w-none" 
+                dangerouslySetInnerHTML={{ 
+                  __html: post.body_content || post.content || '' 
+                }} 
+              />
+            </div>
+          </article>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
