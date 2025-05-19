@@ -32,7 +32,8 @@ export function useProductDetail(productId?: string) {
       const { data: galleryData, error: galleryError } = await supabase
         .from('product_gallery')
         .select('*')
-        .eq('category_id', productId);
+        .eq('category_id', productId)
+        .order('position', { ascending: true });
         
       if (galleryError) throw galleryError;
       
@@ -50,7 +51,8 @@ export function useProductDetail(productId?: string) {
         gallery_images: galleryData?.map(img => ({
           url: img.image_url,
           caption: img.caption,
-          alt: img.alt_text
+          alt: img.alt_text,
+          position: img.position
         })) || []
       };
     },

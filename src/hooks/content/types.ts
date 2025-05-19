@@ -144,8 +144,9 @@ export interface GalleryImageData {
 // Type for gallery images in product display
 export interface GalleryImage {
   url: string;
-  caption: string;
+  caption?: string;
   alt?: string;
+  position?: number;
 }
 
 // Type for Product data

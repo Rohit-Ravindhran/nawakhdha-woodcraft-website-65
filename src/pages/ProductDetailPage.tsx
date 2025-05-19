@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -7,31 +8,8 @@ import { Loader2 } from 'lucide-react';
 import SectionTitle from '@/components/ui/section-title';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-
-// Define interfaces for the response data
-interface ProductGalleryItem {
-  id: string;
-  image_url: string;
-  caption: string;
-  alt_text?: string;
-  position?: number;
-  category_id: string;
-}
-
-interface ProductDetails {
-  id?: string;
-  category_id?: string;
-  description?: string;
-  product_name?: string;
-  seo_title?: string;
-  seo_description?: string;
-  seo_keywords?: string;
-}
-
-interface QueryResult {
-  details: ProductDetails;
-  gallery: ProductGalleryItem[];
-}
+import { ProductGalleryGrid } from '@/components/products/ProductGalleryGrid';
+import { useProductDetail } from '@/hooks/content/useProductDetails';
 
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -108,40 +86,13 @@ const ProductDetailPage: React.FC = () => {
     enabled: !!slug
   });
 
-  // Then, get the product details and gallery once we have the category ID
+  // Use the enhanced product detail hook to fetch product details including gallery
   const { 
-    data: productDetails, 
-    isLoading: loadingDetails
-  } = useQuery({
-    queryKey: ['product_details', productCategory?.id],
-    queryFn: async () => {
-      if (!productCategory?.id) return { details: {}, gallery: [] } as QueryResult;
-      
-      const { data: detailData, error: detailError } = await supabase
-        .from('product_category_details')
-        .select('*')
-        .eq('category_id', productCategory.id)
-        .maybeSingle();
-        
-      if (detailError) throw detailError;
-      
-      const { data: galleryData, error: galleryError } = await supabase
-        .from('product_gallery')
-        .select('*')
-        .eq('category_id', productCategory.id)
-        .order('position', { ascending: true });
-        
-      if (galleryError) throw galleryError;
-      
-      return {
-        details: detailData || {},
-        gallery: galleryData || []
-      } as QueryResult;
-    },
-    enabled: !!productCategory?.id
-  });
-
-  const isLoading = loadingCategory || loadingDetails;
+    data: productData,
+    isLoading: loadingProductData
+  } = useProductDetail(productCategory?.id);
+  
+  const isLoading = loadingCategory || loadingProductData;
   
   if (isLoading) {
     return (
@@ -162,71 +113,65 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const gallery = productDetails?.gallery || [];
-  const details = productDetails?.details || {};
-  const description = details.description || productCategory.description || "";
+  // Get the product details and description
+  const description = productData?.description || productCategory.description || "";
+  const categoryName = productCategory.category_name || "";
+  const productName = productData?.product_name || productCategory.product_name || categoryName;
+  const featuredImage = productData?.gallery_images?.length > 0 
+    ? productData.gallery_images[0].url 
+    : productCategory.category_image_url;
+  const featuredImageAlt = productData?.gallery_images?.length > 0
+    ? productData.gallery_images[0].alt
+    : productCategory.alt_text;
   
   return (
     <div className="py-12">
       <div className="container-custom">
         <SectionTitle
-          title={productCategory.category_name || "Product Details"}
-          subtitle={productCategory.product_name || ""}
+          title={categoryName}
+          subtitle={productName !== categoryName ? productName : ""}
           centered
         />
         
-        {/* Product Gallery */}
+        {/* Product Main Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
           <div>
-            {gallery.length > 0 ? (
-              <div className="space-y-4">
-                <AspectRatio ratio={16/9} className="bg-gray-100 rounded-lg overflow-hidden">
-                  <OptimizedImage 
-                    src={gallery[0]?.image_url || "/placeholder.svg"} 
-                    alt={gallery[0]?.alt_text || productCategory.category_name || "Product image"}
-                    className="w-full h-full"
-                    imageType="productDetail"
-                    priority={true}
-                  />
-                </AspectRatio>
-                
-                {gallery.length > 1 && (
-                  <div className="grid grid-cols-4 gap-2">
-                    {gallery.slice(1).map((image, index) => (
-                      <div key={index} className="aspect-square bg-gray-100 rounded overflow-hidden">
-                        <OptimizedImage 
-                          src={image.image_url || "/placeholder.svg"} 
-                          alt={image.alt_text || `${productCategory.category_name} image ${index + 2}`}
-                          className="w-full h-full"
-                          imageType="product"
-                        />
-                      </div>
-                    ))}
+            <AspectRatio ratio={16/9} className="bg-gray-100 rounded-lg overflow-hidden">
+              {featuredImage ? (
+                <OptimizedImage 
+                  src={featuredImage} 
+                  alt={featuredImageAlt || productName || "Product image"}
+                  className="w-full h-full"
+                  imageType="productDetail"
+                  priority={true}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <p className="text-gray-500">No product images available</p>
+                </div>
+              )}
+            </AspectRatio>
+            
+            {/* Additional thumbnails (optional) */}
+            {productData?.gallery_images && productData.gallery_images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2 mt-4">
+                {productData.gallery_images.slice(1, 5).map((image, index) => (
+                  <div key={index} className="aspect-square bg-gray-100 rounded overflow-hidden">
+                    <OptimizedImage 
+                      src={image.url || "/placeholder.svg"} 
+                      alt={image.alt || `${productName} thumbnail ${index + 2}`}
+                      className="w-full h-full"
+                      imageType="product"
+                    />
                   </div>
-                )}
+                ))}
               </div>
-            ) : (
-              <AspectRatio ratio={16/9} className="bg-gray-100 rounded-lg overflow-hidden">
-                {productCategory.category_image_url ? (
-                  <OptimizedImage 
-                    src={productCategory.category_image_url} 
-                    alt={productCategory.alt_text || "Product image"}
-                    className="w-full h-full"
-                    imageType="product"
-                    priority={true}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <p className="text-gray-500">No product images available</p>
-                  </div>
-                )}
-              </AspectRatio>
             )}
           </div>
           
           {/* Product Description */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">{productCategory.product_name || productCategory.category_name}</h2>
+            <h2 className="text-2xl font-semibold mb-4">{productName}</h2>
             
             <div className="prose max-w-none">
               {description ? (
@@ -239,8 +184,8 @@ const ProductDetailPage: React.FC = () => {
             <div className="mt-8 pt-8 border-t border-gray-200">
               <h3 className="text-lg font-medium mb-2">Product Details</h3>
               <ul className="space-y-2">
-                <li><strong>Category:</strong> {productCategory.category_name}</li>
-                {productCategory.product_name && (
+                <li><strong>Category:</strong> {categoryName}</li>
+                {productCategory.product_name && categoryName !== productCategory.product_name && (
                   <li><strong>Product Name:</strong> {productCategory.product_name}</li>
                 )}
                 {productCategory.slug && (
@@ -250,6 +195,14 @@ const ProductDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        {/* Product Gallery Grid - New Addition */}
+        {productData?.gallery_images && productData.gallery_images.length > 0 && (
+          <ProductGalleryGrid 
+            images={productData.gallery_images}
+            productName={productName}
+          />
+        )}
       </div>
     </div>
   );
