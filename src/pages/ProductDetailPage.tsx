@@ -8,6 +8,8 @@ import { ProductMainContent } from '@/components/products/ProductMainContent';
 import { ProductGalleryGrid } from '@/components/products/ProductGalleryGrid';
 import { ProductLoading } from '@/components/products/ProductLoading';
 import { ProductNotFound } from '@/components/products/ProductNotFound';
+import { Helmet } from 'react-helmet-async';
+import { Separator } from '@/components/ui/separator';
 
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -39,40 +41,72 @@ const ProductDetailPage: React.FC = () => {
   const description = productData?.description || productCategory.description || "";
   const categoryName = productCategory.category_name || "";
   const productName = productData?.product_name || productCategory.product_name || categoryName;
+  
+  // Choose the first gallery image as featured, or fall back to category image
   const featuredImage = productData?.gallery_images?.length > 0 
     ? productData.gallery_images[0].url 
     : productCategory.category_image_url;
+    
   const featuredImageAlt = productData?.gallery_images?.length > 0
     ? productData.gallery_images[0].alt
     : productCategory.alt_text;
+    
+  // SEO metadata
+  const seoTitle = productData?.seo_title || productCategory.seo_title || productName;
+  const seoDescription = productData?.seo_description || productCategory.seo_description || description.substring(0, 160);
+  const seoKeywords = productData?.seo_keywords || productCategory.seo_keywords || '';
+  
+  // Gallery images - make a copy to avoid modifying the original data
+  const galleryImages = productData?.gallery_images ? [...productData.gallery_images] : [];
+  
+  // Sort images by position if available
+  galleryImages.sort((a, b) => {
+    if (a.position !== undefined && b.position !== undefined) {
+      return a.position - b.position;
+    }
+    return 0;
+  });
   
   return (
-    <div className="py-12">
-      <div className="container-custom">
-        <ProductHeader 
-          categoryName={categoryName} 
-          productName={productName} 
-        />
-        
-        <ProductMainContent 
-          featuredImage={featuredImage}
-          featuredImageAlt={featuredImageAlt}
-          productName={productName}
-          description={description}
-          categoryName={categoryName}
-          productSlug={productCategory.slug}
-          galleryImages={productData?.gallery_images}
-        />
-        
-        {/* Product Gallery Grid */}
-        {productData?.gallery_images && productData.gallery_images.length > 0 && (
-          <ProductGalleryGrid 
-            images={productData.gallery_images}
-            productName={productName}
+    <>
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        {seoKeywords && <meta name="keywords" content={seoKeywords} />}
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        {featuredImage && <meta property="og:image" content={featuredImage} />}
+        <meta property="og:type" content="product" />
+      </Helmet>
+      
+      <div className="py-12">
+        <div className="container-custom">
+          <ProductHeader 
+            categoryName={categoryName} 
+            productName={productName} 
           />
-        )}
+          
+          <ProductMainContent 
+            featuredImage={featuredImage}
+            featuredImageAlt={featuredImageAlt}
+            productName={productName}
+            description={description}
+            categoryName={categoryName}
+            productSlug={productCategory.slug}
+          />
+          
+          {galleryImages.length > 0 && (
+            <>
+              <Separator className="my-10" />
+              <ProductGalleryGrid 
+                images={galleryImages}
+                productName={productName}
+              />
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
