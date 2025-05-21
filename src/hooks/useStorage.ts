@@ -84,14 +84,20 @@ export function useStorage() {
       // Set appropriate cache control based on image type
       const cacheMaxAge = CACHE_DURATIONS[imageType];
       
-      // Ensure the bucket exists before uploading
-      // This is just a check, won't create if doesn't exist
+      // First check if the bucket exists
       const { data: bucketData, error: bucketError } = await supabase.storage
         .getBucket(bucket);
         
       if (bucketError) {
         console.error("Error checking bucket:", bucketError);
-        // We'll try the upload anyway
+        if (bucketError.message.includes("does not exist")) {
+          throw new Error(`Bucket "${bucket}" does not exist. Please ensure it exists and you have proper permissions.`);
+        }
+        throw bucketError;
+      }
+      
+      if (!bucketData) {
+        throw new Error(`Bucket "${bucket}" not found. It may not exist or you may not have permission to access it.`);
       }
       
       // Upload the file

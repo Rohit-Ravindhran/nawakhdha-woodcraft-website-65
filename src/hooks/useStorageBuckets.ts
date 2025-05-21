@@ -7,6 +7,7 @@ export function useStorageBuckets() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [buckets, setBuckets] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Ensure all required buckets exist
   const initializeBuckets = async () => {
@@ -17,6 +18,8 @@ export function useStorageBuckets() {
     ];
     
     try {
+      setIsLoading(true);
+      
       // Get list of existing buckets
       const { data: existingBuckets, error: listError } = await supabase.storage.listBuckets();
       
@@ -30,31 +33,27 @@ export function useStorageBuckets() {
       
       console.log("Existing buckets:", existingBucketNames);
       
-      // Create any missing buckets
-      for (const bucket of requiredBuckets) {
-        if (!existingBucketNames.includes(bucket.name)) {
-          console.log(`Creating missing bucket: ${bucket.name}`);
-          
-          const { error } = await supabase.storage.createBucket(
-            bucket.name, 
-            { public: bucket.isPublic }
-          );
-          
-          if (error) {
-            console.error(`Error creating bucket ${bucket.name}:`, error);
-            toast.error(`Error creating storage bucket: ${error.message}`);
-          } else {
-            console.log(`Successfully created bucket: ${bucket.name}`);
-            setBuckets(prev => [...prev, bucket.name]);
-          }
-        }
+      // We'll check which buckets are missing
+      const missingBuckets = requiredBuckets.filter(
+        bucket => !existingBucketNames.includes(bucket.name)
+      );
+      
+      if (missingBuckets.length > 0) {
+        console.warn(`Missing storage buckets: ${missingBuckets.map(b => b.name).join(', ')}`);
+        
+        // Don't attempt to create buckets if we don't have permission
+        // Just inform the user that they're missing
+        toast.warning(`Some required storage buckets are missing. Please contact an administrator to create them: ${missingBuckets.map(b => b.name).join(', ')}`);
       }
       
+      // Even if buckets are missing, we mark as initialized so the UI can handle the situation
       setIsInitialized(true);
     } catch (err: any) {
       console.error("Error initializing storage buckets:", err);
       setError(err);
       toast.error(`Storage initialization error: ${err.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -68,9 +67,10 @@ export function useStorageBuckets() {
         console.log("No session found, skipping bucket initialization");
         // If not logged in, just mark as initialized to avoid errors
         setIsInitialized(true);
+        setIsLoading(false);
       }
     });
   }, []);
 
-  return { isInitialized, error, buckets };
+  return { isInitialized, error, buckets, isLoading };
 }
