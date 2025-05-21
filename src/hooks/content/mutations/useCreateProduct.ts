@@ -12,22 +12,34 @@ export function useCreateProduct() {
   
   return useMutation({
     mutationFn: async (productData: Omit<ProductData, 'id'>) => {
-      // Insert new product
-      const { data, error } = await supabase
-        .from('product_categories')
-        .insert(productData)
-        .select()
-        .single();
-          
-      if (error) throw error;
-      return data as ProductData;
+      try {
+        // Insert new product
+        const { data, error } = await supabase
+          .from('product_categories')
+          .insert(productData)
+          .select()
+          .single();
+            
+        if (error) {
+          // Handle specific errors
+          if (error.message.includes("row-level security")) {
+            throw new Error('Permission denied: You may not have the required permissions to create products');
+          }
+          throw error;
+        }
+        
+        return data as ProductData;
+      } catch (error: any) {
+        console.error("Product creation error:", error);
+        throw new Error(`Failed to create product: ${error.message}`);
+      }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       toast.success(`Product "${data.product_name || 'New product'}" created successfully`);
     },
     onError: (error: Error) => {
-      toast.error(`Error creating product: ${error.message}`);
+      toast.error(`Error: ${error.message}`);
     }
   });
 }

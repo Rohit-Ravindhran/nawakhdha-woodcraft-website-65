@@ -11,13 +11,25 @@ export function useDeleteProduct() {
   
   return useMutation({
     mutationFn: async (productId: string) => {
-      const { error } = await supabase
-        .from('product_categories')
-        .delete()
-        .eq('id', productId);
+      try {
+        const { error } = await supabase
+          .from('product_categories')
+          .delete()
+          .eq('id', productId);
+          
+        if (error) {
+          // Handle specific errors
+          if (error.message.includes("row-level security")) {
+            throw new Error('Permission denied: You may not have the required permissions to delete products');
+          }
+          throw error;
+        }
         
-      if (error) throw error;
-      return productId;
+        return productId;
+      } catch (error: any) {
+        console.error("Product deletion error:", error);
+        throw new Error(`Failed to delete product: ${error.message}`);
+      }
     },
     onSuccess: (productId) => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -25,7 +37,7 @@ export function useDeleteProduct() {
       toast.success(`Product deleted successfully`);
     },
     onError: (error: Error) => {
-      toast.error(`Error deleting product: ${error.message}`);
+      toast.error(`Error: ${error.message}`);
     }
   });
 }

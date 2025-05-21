@@ -8,6 +8,7 @@ import { AlertCircle } from "lucide-react";
 import { GalleryImage } from "@/components/admin/schemas/productSchema";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useStorage } from "@/hooks/useStorage";
+import { toast } from "sonner";
 
 interface ProductGalleryManagerProps {
   images: GalleryImage[];
@@ -27,31 +28,54 @@ export default function ProductGalleryManager({
   const handleImageUploaded = (url: string, alt: string, index?: number) => {
     if (!url) return; // Don't add empty URLs
     
-    if (index !== undefined && index >= 0 && index < images.length) {
-      // Update existing image
-      const updatedImages = [...images];
-      
-      // If URL changed, purge CDN cache for old URL
-      if (updatedImages[index].url !== url && updatedImages[index].url) {
-        purgeCDNCache(updatedImages[index].url);
+    try {
+      if (index !== undefined && index >= 0 && index < images.length) {
+        // Update existing image
+        const updatedImages = [...images];
+        
+        // If URL changed, purge CDN cache for old URL
+        if (updatedImages[index].url !== url && updatedImages[index].url) {
+          purgeCDNCache(updatedImages[index].url);
+        }
+        
+        updatedImages[index] = { ...updatedImages[index], url, alt };
+        onChange(updatedImages);
+      } else {
+        // Add new image
+        onChange([...images, { url, caption: "", alt }]);
       }
       
-      updatedImages[index] = { ...updatedImages[index], url, alt };
-      onChange(updatedImages);
-    } else {
-      // Add new image
-      onChange([...images, { url, caption: "", alt }]);
+      toast.success("Image updated successfully");
+    } catch (error: any) {
+      console.error("Error handling image update:", error);
+      toast.error(error.message || "Failed to update image");
+      
+      // Check for specific RLS errors
+      if (error.message?.includes("new row violates row-level security policy")) {
+        toast.error("Permission denied: You don't have access to add images. Please contact an administrator.");
+      }
     }
   };
 
   const handleCaptionChange = (caption: string, index: number) => {
-    const updatedImages = [...images];
-    updatedImages[index] = { ...updatedImages[index], caption };
-    onChange(updatedImages);
+    try {
+      const updatedImages = [...images];
+      updatedImages[index] = { ...updatedImages[index], caption };
+      onChange(updatedImages);
+    } catch (error: any) {
+      console.error("Error updating caption:", error);
+      toast.error("Failed to update image caption");
+    }
   };
 
   const removeImage = (index: number) => {
-    onChange(images.filter((_, i) => i !== index));
+    try {
+      onChange(images.filter((_, i) => i !== index));
+      toast.success("Image removed successfully");
+    } catch (error: any) {
+      console.error("Error removing image:", error);
+      toast.error("Failed to remove image");
+    }
   };
 
   const hasValidImages = images.length > 0 && images.every(img => img.url && img.url.trim() !== '');

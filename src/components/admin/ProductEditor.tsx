@@ -8,9 +8,21 @@ import { ProductData } from "@/hooks/content/types";
 import { productSchema, ProductFormValues } from "./schemas/productSchema";
 import ProductFormFields from "./ProductFormFields";
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Loader2, Save, Trash2 } from "lucide-react";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, Save, Trash2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProductEditorProps {
   productId?: string;
@@ -18,10 +30,11 @@ interface ProductEditorProps {
 }
 
 const ProductEditor: React.FC<ProductEditorProps> = ({ productId, onProductUpdated }) => {
-  const { data: product, isLoading } = useProductCategory(productId);
+  const { data: product, isLoading, error: fetchError } = useProductCategory(productId);
   const updateProduct = useUpdateProductCategory();
   const deleteProduct = useDeleteProductCategory();
   const [isDeleteOpen, setDeleteOpen] = useState(false);
+  const { session } = useAuth();
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -46,6 +59,11 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ productId, onProductUpdat
   }, [product, form]);
 
   const onSubmit = (values: ProductFormValues) => {
+    if (!session) {
+      toast.error("You must be logged in to update products");
+      return;
+    }
+    
     const productData: ProductData = {
       ...values,
       id: product?.id,
@@ -69,6 +87,11 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ productId, onProductUpdat
   };
 
   const handleDelete = () => {
+    if (!session) {
+      toast.error("You must be logged in to delete products");
+      return;
+    }
+    
     if (product?.id) {
       deleteProduct.mutate(product.id, {
         onSuccess: () => {
@@ -88,6 +111,28 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ productId, onProductUpdat
       <div className="flex justify-center items-center p-4">
         <Loader2 className="h-6 w-6 animate-spin" />
       </div>
+    );
+  }
+  
+  if (fetchError) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Error loading product: {fetchError.message}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+  
+  if (!session) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          You need to be logged in to manage products. Please log in to continue.
+        </AlertDescription>
+      </Alert>
     );
   }
 

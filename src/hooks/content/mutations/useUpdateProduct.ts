@@ -18,14 +18,26 @@ export function useUpdateProduct() {
         throw new Error('Product ID is required for updating');
       }
       
-      // Update existing product
-      const { error } = await supabase
-        .from('product_categories')
-        .update(productFields)
-        .eq('id', id);
-          
-      if (error) throw error;
-      return productData;
+      try {
+        // Update existing product
+        const { error } = await supabase
+          .from('product_categories')
+          .update(productFields)
+          .eq('id', id);
+            
+        if (error) {
+          // Handle specific errors
+          if (error.message.includes("row-level security")) {
+            throw new Error('Permission denied: You may not have the required permissions to update products');
+          }
+          throw error;
+        }
+        
+        return productData;
+      } catch (error: any) {
+        console.error("Product update error:", error);
+        throw new Error(`Failed to update product: ${error.message}`);
+      }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -33,7 +45,7 @@ export function useUpdateProduct() {
       toast.success(`Product "${data.product_name || 'Product'}" updated successfully`);
     },
     onError: (error: Error) => {
-      toast.error(`Error updating product: ${error.message}`);
+      toast.error(`Error: ${error.message}`);
     }
   });
 }
