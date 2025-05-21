@@ -33,45 +33,48 @@ export function useStorageBuckets() {
       console.log("Existing buckets:", existingBucketNames);
       setBuckets(existingBucketNames);
       
-      // Force refresh of buckets
-      if (!existingBucketNames.includes('product-categories')) {
-        // Try creating the bucket directly through the Storage API
-        try {
-          console.log("Attempting to create product-categories bucket via Storage API");
-          const { data, error } = await supabase.storage.createBucket('product-categories', { public: true });
-          
-          if (error) {
-            console.warn("Could not create product-categories bucket:", error.message);
-          } else {
-            console.log("Successfully created product-categories bucket");
-            // Refresh bucket list after creation
-            const { data: refreshedBuckets } = await supabase.storage.listBuckets();
-            if (refreshedBuckets) {
-              setBuckets(refreshedBuckets.map(b => b.name));
-              console.log("Updated bucket list:", refreshedBuckets.map(b => b.name));
-            }
-          }
-        } catch (createError) {
-          console.error("Error creating bucket via Storage API:", createError);
-        }
-      }
-      
-      // Check which buckets are still missing after creation attempt
-      const { data: finalBuckets } = await supabase.storage.listBuckets();
-      const finalBucketNames = finalBuckets ? finalBuckets.map(b => b.name) : [];
+      // Check if all required buckets exist
       const missingBuckets = requiredBuckets.filter(
-        bucket => !finalBucketNames.includes(bucket.name)
+        bucket => !existingBucketNames.includes(bucket.name)
       );
       
       if (missingBuckets.length > 0) {
-        console.warn(`Missing storage buckets: ${missingBuckets.map(b => b.name).join(', ')}`);
-        toast.warning(`Some storage buckets are still missing. This might require admin intervention or a full page refresh.`);
-      } else {
-        console.log("All required buckets are present:", requiredBuckets.map(b => b.name).join(', '));
-        toast.success("All required storage buckets are available");
+        console.log("Missing buckets detected:", missingBuckets.map(b => b.name));
+        
+        for (const bucket of missingBuckets) {
+          try {
+            console.log(`Creating bucket: ${bucket.name}`);
+            const { error: createError } = await supabase.storage
+              .createBucket(bucket.name, { public: bucket.isPublic });
+            
+            if (createError) {
+              console.warn(`Could not create ${bucket.name} bucket:`, createError.message);
+            } else {
+              console.log(`Successfully created ${bucket.name} bucket`);
+            }
+          } catch (err) {
+            console.error(`Error creating bucket ${bucket.name}:`, err);
+          }
+        }
+        
+        // Refresh bucket list after creation
+        const { data: refreshedBuckets } = await supabase.storage.listBuckets();
+        if (refreshedBuckets) {
+          const refreshedNames = refreshedBuckets.map(b => b.name);
+          setBuckets(refreshedNames);
+          console.log("Updated bucket list:", refreshedNames);
+          
+          // Check if all required buckets now exist
+          const stillMissing = requiredBuckets.filter(
+            bucket => !refreshedNames.includes(bucket.name)
+          );
+          
+          if (stillMissing.length === 0) {
+            toast.success("All required storage buckets are now available");
+          }
+        }
       }
       
-      // Even if buckets are missing, we mark as initialized so the UI can handle the situation
       setIsInitialized(true);
     } catch (err: any) {
       console.error("Error checking storage buckets:", err);
@@ -97,5 +100,5 @@ export function useStorageBuckets() {
     });
   }, []);
 
-  return { isInitialized, error, buckets, isLoading };
+  return { isInitialized, error, buckets, isLoading, refreshBuckets: initializeBuckets };
 }

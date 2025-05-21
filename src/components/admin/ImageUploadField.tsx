@@ -63,7 +63,7 @@ const ImageUploadField = ({
       
       const bucketExists = buckets?.some(b => b.name === bucket);
       if (!bucketExists) {
-        throw new Error(`The storage bucket "${bucket}" does not exist. Please contact an administrator to set up the required storage bucket.`);
+        throw new Error(`The storage bucket "${bucket}" does not exist. Please refresh the page and try again.`);
       }
       
       const uploadedUrl = await uploadImage(
