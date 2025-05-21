@@ -23,6 +23,12 @@ export function useStorage() {
     try {
       setUploading(true);
       
+      // Check if user is authenticated for storage operations
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error("Authentication required for uploading files");
+      }
+      
       if (!file) {
         throw new Error("You must select an image to upload.");
       }
@@ -78,7 +84,18 @@ export function useStorage() {
       // Set appropriate cache control based on image type
       const cacheMaxAge = CACHE_DURATIONS[imageType];
       
-      const { error: uploadError } = await supabase.storage
+      // Ensure the bucket exists before uploading
+      // This is just a check, won't create if doesn't exist
+      const { data: bucketData, error: bucketError } = await supabase.storage
+        .getBucket(bucket);
+        
+      if (bucketError) {
+        console.error("Error checking bucket:", bucketError);
+        // We'll try the upload anyway
+      }
+      
+      // Upload the file
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from(bucket)
         .upload(filePath, fileToUpload, {
           cacheControl: `max-age=${cacheMaxAge}, stale-while-revalidate=86400`,
@@ -87,6 +104,10 @@ export function useStorage() {
         });
 
       if (uploadError) {
+        if (uploadError.message.includes("row-level security policy")) {
+          throw new Error("Permission denied: You don't have access rights to upload to this bucket");
+        }
+        
         throw uploadError;
       }
 
@@ -98,8 +119,9 @@ export function useStorage() {
       const publicUrl = data.publicUrl;
       return cacheBusting ? `${publicUrl}?t=${timestamp}` : publicUrl;
     } catch (error: any) {
+      console.error("Storage upload error:", error);
       toast.error(`Error uploading image: ${error.message}`);
-      return null;
+      throw error;
     } finally {
       setUploading(false);
     }

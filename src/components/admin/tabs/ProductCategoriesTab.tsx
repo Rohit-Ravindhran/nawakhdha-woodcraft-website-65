@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,9 +19,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2 } from "lucide-react";
+import { Edit, Plus, Save, Trash2, Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
+import { useAuth } from "@/contexts/AuthContext";
 
 const productCategorySchema = z.object({
   id: z.string().optional(),
@@ -39,10 +42,13 @@ type ProductCategoryFormValues = z.infer<typeof productCategorySchema>;
 export default function ProductCategoriesTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<ProductCategoryData | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const queryClient = useQueryClient();
+  const { session } = useAuth();
   
-  const { data: categories, isLoading } = useQuery({
+  const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -69,34 +75,42 @@ export default function ProductCategoriesTab() {
     },
   });
   
+  // Reset form when current category changes
+  useEffect(() => {
+    if (currentCategory) {
+      form.reset({
+        id: currentCategory.id,
+        category_name: currentCategory.category_name || "",
+        category_slug: currentCategory.category_slug || "",
+        product_name: currentCategory.product_name || "",
+        category_image_url: currentCategory.category_image_url || "",
+        alt_text: currentCategory.alt_text || "",
+        seo_title: currentCategory.seo_title || "",
+        seo_description: currentCategory.seo_description || "",
+        seo_keywords: currentCategory.seo_keywords || "",
+      });
+    } else {
+      form.reset({
+        category_name: "",
+        category_slug: "",
+        product_name: "",
+        category_image_url: "",
+        alt_text: "",
+        seo_title: "",
+        seo_description: "",
+        seo_keywords: "",
+      });
+    }
+    setErrorMessage(null);
+  }, [currentCategory, form]);
+  
   const handleEdit = (category: ProductCategoryData) => {
     setCurrentCategory(category);
-    form.reset({
-      id: category.id,
-      category_name: category.category_name || "",
-      category_slug: category.category_slug || "",
-      product_name: category.product_name || "",
-      category_image_url: category.category_image_url || "",
-      alt_text: category.alt_text || "",
-      seo_title: category.seo_title || "",
-      seo_description: category.seo_description || "",
-      seo_keywords: category.seo_keywords || "",
-    });
     setIsDialogOpen(true);
   };
   
   const handleAdd = () => {
     setCurrentCategory(null);
-    form.reset({
-      category_name: "",
-      category_slug: "",
-      product_name: "",
-      category_image_url: "",
-      alt_text: "",
-      seo_title: "",
-      seo_description: "",
-      seo_keywords: "",
-    });
     setIsDialogOpen(true);
   };
   
@@ -113,6 +127,14 @@ export default function ProductCategoriesTab() {
   };
   
   const onSubmit = async (values: ProductCategoryFormValues) => {
+    if (!session) {
+      setErrorMessage("You must be logged in to save product categories");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    
     try {
       const submitData = {
         category_name: values.category_name,
@@ -132,7 +154,13 @@ export default function ProductCategoriesTab() {
           .update(submitData)
           .eq('id', values.id);
           
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("row-level security policy")) {
+            throw new Error("Permission denied: You may not have the required permissions to update product categories");
+          }
+          throw error;
+        }
+        
         toast.success("Product category updated successfully");
       } else {
         // Create new
@@ -140,7 +168,13 @@ export default function ProductCategoriesTab() {
           .from('product_categories')
           .insert(submitData);
           
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("row-level security policy")) {
+            throw new Error("Permission denied: You may not have the required permissions to create product categories");
+          }
+          throw error;
+        }
+        
         toast.success("Product category added successfully");
       }
       
@@ -148,11 +182,20 @@ export default function ProductCategoriesTab() {
       queryClient.invalidateQueries({ queryKey: ['product_categories'] });
       setIsDialogOpen(false);
     } catch (error: any) {
+      console.error("Error saving product category:", error);
+      setErrorMessage(error.message || "An error occurred saving the product category");
       toast.error(`Error saving product category: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
   const handleDelete = async (id: string) => {
+    if (!session) {
+      toast.error("You must be logged in to delete product categories");
+      return;
+    }
+    
     if (confirm("Are you sure you want to delete this product category? This will also delete associated details and gallery images.")) {
       try {
         // Delete associated product details first
@@ -161,7 +204,12 @@ export default function ProductCategoriesTab() {
           .delete()
           .eq('category_id', id);
           
-        if (detailsError) throw detailsError;
+        if (detailsError) {
+          if (detailsError.message.includes("row-level security policy")) {
+            throw new Error("Permission denied: You may not have the required permissions to delete product details");
+          }
+          throw detailsError;
+        }
         
         // Delete associated gallery images
         const { error: galleryError } = await supabase
@@ -169,7 +217,12 @@ export default function ProductCategoriesTab() {
           .delete()
           .eq('category_id', id);
           
-        if (galleryError) throw galleryError;
+        if (galleryError) {
+          if (galleryError.message.includes("row-level security policy")) {
+            throw new Error("Permission denied: You may not have the required permissions to delete gallery images");
+          }
+          throw galleryError;
+        }
         
         // Delete the category itself
         const { error } = await supabase
@@ -177,17 +230,43 @@ export default function ProductCategoriesTab() {
           .delete()
           .eq('id', id);
           
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("row-level security policy")) {
+            throw new Error("Permission denied: You may not have the required permissions to delete product categories");
+          }
+          throw error;
+        }
         
         toast.success("Product category and related items deleted successfully");
         queryClient.invalidateQueries({ queryKey: ['product_categories'] });
       } catch (error: any) {
+        console.error("Error deleting product category:", error);
         toast.error(`Error deleting product category: ${error.message}`);
       }
     }
   };
   
-  if (isLoading) return <div>Loading...</div>;
+  if (!session) {
+    return (
+      <Alert className="mb-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          You must be logged in to manage product categories.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+  
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Error loading product categories: {(error as Error).message}
+        </AlertDescription>
+      </Alert>
+    );
+  }
   
   return (
     <div>
@@ -199,70 +278,76 @@ export default function ProductCategoriesTab() {
         </Button>
       </div>
       
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Image</TableHead>
-            <TableHead>Category Name</TableHead>
-            <TableHead>Slug</TableHead>
-            <TableHead>Product Name</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {categories && categories.length > 0 ? (
-            categories.map((category) => (
-              <TableRow key={category.id}>
-                <TableCell>
-                  <div className="w-16 h-16 relative bg-gray-200 rounded overflow-hidden">
-                    {category.category_image_url ? (
-                      <img 
-                        src={category.category_image_url} 
-                        alt={category.alt_text || 'Category image'} 
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "/placeholder.svg";
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        No img
-                      </div>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>{category.category_name || 'N/A'}</TableCell>
-                <TableCell>{category.category_slug || 'N/A'}</TableCell>
-                <TableCell>{category.product_name || 'N/A'}</TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleEdit(category)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleDelete(category.id!)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Image</TableHead>
+              <TableHead>Category Name</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {categories && categories.length > 0 ? (
+              categories.map((category) => (
+                <TableRow key={category.id}>
+                  <TableCell>
+                    <div className="w-16 h-16 relative bg-gray-200 rounded overflow-hidden">
+                      {category.category_image_url ? (
+                        <img 
+                          src={category.category_image_url} 
+                          alt={category.alt_text || 'Category image'} 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder.svg";
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          No img
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>{category.category_name || 'N/A'}</TableCell>
+                  <TableCell>{category.category_slug || 'N/A'}</TableCell>
+                  <TableCell>{category.product_name || 'N/A'}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleEdit(category)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleDelete(category.id!)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-4">
+                  No product categories found
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} className="text-center py-4">
-                No product categories found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
+      )}
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-3xl">
@@ -271,6 +356,13 @@ export default function ProductCategoriesTab() {
               {currentCategory ? "Edit Product Category" : "Add New Product Category"}
             </DialogTitle>
           </DialogHeader>
+          
+          {errorMessage && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -353,9 +445,18 @@ export default function ProductCategoriesTab() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex items-center">
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Category
+                <Button type="submit" className="flex items-center" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Save Category
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
