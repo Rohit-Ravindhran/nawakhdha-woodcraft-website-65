@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,12 +19,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon, AlertTriangle, RefreshCw } from "lucide-react";
+import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
 import { useAuth } from "@/contexts/AuthContext";
-import { useStorageBuckets } from "@/hooks/useStorageBuckets";
 
 const productCategorySchema = z.object({
   id: z.string().optional(),
@@ -44,11 +44,37 @@ export default function ProductCategoriesTab() {
   const [currentCategory, setCurrentCategory] = useState<ProductCategoryData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [attemptingBucketRefresh, setAttemptingBucketRefresh] = useState(false);
   
   const queryClient = useQueryClient();
   const { session } = useAuth();
-  const { buckets, isInitialized: bucketsInitialized, isLoading: bucketsLoading } = useStorageBuckets();
+  
+  // Check if the product-categories bucket exists
+  const [bucketExists, setBucketExists] = useState<boolean | null>(null);
+  const [checkingBucket, setCheckingBucket] = useState(true);
+  
+  useEffect(() => {
+    const checkBucket = async () => {
+      try {
+        setCheckingBucket(true);
+        const { data, error } = await supabase.storage.getBucket('product-categories');
+        
+        if (error) {
+          console.error('Error checking product-categories bucket:', error);
+          setBucketExists(false);
+        } else {
+          console.log('product-categories bucket exists:', data);
+          setBucketExists(true);
+        }
+      } catch (err) {
+        console.error('Unexpected error checking bucket:', err);
+        setBucketExists(false);
+      } finally {
+        setCheckingBucket(false);
+      }
+    };
+    
+    checkBucket();
+  }, []);
   
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],
@@ -135,8 +161,8 @@ export default function ProductCategoriesTab() {
     }
     
     // Check if the required buckets are available
-    if (!bucketsInitialized || (bucketsInitialized && !buckets.includes('product-categories'))) {
-      setErrorMessage("Storage buckets are not properly initialized. Please contact an administrator.");
+    if (bucketExists === false) {
+      setErrorMessage("The product-categories storage bucket is not available. Please contact an administrator.");
       return;
     }
     
@@ -254,63 +280,26 @@ export default function ProductCategoriesTab() {
     }
   };
   
-  // Function to manually attempt refreshing buckets
-  const handleRefreshBuckets = async () => {
-    setAttemptingBucketRefresh(true);
-    try {
-      // First try to create the bucket directly
-      await supabase.storage.createBucket('product-categories', { public: true });
-      toast.success("Bucket creation attempted, refreshing page...");
-      
-      // Force page reload to reinitialize everything
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-    } catch (error: any) {
-      console.error("Error refreshing buckets:", error);
-      toast.error("Failed to refresh buckets: " + error.message);
-      setAttemptingBucketRefresh(false);
-    }
-  };
-  
-  if (bucketsLoading) {
+  if (isLoading || checkingBucket) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-          <p>Checking storage buckets...</p>
+          <p>Loading product categories...</p>
         </div>
       </div>
     );
   }
   
   // Show warning if the required bucket doesn't exist
-  if (bucketsInitialized && !buckets.includes('product-categories')) {
+  if (bucketExists === false) {
     return (
       <Alert variant="destructive" className="mb-6">
-        <AlertTriangle className="h-4 w-4" />
+        <AlertCircle className="h-4 w-4" />
         <AlertDescription className="flex flex-col gap-4">
           <div>
             The "product-categories" bucket is missing. This will prevent you from uploading and managing product images.
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={handleRefreshBuckets}
-              disabled={attemptingBucketRefresh}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              {attemptingBucketRefresh ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="h-4 w-4" />
-              )}
-              {attemptingBucketRefresh ? "Attempting to fix..." : "Attempt to fix buckets"}
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              If this doesn't work, please contact your administrator.
-            </span>
+            Please contact your administrator to ensure the storage buckets are properly configured.
           </div>
         </AlertDescription>
       </Alert>
@@ -348,15 +337,6 @@ export default function ProductCategoriesTab() {
           Add New Category
         </Button>
       </div>
-      
-      {buckets.length > 0 && (
-        <Alert className="mb-4">
-          <InfoIcon className="h-4 w-4" />
-          <AlertDescription>
-            Available storage buckets: {buckets.join(", ")}
-          </AlertDescription>
-        </Alert>
-      )}
       
       {isLoading ? (
         <div className="flex justify-center py-8">

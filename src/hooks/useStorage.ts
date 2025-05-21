@@ -8,6 +8,9 @@ import { compressImage } from "@/utils/imageCompression";
 export function useStorage() {
   const [uploading, setUploading] = useState(false);
 
+  /**
+   * Upload an image to a specified Supabase Storage bucket
+   */
   const uploadImage = async (
     file: File, 
     bucket: string, 
@@ -84,23 +87,14 @@ export function useStorage() {
       // Set appropriate cache control based on image type
       const cacheMaxAge = CACHE_DURATIONS[imageType];
       
-      // First check if the bucket exists
+      // Verify bucket exists before upload
       console.log(`Checking if bucket "${bucket}" exists before uploading...`);
       const { data: bucketData, error: bucketError } = await supabase.storage
         .getBucket(bucket);
         
       if (bucketError) {
         console.error(`Error checking bucket "${bucket}":`, bucketError);
-        if (bucketError.message.includes("does not exist")) {
-          toast.error(`Bucket "${bucket}" does not exist. Please refresh the page and try again.`);
-          throw new Error(`Bucket "${bucket}" does not exist. Please refresh the page to use newly created buckets.`);
-        }
-        throw bucketError;
-      }
-      
-      if (!bucketData) {
-        toast.error(`Bucket "${bucket}" not found. Try refreshing the page to use newly created buckets.`);
-        throw new Error(`Bucket "${bucket}" not found. It may not exist or you may not have permission to access it.`);
+        throw new Error(`Bucket "${bucket}" does not exist or you don't have access to it.`);
       }
       
       console.log(`Uploading to bucket "${bucket}", path: ${filePath}`);
@@ -117,13 +111,13 @@ export function useStorage() {
       if (uploadError) {
         console.error("Upload error:", uploadError);
         if (uploadError.message.includes("row-level security policy")) {
-          toast.error("Permission denied: You don't have access rights to upload to this bucket");
           throw new Error("Permission denied: You don't have access rights to upload to this bucket");
         }
         
         throw uploadError;
       }
 
+      // Get the public URL
       const { data } = supabase.storage
         .from(bucket)
         .getPublicUrl(filePath);
@@ -133,72 +127,88 @@ export function useStorage() {
       return cacheBusting ? `${publicUrl}?t=${timestamp}` : publicUrl;
     } catch (error: any) {
       console.error("Storage upload error:", error);
-      toast.error(`Error uploading image: ${error.message}`);
       throw error;
     } finally {
       setUploading(false);
     }
   };
 
+  /**
+   * Delete an image from a specified Supabase Storage bucket
+   */
   const deleteImage = async (url: string, bucket: string): Promise<boolean> => {
     try {
+      if (!url) {
+        throw new Error("No image URL provided");
+      }
+      
+      // Check if user is authenticated for storage operations
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error("Authentication required for deleting files");
+      }
+      
       // Extract the file path from the URL
       const urlParts = url.split(`${bucket}/`);
       if (urlParts.length < 2) {
-        throw new Error("Invalid file URL");
+        throw new Error(`Invalid file URL format. Cannot extract path from ${url}`);
       }
       
       // Remove any query parameters
       const filePath = urlParts[1].split('?')[0];
+      
+      console.log(`Deleting from bucket "${bucket}", path: ${filePath}`);
+      
+      // Verify bucket exists
+      const { error: bucketError } = await supabase.storage
+        .getBucket(bucket);
+        
+      if (bucketError) {
+        console.error(`Error checking bucket "${bucket}":`, bucketError);
+        throw new Error(`Bucket "${bucket}" does not exist or you don't have access to it.`);
+      }
       
       const { error } = await supabase.storage
         .from(bucket)
         .remove([filePath]);
         
       if (error) {
+        console.error(`Error deleting from bucket "${bucket}", path: ${filePath}:`, error);
+        if (error.message.includes("row-level security policy")) {
+          throw new Error("Permission denied: You don't have access rights to delete from this bucket");
+        }
         throw error;
       }
       
+      console.log(`Successfully deleted from bucket "${bucket}", path: ${filePath}`);
       return true;
     } catch (error: any) {
-      toast.error(`Error deleting image: ${error.message}`);
-      return false;
+      console.error("Error deleting image:", error);
+      throw error;
     }
   };
 
-  const getImageMetadata = async (url: string, bucket: string): Promise<any | null> => {
-    try {
-      // Extract the file path from the URL
-      const urlParts = url.split(`${bucket}/`);
-      if (urlParts.length < 2) {
-        throw new Error("Invalid file URL");
-      }
-      
-      // Remove any query parameters
-      const filePath = urlParts[1].split('?')[0];
-      
-      // Updated to use list instead of getMetadata which doesn't exist in the API
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .list(filePath.substring(0, filePath.lastIndexOf('/')), {
-          limit: 1,
-          offset: 0,
-          search: filePath.substring(filePath.lastIndexOf('/') + 1)
-        });
-        
-      if (error) {
-        throw error;
-      }
-      
-      return data?.[0] || null;
-    } catch (error: any) {
-      console.error(`Error getting image metadata: ${error.message}`);
-      return null;
+  /**
+   * Add a cache busting parameter to an existing URL
+   */
+  const addCacheBusting = (url: string): string => {
+    if (!url || url.includes('/placeholder.svg') || url.endsWith('.svg')) {
+      return url;
     }
+    
+    // Remove any existing query parameters
+    const baseUrl = url.split('?')[0];
+    
+    // Add timestamp as query parameter
+    return `${baseUrl}?v=${Date.now()}`;
   };
 
-  // Add cache purging for image URLs with improved cache busting
+  /**
+   * Purge CDN cache for an image URL
+   */
   const purgeCDNCache = async (url: string): Promise<boolean> => {
+    if (!url) return false;
+    
     try {
       // Remove existing cache busting parameters
       const cleanUrl = url.split('?')[0];
@@ -216,25 +226,11 @@ export function useStorage() {
     }
   };
 
-  // Function to add cache busting parameter to existing URL
-  const addCacheBusting = (url: string): string => {
-    if (!url || url.includes('/placeholder.svg') || url.endsWith('.svg')) {
-      return url;
-    }
-    
-    // Remove any existing query parameters
-    const baseUrl = url.split('?')[0];
-    
-    // Add timestamp as query parameter
-    return `${baseUrl}?v=${Date.now()}`;
-  };
-
   return {
     uploadImage,
     deleteImage,
-    getImageMetadata,
-    purgeCDNCache,
     addCacheBusting,
+    purgeCDNCache,
     uploading
   };
 }

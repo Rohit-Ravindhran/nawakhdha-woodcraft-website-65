@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Loader2, ImagePlus, X } from "lucide-react";
 import { useStorage } from "@/hooks/useStorage";
 import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -34,7 +33,6 @@ const ImageUploadField = ({
   const { getValues, setValue } = useFormContext();
   const { uploadImage, deleteImage } = useStorage();
   const imageUrl = getValues(name);
-  const altText = getValues(altTextName || "alt_text");
   
   const onRemove = async () => {
     if (!imageUrl) return;
@@ -43,6 +41,9 @@ const ImageUploadField = ({
       try {
         await deleteImage(imageUrl, bucket);
         setValue(name, "");
+        if (altTextName) {
+          setValue(altTextName, "");
+        }
         toast.success("Image removed successfully");
       } catch (error: any) {
         console.error("Error removing image:", error);
@@ -55,28 +56,26 @@ const ImageUploadField = ({
     setUploading(true);
     try {
       // Check if bucket exists first
-      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      const { data: bucketData, error: bucketError } = await supabase.storage.getBucket(bucket);
       
-      if (bucketsError) {
-        throw new Error(`Error checking buckets: ${bucketsError.message}`);
+      if (bucketError) {
+        console.error(`Error checking bucket "${bucket}":`, bucketError);
+        throw new Error(`The storage bucket "${bucket}" does not exist or you don't have access to it.`);
       }
       
-      const bucketExists = buckets?.some(b => b.name === bucket);
-      if (!bucketExists) {
-        throw new Error(`The storage bucket "${bucket}" does not exist. Please refresh the page and try again.`);
-      }
+      console.log(`Uploading to bucket "${bucket}", folder: ${folder}`);
       
       const uploadedUrl = await uploadImage(
         file,
         bucket,
-        folder,
+        folder
       );
       
       if (uploadedUrl) {
         setValue(name, uploadedUrl, { shouldValidate: true });
         toast.success("Image uploaded successfully");
       } else {
-        toast.error("Image upload failed");
+        throw new Error("Image upload failed");
       }
     } catch (error: any) {
       console.error("Image upload error:", error);
@@ -88,14 +87,14 @@ const ImageUploadField = ({
   
   return (
     <FormItem>
-      <FormLabel>{label}</FormLabel>
+      <FormLabel>{label}{required && <span className="text-destructive"> *</span>}</FormLabel>
       <FormControl>
         <div className="flex flex-col space-y-2">
           {imageUrl ? (
             <div className="relative w-full aspect-video rounded-md overflow-hidden">
               <OptimizedImage
                 src={imageUrl}
-                alt={altText || "Uploaded image"}
+                alt={altTextName ? getValues(altTextName) || "Uploaded image" : "Uploaded image"}
                 imageType="productDetail"
               />
               <Button
@@ -110,7 +109,7 @@ const ImageUploadField = ({
             </div>
           ) : (
             <label
-              htmlFor="upload-image"
+              htmlFor={`upload-${name}`}
               className="relative cursor-pointer flex items-center justify-center rounded-md border border-dashed p-8 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             >
               {uploading ? (
@@ -123,10 +122,11 @@ const ImageUploadField = ({
               )}
               <input
                 type="file"
-                id="upload-image"
+                id={`upload-${name}`}
                 className="absolute opacity-0 w-0 h-0"
+                accept="image/*"
                 onChange={(e) => {
-                  const file = (e.target.files as FileList)[0];
+                  const file = e.target.files?.[0];
                   if (file) {
                     onUpload(file);
                   }
