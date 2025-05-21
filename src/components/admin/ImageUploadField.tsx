@@ -4,10 +4,11 @@ import { Control, useController } from "react-hook-form";
 import { FormLabel, FormControl, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
 import { useStorage } from "@/hooks/useStorage";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ImageUploadFieldProps {
   control: Control<any>;
@@ -35,6 +36,7 @@ export default function ImageUploadField({
   
   const [file, setFile] = useState<File | null>(null);
   const [altText, setAltText] = useState<string>("");
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const { uploadImage, uploading } = useStorage();
   const { session } = useAuth();
 
@@ -46,6 +48,7 @@ export default function ImageUploadField({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
+      setUploadError(null);
     }
   };
 
@@ -58,12 +61,16 @@ export default function ImageUploadField({
     if (!file) return;
     
     if (!session) {
+      setUploadError("You must be logged in to upload images");
       toast.error("You must be logged in to upload images");
       return;
     }
     
     try {
+      setUploadError(null);
+      console.log(`Attempting to upload to bucket: ${bucket}, folder: ${folder}`);
       const url = await uploadImage(file, bucket, folder);
+      
       if (url) {
         imageField.onChange(url);
         setFile(null);
@@ -71,17 +78,32 @@ export default function ImageUploadField({
       }
     } catch (error: any) {
       console.error("Error uploading image:", error);
-      toast.error(`Upload failed: ${error.message || "Unknown error"}`);
       
-      // Provide specific instructions for RLS errors
-      if (error.message?.includes("row-level security policy")) {
-        toast.error("Permission denied. You may not have access to upload images.");
+      let errorMessage = error.message || "Unknown error";
+      
+      // Handle specific bucket not found error
+      if (errorMessage.includes("Bucket not found")) {
+        errorMessage = `Bucket "${bucket}" not found. Please ensure it exists and you have proper permissions.`;
       }
+      // Handle RLS policy errors
+      else if (errorMessage.includes("row-level security policy")) {
+        errorMessage = "Permission denied: You don't have access to upload images. Please contact an administrator.";
+      }
+      
+      setUploadError(errorMessage);
+      toast.error(`Upload failed: ${errorMessage}`);
     }
   };
 
   return (
     <div className="space-y-4">
+      {uploadError && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{uploadError}</AlertDescription>
+        </Alert>
+      )}
+      
       <FormItem>
         <FormLabel>{label}</FormLabel>
         <FormControl>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,11 +18,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, Loader2, AlertCircle } from "lucide-react";
+import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
 import { useAuth } from "@/contexts/AuthContext";
+import { useStorageBuckets } from "@/hooks/useStorageBuckets";
 
 const productCategorySchema = z.object({
   id: z.string().optional(),
@@ -47,6 +47,7 @@ export default function ProductCategoriesTab() {
   
   const queryClient = useQueryClient();
   const { session } = useAuth();
+  const { buckets, isInitialized: bucketsInitialized } = useStorageBuckets();
   
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],
@@ -129,6 +130,12 @@ export default function ProductCategoriesTab() {
   const onSubmit = async (values: ProductCategoryFormValues) => {
     if (!session) {
       setErrorMessage("You must be logged in to save product categories");
+      return;
+    }
+    
+    // Check if the required buckets are available
+    if (!bucketsInitialized || (bucketsInitialized && !buckets.includes('product-categories'))) {
+      setErrorMessage("Storage buckets are not properly initialized. Please contact an administrator.");
       return;
     }
     
@@ -246,6 +253,30 @@ export default function ProductCategoriesTab() {
     }
   };
   
+  if (!bucketsInitialized) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p>Initializing storage buckets...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show warning if the required bucket doesn't exist
+  if (bucketsInitialized && !buckets.includes('product-categories')) {
+    return (
+      <Alert variant="destructive" className="mb-6">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          The "product-categories" bucket is not available. You may not be able to upload images.
+          Please contact your administrator to ensure the bucket is properly created.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+  
   if (!session) {
     return (
       <Alert className="mb-4">
@@ -277,6 +308,15 @@ export default function ProductCategoriesTab() {
           Add New Category
         </Button>
       </div>
+      
+      {buckets.length > 0 && (
+        <Alert className="mb-4">
+          <InfoIcon className="h-4 w-4" />
+          <AlertDescription>
+            Available storage buckets: {buckets.join(", ")}
+          </AlertDescription>
+        </Alert>
+      )}
       
       {isLoading ? (
         <div className="flex justify-center py-8">

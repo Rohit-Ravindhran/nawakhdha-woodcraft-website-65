@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStorage } from "@/hooks/useStorage";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 
 interface EnhancedImageUploaderProps {
   onImageUploaded: (url: string, alt: string) => void;
@@ -59,6 +58,7 @@ export default function EnhancedImageUploader({
     
     try {
       setError(null);
+      console.log(`Attempting to upload to bucket: ${bucket}, folder: ${folder}`);
       const url = await uploadImage(file, bucket, folder);
       
       if (url) {
@@ -68,12 +68,19 @@ export default function EnhancedImageUploader({
       }
     } catch (error: any) {
       console.error("Error in EnhancedImageUploader:", error);
-      setError(error.message || "Upload failed");
       
-      // Handle specific RLS errors
-      if (error.message?.includes("row-level security policy")) {
-        setError("Permission denied: You don't have access rights to upload to this bucket. Please contact an administrator.");
+      let errorMessage = error.message || "Upload failed";
+      
+      // Handle specific bucket not found error
+      if (errorMessage.includes("Bucket not found")) {
+        errorMessage = `Bucket "${bucket}" not found. Please ensure it exists and you have proper permissions.`;
       }
+      // Handle RLS policy errors
+      else if (errorMessage.includes("row-level security policy")) {
+        errorMessage = "Permission denied: You don't have access rights to upload to this bucket. Please contact an administrator.";
+      }
+      
+      setError(errorMessage);
     }
   };
 
@@ -81,7 +88,7 @@ export default function EnhancedImageUploader({
     <div className="space-y-4">
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <AlertTriangle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

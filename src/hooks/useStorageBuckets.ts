@@ -6,6 +6,7 @@ import { toast } from "sonner";
 export function useStorageBuckets() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [buckets, setBuckets] = useState<string[]>([]);
   
   // Ensure all required buckets exist
   const initializeBuckets = async () => {
@@ -20,10 +21,14 @@ export function useStorageBuckets() {
       const { data: existingBuckets, error: listError } = await supabase.storage.listBuckets();
       
       if (listError) {
+        console.error("Error listing buckets:", listError);
         throw listError;
       }
       
       const existingBucketNames = existingBuckets ? existingBuckets.map(b => b.name) : [];
+      setBuckets(existingBucketNames);
+      
+      console.log("Existing buckets:", existingBucketNames);
       
       // Create any missing buckets
       for (const bucket of requiredBuckets) {
@@ -36,8 +41,11 @@ export function useStorageBuckets() {
           );
           
           if (error) {
-            // Just log, don't throw, so we try creating all buckets
             console.error(`Error creating bucket ${bucket.name}:`, error);
+            toast.error(`Error creating storage bucket: ${error.message}`);
+          } else {
+            console.log(`Successfully created bucket: ${bucket.name}`);
+            setBuckets(prev => [...prev, bucket.name]);
           }
         }
       }
@@ -46,6 +54,7 @@ export function useStorageBuckets() {
     } catch (err: any) {
       console.error("Error initializing storage buckets:", err);
       setError(err);
+      toast.error(`Storage initialization error: ${err.message}`);
     }
   };
   
@@ -53,13 +62,15 @@ export function useStorageBuckets() {
     // Only attempt to initialize buckets if we have an active session
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
+        console.log("Session found, initializing buckets");
         initializeBuckets();
       } else {
+        console.log("No session found, skipping bucket initialization");
         // If not logged in, just mark as initialized to avoid errors
         setIsInitialized(true);
       }
     });
   }, []);
 
-  return { isInitialized, error };
+  return { isInitialized, error, buckets };
 }
