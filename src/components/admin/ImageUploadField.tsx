@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/f
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ImageUploadFieldProps {
   name: string;
@@ -30,7 +32,7 @@ const ImageUploadField = ({
 }: ImageUploadFieldProps) => {
   const [uploading, setUploading] = useState(false);
   const { getValues, setValue } = useFormContext();
-  const { upload, remove } = useStorage();
+  const { uploadImage, deleteImage } = useStorage();
   const imageUrl = getValues(name);
   const altText = getValues(altTextName || "alt_text");
   
@@ -39,7 +41,7 @@ const ImageUploadField = ({
     
     if (confirm("Are you sure you want to remove this image?")) {
       try {
-        await remove(imageUrl);
+        await deleteImage(imageUrl, bucket);
         setValue(name, "");
         toast.success("Image removed successfully");
       } catch (error: any) {
@@ -64,11 +66,11 @@ const ImageUploadField = ({
         throw new Error(`The storage bucket "${bucket}" does not exist. Please contact an administrator to set up the required storage bucket.`);
       }
       
-      const uploadedUrl = await upload({
+      const uploadedUrl = await uploadImage(
         file,
         bucket,
         folder,
-      });
+      );
       
       if (uploadedUrl) {
         setValue(name, uploadedUrl, { shouldValidate: true });
