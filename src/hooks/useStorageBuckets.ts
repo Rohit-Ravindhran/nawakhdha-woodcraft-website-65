@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -8,17 +8,15 @@ export function useStorageBuckets() {
   const [error, setError] = useState<Error | null>(null);
   const [buckets, setBuckets] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // Ensure all required buckets exist
-  const initializeBuckets = async () => {
-    const requiredBuckets = [
-      { name: "product-categories", isPublic: true },
-      { name: "product-gallery", isPublic: true },
-      { name: "homepage", isPublic: true }
-    ];
+  // Memoize the refreshBuckets function to prevent it from changing on every render
+  const refreshBuckets = useCallback(async () => {
+    // Skip if already refreshing to prevent loops
+    if (isRefreshing) return;
     
     try {
-      setIsLoading(true);
+      setIsRefreshing(true);
       setError(null);
       
       // Get list of existing buckets
@@ -26,52 +24,59 @@ export function useStorageBuckets() {
       
       if (listError) {
         console.error("Error listing buckets:", listError);
-        throw listError;
+        setError(listError);
+        return;
       }
       
       const existingBucketNames = existingBuckets ? existingBuckets.map(b => b.name) : [];
       console.log("Existing buckets:", existingBucketNames);
       setBuckets(existingBucketNames);
       
-      // Check if all required buckets exist
-      const missingBuckets = requiredBuckets.filter(
-        bucket => !existingBucketNames.includes(bucket.name)
-      );
-      
-      if (missingBuckets.length > 0) {
-        console.log("Missing buckets detected:", missingBuckets.map(b => b.name));
-        
-        for (const bucket of missingBuckets) {
-          try {
-            console.log(`Creating bucket: ${bucket.name}`);
-            const { error: createError } = await supabase.storage
-              .createBucket(bucket.name, { public: bucket.isPublic });
-            
-            if (createError) {
-              console.warn(`Could not create ${bucket.name} bucket:`, createError.message);
-            } else {
-              console.log(`Successfully created ${bucket.name} bucket`);
+      // Only attempt bucket creation if we found no buckets and we have an authenticated session
+      if (existingBucketNames.length === 0) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          console.log("No buckets found. Attempting to initialize required buckets...");
+          
+          // Define required buckets
+          const requiredBuckets = [
+            { name: "product-categories", isPublic: true },
+            { name: "product-gallery", isPublic: true },
+            { name: "homepage", isPublic: true }
+          ];
+          
+          // Attempt to create any missing buckets
+          for (const bucket of requiredBuckets) {
+            if (!existingBucketNames.includes(bucket.name)) {
+              try {
+                console.log(`Creating bucket: ${bucket.name}`);
+                const { error: createError } = await supabase.storage
+                  .createBucket(bucket.name, { public: bucket.isPublic });
+                
+                if (createError) {
+                  console.warn(`Could not create ${bucket.name} bucket:`, createError.message);
+                } else {
+                  console.log(`Successfully created ${bucket.name} bucket`);
+                }
+              } catch (err) {
+                console.error(`Error creating bucket ${bucket.name}:`, err);
+              }
             }
-          } catch (err) {
-            console.error(`Error creating bucket ${bucket.name}:`, err);
           }
-        }
-        
-        // Refresh bucket list after creation
-        const { data: refreshedBuckets } = await supabase.storage.listBuckets();
-        if (refreshedBuckets) {
-          const refreshedNames = refreshedBuckets.map(b => b.name);
-          setBuckets(refreshedNames);
-          console.log("Updated bucket list:", refreshedNames);
           
-          // Check if all required buckets now exist
-          const stillMissing = requiredBuckets.filter(
-            bucket => !refreshedNames.includes(bucket.name)
-          );
-          
-          if (stillMissing.length === 0) {
-            toast.success("All required storage buckets are now available");
+          // Refresh bucket list after attempt
+          const { data: refreshedBuckets } = await supabase.storage.listBuckets();
+          if (refreshedBuckets) {
+            const refreshedNames = refreshedBuckets.map(b => b.name);
+            setBuckets(refreshedNames);
+            console.log("Updated bucket list:", refreshedNames);
+            
+            if (refreshedNames.length > 0) {
+              toast.success("Storage buckets initialized successfully");
+            }
           }
+        } else {
+          console.log("No session found. Skipping bucket creation attempt.");
         }
       }
       
@@ -81,16 +86,17 @@ export function useStorageBuckets() {
       setError(err);
       toast.error(`Storage initialization error: ${err.message}`);
     } finally {
+      setIsRefreshing(false);
       setIsLoading(false);
     }
-  };
+  }, [isRefreshing]);
   
   useEffect(() => {
     // Only attempt to initialize buckets if we have an active session
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
         console.log("Session found, checking buckets");
-        initializeBuckets();
+        refreshBuckets();
       } else {
         console.log("No session found, skipping bucket check");
         // If not logged in, just mark as initialized to avoid errors
@@ -98,7 +104,14 @@ export function useStorageBuckets() {
         setIsLoading(false);
       }
     });
-  }, []);
+  }, [refreshBuckets]); // Include refreshBuckets as dependency since it's now memoized
 
-  return { isInitialized, error, buckets, isLoading, refreshBuckets: initializeBuckets };
+  return { 
+    isInitialized, 
+    error, 
+    buckets, 
+    isLoading, 
+    refreshBuckets, 
+    isRefreshing 
+  };
 }

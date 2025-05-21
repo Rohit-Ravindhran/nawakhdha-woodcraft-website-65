@@ -7,15 +7,20 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const AdminPage = ({ children }: { children: ReactNode }) => {
-  const { isInitialized, error, buckets, isLoading, refreshBuckets } = useStorageBuckets();
+  const { isInitialized, error, buckets, isLoading, refreshBuckets, isRefreshing } = useStorageBuckets();
   
-  // Auto-refresh buckets when there's an issue
+  // Auto-refresh buckets once if initialization is complete but no buckets are found
   useEffect(() => {
-    if (isInitialized && buckets.length === 0) {
+    if (isInitialized && buckets.length === 0 && !isRefreshing) {
       console.log("No buckets found after initialization, attempting refresh");
-      refreshBuckets();
+      // Adding a small delay to prevent immediate refresh which could cause a loop
+      const timer = setTimeout(() => {
+        refreshBuckets();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
-  }, [isInitialized, buckets.length, refreshBuckets]);
+  }, [isInitialized, buckets.length, refreshBuckets, isRefreshing]);
 
   // Show loading state while initializing buckets
   if (isLoading) {
@@ -36,13 +41,14 @@ const AdminPage = ({ children }: { children: ReactNode }) => {
         <AlertDescription className="flex flex-col gap-2">
           <div>Error initializing storage: {error.message}</div>
           <Button 
-            onClick={refreshBuckets}
+            onClick={() => refreshBuckets()}
             variant="outline" 
             size="sm"
             className="flex items-center gap-2 w-fit"
+            disabled={isRefreshing}
           >
-            <RefreshCw className="h-4 w-4" />
-            Retry
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Retrying...' : 'Retry'}
           </Button>
         </AlertDescription>
       </Alert>
@@ -64,13 +70,14 @@ const AdminPage = ({ children }: { children: ReactNode }) => {
             </div>
             <div className="flex items-center gap-2">
               <Button
-                onClick={refreshBuckets}
+                onClick={() => refreshBuckets()}
                 variant="outline"
                 size="sm"
                 className="flex items-center gap-2"
+                disabled={isRefreshing}
               >
-                <RefreshCw className="h-4 w-4" />
-                Refresh buckets
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                {isRefreshing ? 'Refreshing...' : 'Refresh buckets'}
               </Button>
             </div>
           </AlertDescription>
@@ -81,7 +88,7 @@ const AdminPage = ({ children }: { children: ReactNode }) => {
         <Alert className="max-w-xl mx-auto mb-6 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-500" />
           <AlertDescription className="text-green-700">
-            All required storage buckets are available: {buckets.join(', ')}
+            All required storage buckets are available
           </AlertDescription>
         </Alert>
       )}
