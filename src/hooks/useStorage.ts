@@ -85,20 +85,25 @@ export function useStorage() {
       const cacheMaxAge = CACHE_DURATIONS[imageType];
       
       // First check if the bucket exists
+      console.log(`Checking if bucket "${bucket}" exists before uploading...`);
       const { data: bucketData, error: bucketError } = await supabase.storage
         .getBucket(bucket);
         
       if (bucketError) {
-        console.error("Error checking bucket:", bucketError);
+        console.error(`Error checking bucket "${bucket}":`, bucketError);
         if (bucketError.message.includes("does not exist")) {
-          throw new Error(`Bucket "${bucket}" does not exist. Please ensure it exists and you have proper permissions.`);
+          toast.error(`Bucket "${bucket}" does not exist. Please refresh the page and try again.`);
+          throw new Error(`Bucket "${bucket}" does not exist. Please refresh the page to use newly created buckets.`);
         }
         throw bucketError;
       }
       
       if (!bucketData) {
+        toast.error(`Bucket "${bucket}" not found. Try refreshing the page to use newly created buckets.`);
         throw new Error(`Bucket "${bucket}" not found. It may not exist or you may not have permission to access it.`);
       }
+      
+      console.log(`Uploading to bucket "${bucket}", path: ${filePath}`);
       
       // Upload the file
       const { error: uploadError, data: uploadData } = await supabase.storage
@@ -110,7 +115,9 @@ export function useStorage() {
         });
 
       if (uploadError) {
+        console.error("Upload error:", uploadError);
         if (uploadError.message.includes("row-level security policy")) {
+          toast.error("Permission denied: You don't have access rights to upload to this bucket");
           throw new Error("Permission denied: You don't have access rights to upload to this bucket");
         }
         

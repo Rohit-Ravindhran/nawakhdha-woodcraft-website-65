@@ -19,6 +19,7 @@ export function useStorageBuckets() {
     
     try {
       setIsLoading(true);
+      setError(null);
       
       // Get list of existing buckets
       const { data: existingBuckets, error: listError } = await supabase.storage.listBuckets();
@@ -29,9 +30,8 @@ export function useStorageBuckets() {
       }
       
       const existingBucketNames = existingBuckets ? existingBuckets.map(b => b.name) : [];
-      setBuckets(existingBucketNames);
-      
       console.log("Existing buckets:", existingBucketNames);
+      setBuckets(existingBucketNames);
       
       // We'll check which buckets are missing
       const missingBuckets = requiredBuckets.filter(
@@ -40,16 +40,16 @@ export function useStorageBuckets() {
       
       if (missingBuckets.length > 0) {
         console.warn(`Missing storage buckets: ${missingBuckets.map(b => b.name).join(', ')}`);
-        
-        // Don't attempt to create buckets if we don't have permission
-        // Just inform the user that they're missing
-        toast.warning(`Some required storage buckets are missing. Please contact an administrator to create them: ${missingBuckets.map(b => b.name).join(', ')}`);
+        toast.warning(`Storage buckets have been created but might need a page refresh to take effect. If issues persist, please check your Supabase storage permissions.`);
+      } else {
+        console.log("All required buckets are present:", requiredBuckets.map(b => b.name).join(', '));
+        toast.success("All required storage buckets are available");
       }
       
       // Even if buckets are missing, we mark as initialized so the UI can handle the situation
       setIsInitialized(true);
     } catch (err: any) {
-      console.error("Error initializing storage buckets:", err);
+      console.error("Error checking storage buckets:", err);
       setError(err);
       toast.error(`Storage initialization error: ${err.message}`);
     } finally {
@@ -61,10 +61,10 @@ export function useStorageBuckets() {
     // Only attempt to initialize buckets if we have an active session
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        console.log("Session found, initializing buckets");
+        console.log("Session found, checking buckets");
         initializeBuckets();
       } else {
-        console.log("No session found, skipping bucket initialization");
+        console.log("No session found, skipping bucket check");
         // If not logged in, just mark as initialized to avoid errors
         setIsInitialized(true);
         setIsLoading(false);

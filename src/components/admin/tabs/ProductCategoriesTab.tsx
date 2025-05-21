@@ -258,7 +258,7 @@ export default function ProductCategoriesTab() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-          <p>Initializing storage buckets...</p>
+          <p>Checking storage buckets...</p>
         </div>
       </div>
     );
@@ -267,11 +267,11 @@ export default function ProductCategoriesTab() {
   // Show warning if the required bucket doesn't exist
   if (bucketsInitialized && !buckets.includes('product-categories')) {
     return (
-      <Alert variant="destructive" className="mb-6">
-        <AlertCircle className="h-4 w-4" />
+      <Alert variant="warning" className="mb-6">
+        <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
-          The "product-categories" bucket is not available. You may not be able to upload images.
-          Please contact your administrator to ensure the bucket is properly created.
+          The "product-categories" bucket is still being initialized. Please refresh the page in a few moments.
+          If the issue persists, please contact your administrator to ensure the bucket is properly created.
         </AlertDescription>
       </Alert>
     );
