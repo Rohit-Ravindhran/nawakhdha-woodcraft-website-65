@@ -1,3 +1,4 @@
+
 // Types for pages
 export interface PageData {
   id?: string;
@@ -132,13 +133,14 @@ export interface BlogData {
   alt_text?: string;
 }
 
-// Types for gallery image data
+// Types for gallery image data - Added position property to match database schema
 export interface GalleryImageData {
   id?: string;
   image_url: string;
   caption: string;
   alt_text?: string;
   category_id?: string;
+  position?: number; // Added this property to match the database schema
 }
 
 // Type for gallery images in product display
