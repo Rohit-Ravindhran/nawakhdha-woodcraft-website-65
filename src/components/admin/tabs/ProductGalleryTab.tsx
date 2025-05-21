@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, AlertCircle } from "lucide-react";
+import { Edit, Plus, Save, Trash2, AlertCircle, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -41,6 +41,7 @@ export default function ProductGalleryTab() {
   const [currentImage, setCurrentImage] = useState<GalleryImageData | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [creatingBucket, setCreatingBucket] = useState(false);
   
   const queryClient = useQueryClient();
   const { session } = useAuth();
@@ -49,27 +50,59 @@ export default function ProductGalleryTab() {
   const [bucketExists, setBucketExists] = useState<boolean | null>(null);
   const [checkingBucket, setCheckingBucket] = useState(true);
   
-  useEffect(() => {
-    const checkBucket = async () => {
-      try {
-        setCheckingBucket(true);
-        const { data, error } = await supabase.storage.getBucket('product-gallery');
-        
-        if (error) {
-          console.error('Error checking product-gallery bucket:', error);
-          setBucketExists(false);
-        } else {
-          console.log('product-gallery bucket exists:', data);
-          setBucketExists(true);
-        }
-      } catch (err) {
-        console.error('Unexpected error checking bucket:', err);
+  const checkBucket = async () => {
+    try {
+      setCheckingBucket(true);
+      const { data, error } = await supabase.storage.getBucket('product-gallery');
+      
+      if (error) {
+        console.error('Error checking product-gallery bucket:', error);
         setBucketExists(false);
-      } finally {
-        setCheckingBucket(false);
+      } else {
+        console.log('product-gallery bucket exists:', data);
+        setBucketExists(true);
       }
-    };
+    } catch (err) {
+      console.error('Unexpected error checking bucket:', err);
+      setBucketExists(false);
+    } finally {
+      setCheckingBucket(false);
+    }
+  };
+
+  const createBucket = async () => {
+    if (!session) {
+      toast.error("You must be logged in to create storage buckets");
+      return;
+    }
     
+    try {
+      setCreatingBucket(true);
+      setErrorMessage(null);
+      
+      const { data, error } = await supabase.storage.createBucket('product-gallery', { 
+        public: true // Make bucket public so images can be viewed without authentication
+      });
+      
+      if (error) {
+        console.error("Error creating bucket:", error);
+        setErrorMessage(`Failed to create bucket: ${error.message}`);
+        return;
+      }
+      
+      console.log("Bucket created successfully:", data);
+      toast.success("Storage bucket 'product-gallery' created successfully");
+      setBucketExists(true);
+      
+    } catch (err: any) {
+      console.error("Error creating bucket:", err);
+      setErrorMessage(`Unexpected error: ${err.message}`);
+    } finally {
+      setCreatingBucket(false);
+    }
+  };
+  
+  useEffect(() => {
     checkBucket();
   }, []);
   
@@ -175,7 +208,7 @@ export default function ProductGalleryTab() {
     }
     
     if (bucketExists === false) {
-      setErrorMessage("The product-gallery storage bucket is not available. Please contact an administrator.");
+      setErrorMessage("The product-gallery storage bucket is not available. Please create it using the 'Create Bucket' button.");
       return;
     }
     
@@ -275,18 +308,49 @@ export default function ProductGalleryTab() {
     );
   }
   
-  // Show warning if the required bucket doesn't exist
+  // Show option to create the bucket if it doesn't exist
   if (bucketExists === false) {
     return (
-      <Alert variant="destructive" className="mb-6">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription className="flex flex-col gap-4">
-          <div>
-            The "product-gallery" bucket is missing. This will prevent you from uploading and managing gallery images.
-            Please contact your administrator to ensure the storage buckets are properly configured.
-          </div>
-        </AlertDescription>
-      </Alert>
+      <div className="space-y-6">
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex flex-col gap-4">
+            <div>
+              The "product-gallery" bucket is missing. This will prevent you from uploading and managing gallery images.
+            </div>
+            <Button 
+              onClick={createBucket} 
+              disabled={creatingBucket || !session}
+              className="mt-2 w-fit"
+            >
+              {creatingBucket ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Bucket...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Bucket
+                </>
+              )}
+            </Button>
+            {errorMessage && (
+              <p className="text-sm font-medium text-destructive mt-2">{errorMessage}</p>
+            )}
+          </AlertDescription>
+        </Alert>
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={checkBucket}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Refresh Status
+        </Button>
+      </div>
     );
   }
   
@@ -497,3 +561,4 @@ export default function ProductGalleryTab() {
     </div>
   );
 }
+

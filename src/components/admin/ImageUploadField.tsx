@@ -30,6 +30,7 @@ const ImageUploadField = ({
   control,
 }: ImageUploadFieldProps) => {
   const [uploading, setUploading] = useState(false);
+  const [bucketError, setBucketError] = useState<string | null>(null);
   const { getValues, setValue } = useFormContext();
   const { uploadImage, deleteImage } = useStorage();
   const imageUrl = getValues(name);
@@ -52,15 +53,52 @@ const ImageUploadField = ({
     }
   };
   
+  const checkBucket = async (): Promise<boolean> => {
+    try {
+      // Check if bucket exists
+      const { data, error } = await supabase.storage.getBucket(bucket);
+      
+      if (error) {
+        console.error(`Error checking bucket "${bucket}":`, error);
+        
+        // Try to create the bucket if it doesn't exist
+        try {
+          const { data: createData, error: createError } = await supabase.storage
+            .createBucket(bucket, { public: true });
+          
+          if (createError) {
+            console.error(`Failed to create bucket "${bucket}":`, createError);
+            setBucketError(`The storage bucket "${bucket}" does not exist and couldn't be created automatically. Please contact an administrator.`);
+            return false;
+          } else {
+            console.log(`Successfully created bucket "${bucket}"`, createData);
+            toast.success(`Created storage bucket "${bucket}"`);
+            return true;
+          }
+        } catch (createErr: any) {
+          console.error(`Error creating bucket "${bucket}":`, createErr);
+          setBucketError(`Failed to create bucket: ${createErr.message}`);
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (err: any) {
+      console.error(`Error in bucket check for "${bucket}":`, err);
+      setBucketError(`Error checking bucket: ${err.message}`);
+      return false;
+    }
+  };
+  
   const onUpload = async (file: File) => {
     setUploading(true);
+    setBucketError(null);
     try {
-      // Check if bucket exists first
-      const { data: bucketData, error: bucketError } = await supabase.storage.getBucket(bucket);
+      // First check if bucket exists and try to create it if not
+      const bucketIsReady = await checkBucket();
       
-      if (bucketError) {
-        console.error(`Error checking bucket "${bucket}":`, bucketError);
-        throw new Error(`The storage bucket "${bucket}" does not exist or you don't have access to it.`);
+      if (!bucketIsReady) {
+        throw new Error(`Storage bucket "${bucket}" is not available. Please check with your administrator.`);
       }
       
       console.log(`Uploading to bucket "${bucket}", folder: ${folder}`);
@@ -90,6 +128,12 @@ const ImageUploadField = ({
       <FormLabel>{label}{required && <span className="text-destructive"> *</span>}</FormLabel>
       <FormControl>
         <div className="flex flex-col space-y-2">
+          {bucketError && (
+            <div className="text-sm text-destructive mb-2">
+              {bucketError}
+            </div>
+          )}
+          
           {imageUrl ? (
             <div className="relative w-full aspect-video rounded-md overflow-hidden">
               <OptimizedImage
