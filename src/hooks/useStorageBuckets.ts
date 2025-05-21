@@ -33,14 +33,39 @@ export function useStorageBuckets() {
       console.log("Existing buckets:", existingBucketNames);
       setBuckets(existingBucketNames);
       
-      // We'll check which buckets are missing
+      // Force refresh of buckets
+      if (!existingBucketNames.includes('product-categories')) {
+        // Try creating the bucket directly through the Storage API
+        try {
+          console.log("Attempting to create product-categories bucket via Storage API");
+          const { data, error } = await supabase.storage.createBucket('product-categories', { public: true });
+          
+          if (error) {
+            console.warn("Could not create product-categories bucket:", error.message);
+          } else {
+            console.log("Successfully created product-categories bucket");
+            // Refresh bucket list after creation
+            const { data: refreshedBuckets } = await supabase.storage.listBuckets();
+            if (refreshedBuckets) {
+              setBuckets(refreshedBuckets.map(b => b.name));
+              console.log("Updated bucket list:", refreshedBuckets.map(b => b.name));
+            }
+          }
+        } catch (createError) {
+          console.error("Error creating bucket via Storage API:", createError);
+        }
+      }
+      
+      // Check which buckets are still missing after creation attempt
+      const { data: finalBuckets } = await supabase.storage.listBuckets();
+      const finalBucketNames = finalBuckets ? finalBuckets.map(b => b.name) : [];
       const missingBuckets = requiredBuckets.filter(
-        bucket => !existingBucketNames.includes(bucket.name)
+        bucket => !finalBucketNames.includes(bucket.name)
       );
       
       if (missingBuckets.length > 0) {
         console.warn(`Missing storage buckets: ${missingBuckets.map(b => b.name).join(', ')}`);
-        toast.warning(`Storage buckets have been created but might need a page refresh to take effect. If issues persist, please check your Supabase storage permissions.`);
+        toast.warning(`Some storage buckets are still missing. This might require admin intervention or a full page refresh.`);
       } else {
         console.log("All required buckets are present:", requiredBuckets.map(b => b.name).join(', '));
         toast.success("All required storage buckets are available");

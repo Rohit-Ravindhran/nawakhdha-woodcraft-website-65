@@ -18,7 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon, AlertTriangle } from "lucide-react";
+import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon, AlertTriangle, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
@@ -44,10 +44,11 @@ export default function ProductCategoriesTab() {
   const [currentCategory, setCurrentCategory] = useState<ProductCategoryData | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [attemptingBucketRefresh, setAttemptingBucketRefresh] = useState(false);
   
   const queryClient = useQueryClient();
   const { session } = useAuth();
-  const { buckets, isInitialized: bucketsInitialized } = useStorageBuckets();
+  const { buckets, isInitialized: bucketsInitialized, isLoading: bucketsLoading } = useStorageBuckets();
   
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],
@@ -253,7 +254,26 @@ export default function ProductCategoriesTab() {
     }
   };
   
-  if (!bucketsInitialized) {
+  // Function to manually attempt refreshing buckets
+  const handleRefreshBuckets = async () => {
+    setAttemptingBucketRefresh(true);
+    try {
+      // First try to create the bucket directly
+      await supabase.storage.createBucket('product-categories', { public: true });
+      toast.success("Bucket creation attempted, refreshing page...");
+      
+      // Force page reload to reinitialize everything
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error: any) {
+      console.error("Error refreshing buckets:", error);
+      toast.error("Failed to refresh buckets: " + error.message);
+      setAttemptingBucketRefresh(false);
+    }
+  };
+  
+  if (bucketsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
@@ -269,9 +289,29 @@ export default function ProductCategoriesTab() {
     return (
       <Alert variant="destructive" className="mb-6">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          The "product-categories" bucket is still being initialized. Please refresh the page in a few moments.
-          If the issue persists, please contact your administrator to ensure the bucket is properly created.
+        <AlertDescription className="flex flex-col gap-4">
+          <div>
+            The "product-categories" bucket is missing. This will prevent you from uploading and managing product images.
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={handleRefreshBuckets}
+              disabled={attemptingBucketRefresh}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              {attemptingBucketRefresh ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              {attemptingBucketRefresh ? "Attempting to fix..." : "Attempt to fix buckets"}
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              If this doesn't work, please contact your administrator.
+            </span>
+          </div>
         </AlertDescription>
       </Alert>
     );
