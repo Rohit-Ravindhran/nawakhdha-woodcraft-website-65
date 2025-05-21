@@ -30,7 +30,8 @@ export function useContactData() {
                 data.business_hours_json : 
                 JSON.stringify(data.business_hours_json)
               ) : null,
-            map_url: data.map_url || null
+            // Handle the map_url property which is missing in the database
+            map_url: null // Set to null as it's not present in the database schema
           };
           setContactInfo(contactData);
         } else {

@@ -172,7 +172,7 @@ export interface ContactInfoData {
   phone: string | null;
   email: string | null;
   business_hours_json: string | null | Record<string, any>;
-  map_url: string | null;
+  map_url: string | null; // Added this property to match our usage
 }
 
 // Type for business hours to fix ContactPage.tsx errors
