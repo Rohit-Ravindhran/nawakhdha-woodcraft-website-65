@@ -18,7 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon } from "lucide-react";
+import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon, AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
@@ -267,7 +267,7 @@ export default function ProductCategoriesTab() {
   // Show warning if the required bucket doesn't exist
   if (bucketsInitialized && !buckets.includes('product-categories')) {
     return (
-      <Alert variant="warning" className="mb-6">
+      <Alert variant="destructive" className="mb-6">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
           The "product-categories" bucket is still being initialized. Please refresh the page in a few moments.
