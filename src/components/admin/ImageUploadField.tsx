@@ -67,9 +67,26 @@ const ImageUploadField = ({
         return true;
       }
       
-      console.log(`List operation failed, trying getBucket for "${bucket}"`);
+      console.log(`List operation failed for "${bucket}", trying direct file upload test`);
       
-      // If listing fails, try getBucket which requires more permissions
+      // If listing fails, try a direct file upload test with a tiny file
+      // Create a small 1x1 transparent pixel as test file
+      const testFile = new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A])], { type: 'image/png' });
+      const testFilePath = `test-${Date.now()}.png`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(testFilePath, testFile, { upsert: true });
+        
+      if (!uploadError) {
+        console.log(`Successfully uploaded test file to bucket "${bucket}"`);
+        // Clean up the test file
+        await supabase.storage.from(bucket).remove([testFilePath]);
+        return true;
+      }
+      
+      // If both list and upload fail, try getBucket as last resort
+      console.log(`Upload test failed, trying getBucket for "${bucket}"`);
       const { data, error } = await supabase.storage.getBucket(bucket);
       
       if (error) {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon } from "lucide-react";
+import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
@@ -56,6 +55,38 @@ export default function ProductCategoriesTab() {
     const checkBucket = async () => {
       try {
         setCheckingBucket(true);
+        
+        // Try multiple methods to check if bucket exists
+        // Method 1: Try direct listing
+        const { data: files, error: listError } = await supabase.storage
+          .from('product-categories')
+          .list();
+        
+        if (!listError) {
+          console.log('product-categories bucket exists (verified by listing)');
+          setBucketExists(true);
+          setCheckingBucket(false);
+          return;
+        }
+        
+        // Method 2: Try a small file upload test
+        const testFile = new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A])], { type: 'image/png' });
+        const testPath = `test-${Date.now()}.png`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('product-categories')
+          .upload(testPath, testFile, { upsert: true });
+          
+        if (!uploadError) {
+          console.log('product-categories bucket exists (verified by upload test)');
+          // Clean up the test file
+          await supabase.storage.from('product-categories').remove([testPath]);
+          setBucketExists(true);
+          setCheckingBucket(false);
+          return;
+        }
+        
+        // Method 3: Try getBucket
         const { data, error } = await supabase.storage.getBucket('product-categories');
         
         if (error) {
@@ -73,8 +104,12 @@ export default function ProductCategoriesTab() {
       }
     };
     
-    checkBucket();
-  }, []);
+    if (session) {
+      checkBucket();
+    } else {
+      setCheckingBucket(false);
+    }
+  }, [session]);
   
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],
@@ -162,7 +197,7 @@ export default function ProductCategoriesTab() {
     
     // Check if the required buckets are available
     if (bucketExists === false) {
-      setErrorMessage("The product-categories storage bucket is not available. Please contact an administrator.");
+      setErrorMessage("The product-categories storage bucket is not available. Please create it in your Supabase dashboard.");
       return;
     }
     
@@ -294,15 +329,40 @@ export default function ProductCategoriesTab() {
   // Show warning if the required bucket doesn't exist
   if (bucketExists === false) {
     return (
-      <Alert variant="destructive" className="mb-6">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription className="flex flex-col gap-4">
-          <div>
-            The "product-categories" bucket is missing. This will prevent you from uploading and managing product images.
-            Please contact your administrator to ensure the storage buckets are properly configured.
-          </div>
-        </AlertDescription>
-      </Alert>
+      <div className="space-y-6">
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex flex-col gap-4">
+            <div>
+              <p className="font-semibold mb-2">The "product-categories" bucket is missing</p>
+              <p className="mb-2">This will prevent you from uploading and managing product category images.</p>
+              <p>Please create the "product-categories" bucket in your Supabase dashboard and ensure it has the appropriate permissions.</p>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <a 
+                href="https://supabase.com/dashboard/project/enqplizqtwvquxliiygz/storage/buckets" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+              >
+                <ExternalLink className="h-4 w-4 mr-1" />
+                Go to Supabase Storage Dashboard
+              </a>
+            </div>
+          </AlertDescription>
+        </Alert>
+        
+        <Button 
+          onClick={() => {
+            setCheckingBucket(true);
+            checkBucket();
+          }}
+          className="flex items-center gap-2"
+        >
+          <Loader2 className={`h-4 w-4 ${checkingBucket ? 'animate-spin' : ''}`} />
+          Check bucket again
+        </Button>
+      </div>
     );
   }
   

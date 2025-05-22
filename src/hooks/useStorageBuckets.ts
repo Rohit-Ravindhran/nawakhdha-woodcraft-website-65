@@ -28,17 +28,48 @@ export function useStorageBuckets() {
           console.log("Permissions error when listing buckets - will try direct access");
           
           // Try to directly check specific required buckets
-          const requiredBuckets = ["product-gallery"];
+          const requiredBuckets = ["product-gallery", "product-categories"];
           const detectedBuckets: string[] = [];
           
-          // Try to list objects in each bucket to verify existence
+          // Try multiple methods to verify bucket existence
           for (const bucketName of requiredBuckets) {
-            const { error: directError } = await supabase.storage.from(bucketName).list();
-            if (!directError) {
-              console.log(`Bucket "${bucketName}" exists and is accessible`);
-              detectedBuckets.push(bucketName);
-            } else {
-              console.log(`Could not access bucket "${bucketName}": ${directError.message}`);
+            try {
+              // Method 1: Try to list objects in each bucket
+              const { error: listError } = await supabase.storage.from(bucketName).list();
+              
+              if (!listError) {
+                console.log(`Bucket "${bucketName}" exists and is accessible via list`);
+                detectedBuckets.push(bucketName);
+                continue;
+              }
+              
+              // Method 2: Try a simple upload test with a tiny file
+              const testFile = new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A])], { type: 'image/png' });
+              const testPath = `test-${Date.now()}.png`;
+              
+              const { error: uploadError } = await supabase.storage
+                .from(bucketName)
+                .upload(testPath, testFile, { upsert: true });
+                
+              if (!uploadError) {
+                console.log(`Bucket "${bucketName}" exists and is accessible via upload test`);
+                // Clean up the test file
+                await supabase.storage.from(bucketName).remove([testPath]);
+                detectedBuckets.push(bucketName);
+                continue;
+              }
+              
+              // Method 3: Try getBucket as last resort
+              const { error: directError } = await supabase.storage.getBucket(bucketName);
+              
+              if (!directError) {
+                console.log(`Bucket "${bucketName}" exists and is accessible via getBucket`);
+                detectedBuckets.push(bucketName);
+              } else {
+                console.log(`Could not access bucket "${bucketName}": ${directError.message}`);
+              }
+            } catch (err: any) {
+              console.error(`Error checking bucket "${bucketName}":`, err);
             }
           }
           

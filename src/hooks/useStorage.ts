@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -7,6 +6,58 @@ import { compressImage } from "@/utils/imageCompression";
 
 export function useStorage() {
   const [uploading, setUploading] = useState(false);
+
+  /**
+   * Check if a bucket exists and is accessible
+   */
+  const checkBucketExists = async (bucketName: string): Promise<boolean> => {
+    try {
+      console.log(`Checking if bucket "${bucketName}" exists...`);
+      
+      // Method 1: Try direct listing first (requires less permissions)
+      const { error: listError } = await supabase.storage
+        .from(bucketName)
+        .list();
+        
+      if (!listError) {
+        console.log(`Successfully listed files in bucket "${bucketName}"`);
+        return true;
+      }
+      
+      // Method 2: Try a small file upload test
+      try {
+        const testFile = new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A])], { type: 'image/png' });
+        const testPath = `test-${Date.now()}.png`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from(bucketName)
+          .upload(testPath, testFile, { upsert: true });
+          
+        if (!uploadError) {
+          console.log(`Successfully uploaded test file to bucket "${bucketName}"`);
+          // Clean up the test file
+          await supabase.storage.from(bucketName).remove([testPath]);
+          return true;
+        }
+      } catch (e) {
+        console.log(`Test upload failed for "${bucketName}"`, e);
+      }
+      
+      // Method 3: Try getBucket as last resort
+      const { error: bucketError } = await supabase.storage.getBucket(bucketName);
+      
+      if (!bucketError) {
+        console.log(`Successfully verified bucket "${bucketName}" exists via getBucket`);
+        return true;
+      }
+      
+      console.error(`Bucket "${bucketName}" not found or not accessible`);
+      return false;
+    } catch (err) {
+      console.error(`Error checking bucket "${bucketName}":`, err);
+      return false;
+    }
+  };
 
   /**
    * Upload an image to a specified Supabase Storage bucket
@@ -34,6 +85,12 @@ export function useStorage() {
       
       if (!file) {
         throw new Error("You must select an image to upload.");
+      }
+
+      // Verify bucket exists before proceeding
+      const bucketExists = await checkBucketExists(bucket);
+      if (!bucketExists) {
+        throw new Error(`Bucket "${bucket}" does not exist or you don't have permission to access it.`);
       }
 
       const {
@@ -86,16 +143,6 @@ export function useStorage() {
 
       // Set appropriate cache control based on image type
       const cacheMaxAge = CACHE_DURATIONS[imageType];
-      
-      // Verify bucket exists before upload
-      console.log(`Checking if bucket "${bucket}" exists before uploading...`);
-      const { data: bucketData, error: bucketError } = await supabase.storage
-        .getBucket(bucket);
-        
-      if (bucketError) {
-        console.error(`Error checking bucket "${bucket}":`, bucketError);
-        throw new Error(`Bucket "${bucket}" does not exist or you don't have access to it.`);
-      }
       
       console.log(`Uploading to bucket "${bucket}", path: ${filePath}`);
       
@@ -160,11 +207,8 @@ export function useStorage() {
       console.log(`Deleting from bucket "${bucket}", path: ${filePath}`);
       
       // Verify bucket exists
-      const { error: bucketError } = await supabase.storage
-        .getBucket(bucket);
-        
-      if (bucketError) {
-        console.error(`Error checking bucket "${bucket}":`, bucketError);
+      const bucketExists = await checkBucketExists(bucket);
+      if (!bucketExists) {
         throw new Error(`Bucket "${bucket}" does not exist or you don't have access to it.`);
       }
       
@@ -231,6 +275,7 @@ export function useStorage() {
     deleteImage,
     addCacheBusting,
     purgeCDNCache,
+    checkBucketExists,
     uploading
   };
 }
