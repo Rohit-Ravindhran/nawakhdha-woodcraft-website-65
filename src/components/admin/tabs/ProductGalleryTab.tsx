@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -41,7 +40,6 @@ export default function ProductGalleryTab() {
   const [currentImage, setCurrentImage] = useState<GalleryImageData | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [creatingBucket, setCreatingBucket] = useState(false);
   
   const queryClient = useQueryClient();
   const { session } = useAuth();
@@ -70,43 +68,6 @@ export default function ProductGalleryTab() {
     }
   };
 
-  const createBucket = async () => {
-    if (!session) {
-      toast.error("You must be logged in to create storage buckets");
-      return;
-    }
-    
-    try {
-      setCreatingBucket(true);
-      setErrorMessage(null);
-      
-      const { data, error } = await supabase.storage.createBucket('product-gallery', { 
-        public: true // Make bucket public so images can be viewed without authentication
-      });
-      
-      if (error) {
-        console.error("Error creating bucket:", error);
-        
-        if (error.message.includes("row-level security policy")) {
-          setErrorMessage(`Permission denied: You don't have admin rights to create storage buckets. Please contact your Supabase administrator to create the "product-gallery" bucket manually.`);
-        } else {
-          setErrorMessage(`Failed to create bucket: ${error.message}`);
-        }
-        return;
-      }
-      
-      console.log("Bucket created successfully:", data);
-      toast.success("Storage bucket 'product-gallery' created successfully");
-      setBucketExists(true);
-      
-    } catch (err: any) {
-      console.error("Error creating bucket:", err);
-      setErrorMessage(`Unexpected error: ${err.message}`);
-    } finally {
-      setCreatingBucket(false);
-    }
-  };
-  
   useEffect(() => {
     checkBucket();
   }, []);
@@ -213,7 +174,7 @@ export default function ProductGalleryTab() {
     }
     
     if (bucketExists === false) {
-      setErrorMessage("The product-gallery storage bucket is not available. Please create it using the 'Create Bucket' button.");
+      setErrorMessage("The product-gallery storage bucket is not available. Please check your Supabase settings.");
       return;
     }
     
@@ -313,7 +274,7 @@ export default function ProductGalleryTab() {
     );
   }
   
-  // Show option to create the bucket if it doesn't exist
+  // Show message if bucket doesn't exist
   if (bucketExists === false) {
     return (
       <div className="space-y-6">
@@ -321,49 +282,19 @@ export default function ProductGalleryTab() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex flex-col gap-4">
             <div>
-              The "product-gallery" bucket is missing. This will prevent you from uploading and managing gallery images.
+              The "product-gallery" bucket could not be found. Please make sure it exists in your Supabase project.
             </div>
             <div className="text-sm">
-              <p className="font-medium mb-2">Possible solutions:</p>
-              <ol className="list-decimal ml-5 space-y-2">
-                <li>Try creating the bucket using the button below (requires admin rights)</li>
-                <li>Contact your Supabase administrator to create the "product-gallery" bucket manually in the Supabase dashboard</li>
-                <li>
-                  <div className="flex items-center gap-1">
-                    <span>Create the bucket yourself in the</span>
-                    <a 
-                      href="https://supabase.com/dashboard/project/enqplizqtwvquxliiygz/storage/buckets" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline flex items-center"
-                    >
-                      Supabase Storage Dashboard
-                      <ExternalLink className="h-3 w-3 ml-1" />
-                    </a>
-                  </div>
-                </li>
-              </ol>
+              <a 
+                href="https://supabase.com/dashboard/project/enqplizqtwvquxliiygz/storage/buckets" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline flex items-center"
+              >
+                Open Supabase Storage Dashboard
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </a>
             </div>
-            <Button 
-              onClick={createBucket} 
-              disabled={creatingBucket || !session}
-              className="mt-2 w-fit"
-            >
-              {creatingBucket ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Bucket...
-                </>
-              ) : (
-                <>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Bucket
-                </>
-              )}
-            </Button>
-            {errorMessage && (
-              <p className="text-sm font-medium text-destructive mt-2">{errorMessage}</p>
-            )}
           </AlertDescription>
         </Alert>
         
@@ -587,4 +518,3 @@ export default function ProductGalleryTab() {
     </div>
   );
 }
-

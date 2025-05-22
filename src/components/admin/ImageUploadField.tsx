@@ -62,7 +62,7 @@ const ImageUploadField = ({
         console.error(`Error checking bucket "${bucket}":`, error);
         
         if (error.message.includes("Bucket not found")) {
-          setBucketError(`The storage bucket "${bucket}" does not exist. You'll need to create it in the Supabase dashboard.`);
+          setBucketError(`Could not find storage bucket "${bucket}". Please make sure it exists in your Supabase project.`);
           return false;
         }
         
@@ -86,7 +86,7 @@ const ImageUploadField = ({
       const bucketIsReady = await checkBucket();
       
       if (!bucketIsReady) {
-        throw new Error(`Storage bucket "${bucket}" is not available. Please check with your administrator.`);
+        throw new Error(`Storage bucket "${bucket}" is not available. Please check your Supabase settings.`);
       }
       
       console.log(`Uploading to bucket "${bucket}", folder: ${folder}`);

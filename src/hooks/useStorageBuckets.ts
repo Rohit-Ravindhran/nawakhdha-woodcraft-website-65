@@ -32,54 +32,7 @@ export function useStorageBuckets() {
       console.log("Existing buckets:", existingBucketNames);
       setBuckets(existingBucketNames);
       
-      // Only attempt bucket creation if we found no buckets and we have an authenticated session
-      if (existingBucketNames.length === 0) {
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          console.log("No buckets found. Attempting to initialize required buckets...");
-          
-          // Define required buckets
-          const requiredBuckets = [
-            { name: "product-categories", isPublic: true },
-            { name: "product-gallery", isPublic: true },
-            { name: "homepage", isPublic: true }
-          ];
-          
-          // Attempt to create any missing buckets
-          for (const bucket of requiredBuckets) {
-            if (!existingBucketNames.includes(bucket.name)) {
-              try {
-                console.log(`Creating bucket: ${bucket.name}`);
-                const { error: createError } = await supabase.storage
-                  .createBucket(bucket.name, { public: bucket.isPublic });
-                
-                if (createError) {
-                  console.warn(`Could not create ${bucket.name} bucket:`, createError.message);
-                } else {
-                  console.log(`Successfully created ${bucket.name} bucket`);
-                }
-              } catch (err) {
-                console.error(`Error creating bucket ${bucket.name}:`, err);
-              }
-            }
-          }
-          
-          // Refresh bucket list after attempt
-          const { data: refreshedBuckets } = await supabase.storage.listBuckets();
-          if (refreshedBuckets) {
-            const refreshedNames = refreshedBuckets.map(b => b.name);
-            setBuckets(refreshedNames);
-            console.log("Updated bucket list:", refreshedNames);
-            
-            if (refreshedNames.length > 0) {
-              toast.success("Storage buckets initialized successfully");
-            }
-          }
-        } else {
-          console.log("No session found. Skipping bucket creation attempt.");
-        }
-      }
-      
+      // We'll use the existing buckets instead of trying to create new ones
       setIsInitialized(true);
     } catch (err: any) {
       console.error("Error checking storage buckets:", err);
