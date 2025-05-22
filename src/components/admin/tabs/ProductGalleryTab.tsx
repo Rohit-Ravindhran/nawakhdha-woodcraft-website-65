@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, AlertCircle, RefreshCw } from "lucide-react";
+import { Edit, Plus, Save, Trash2, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -86,7 +86,12 @@ export default function ProductGalleryTab() {
       
       if (error) {
         console.error("Error creating bucket:", error);
-        setErrorMessage(`Failed to create bucket: ${error.message}`);
+        
+        if (error.message.includes("row-level security policy")) {
+          setErrorMessage(`Permission denied: You don't have admin rights to create storage buckets. Please contact your Supabase administrator to create the "product-gallery" bucket manually.`);
+        } else {
+          setErrorMessage(`Failed to create bucket: ${error.message}`);
+        }
         return;
       }
       
@@ -317,6 +322,27 @@ export default function ProductGalleryTab() {
           <AlertDescription className="flex flex-col gap-4">
             <div>
               The "product-gallery" bucket is missing. This will prevent you from uploading and managing gallery images.
+            </div>
+            <div className="text-sm">
+              <p className="font-medium mb-2">Possible solutions:</p>
+              <ol className="list-decimal ml-5 space-y-2">
+                <li>Try creating the bucket using the button below (requires admin rights)</li>
+                <li>Contact your Supabase administrator to create the "product-gallery" bucket manually in the Supabase dashboard</li>
+                <li>
+                  <div className="flex items-center gap-1">
+                    <span>Create the bucket yourself in the</span>
+                    <a 
+                      href="https://supabase.com/dashboard/project/enqplizqtwvquxliiygz/storage/buckets" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline flex items-center"
+                    >
+                      Supabase Storage Dashboard
+                      <ExternalLink className="h-3 w-3 ml-1" />
+                    </a>
+                  </div>
+                </li>
+              </ol>
             </div>
             <Button 
               onClick={createBucket} 

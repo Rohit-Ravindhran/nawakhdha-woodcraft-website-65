@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, ImagePlus, X } from "lucide-react";
+import { Loader2, ImagePlus, X, ExternalLink } from "lucide-react";
 import { useStorage } from "@/hooks/useStorage";
 import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
@@ -61,25 +61,13 @@ const ImageUploadField = ({
       if (error) {
         console.error(`Error checking bucket "${bucket}":`, error);
         
-        // Try to create the bucket if it doesn't exist
-        try {
-          const { data: createData, error: createError } = await supabase.storage
-            .createBucket(bucket, { public: true });
-          
-          if (createError) {
-            console.error(`Failed to create bucket "${bucket}":`, createError);
-            setBucketError(`The storage bucket "${bucket}" does not exist and couldn't be created automatically. Please contact an administrator.`);
-            return false;
-          } else {
-            console.log(`Successfully created bucket "${bucket}"`, createData);
-            toast.success(`Created storage bucket "${bucket}"`);
-            return true;
-          }
-        } catch (createErr: any) {
-          console.error(`Error creating bucket "${bucket}":`, createErr);
-          setBucketError(`Failed to create bucket: ${createErr.message}`);
+        if (error.message.includes("Bucket not found")) {
+          setBucketError(`The storage bucket "${bucket}" does not exist. You'll need to create it in the Supabase dashboard.`);
           return false;
         }
+        
+        setBucketError(`Error checking bucket "${bucket}": ${error.message}`);
+        return false;
       }
       
       return true;
@@ -94,7 +82,7 @@ const ImageUploadField = ({
     setUploading(true);
     setBucketError(null);
     try {
-      // First check if bucket exists and try to create it if not
+      // First check if bucket exists
       const bucketIsReady = await checkBucket();
       
       if (!bucketIsReady) {
@@ -117,7 +105,13 @@ const ImageUploadField = ({
       }
     } catch (error: any) {
       console.error("Image upload error:", error);
-      toast.error(`Upload failed: ${error.message}`);
+      
+      if (error.message && error.message.includes("row-level security policy")) {
+        toast.error("Permission denied: You may not have the required permissions to upload to this bucket.");
+        setBucketError("This appears to be a permissions issue. Your account doesn't have permissions to upload to this bucket.");
+      } else {
+        toast.error(`Upload failed: ${error.message}`);
+      }
     } finally {
       setUploading(false);
     }
@@ -129,8 +123,17 @@ const ImageUploadField = ({
       <FormControl>
         <div className="flex flex-col space-y-2">
           {bucketError && (
-            <div className="text-sm text-destructive mb-2">
-              {bucketError}
+            <div className="text-sm text-destructive p-2 border border-destructive/20 rounded-md bg-destructive/10">
+              <p className="mb-2">{bucketError}</p>
+              <a
+                href="https://supabase.com/dashboard/project/enqplizqtwvquxliiygz/storage/buckets"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline flex items-center text-xs"
+              >
+                Go to Supabase Storage Dashboard
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </a>
             </div>
           )}
           
