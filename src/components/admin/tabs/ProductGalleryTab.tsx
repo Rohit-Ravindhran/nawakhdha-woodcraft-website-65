@@ -51,11 +51,63 @@ export default function ProductGalleryTab() {
   const checkBucket = async () => {
     try {
       setCheckingBucket(true);
+      console.log('Checking if product-gallery bucket exists...');
+      
+      // First try to list files (requires less permissions)
+      const { data: files, error: listError } = await supabase.storage
+        .from('product-gallery')
+        .list('', { limit: 1 });
+        
+      if (!listError) {
+        console.log('Successfully listed files in product-gallery bucket');
+        setBucketExists(true);
+        setCheckingBucket(false);
+        return;
+      }
+      
+      console.log('List operation failed, trying getBucket');
+      
+      // If list fails, try getBucket (requires more permissions)
       const { data, error } = await supabase.storage.getBucket('product-gallery');
       
       if (error) {
         console.error('Error checking product-gallery bucket:', error);
-        setBucketExists(false);
+        
+        if (error.message.includes('row-level security policy')) {
+          console.log('Permission error but bucket might still exist');
+          // Try the upload test endpoint if available
+          try {
+            const testImage = new Blob(['test'], { type: 'text/plain' });
+            const testFile = new File([testImage], 'permission-test.txt');
+            
+            const { data: uploadTest, error: uploadError } = await supabase.storage
+              .from('product-gallery')
+              .upload(`test-${Date.now()}.txt`, testFile);
+              
+            if (!uploadError) {
+              console.log('Test upload worked, bucket exists');
+              // Clean up test file
+              await supabase.storage.from('product-gallery').remove([uploadTest.path]);
+              setBucketExists(true);
+            } else {
+              console.log('Test upload failed:', uploadError);
+              if (!uploadError.message.includes('not found')) {
+                // If error is something other than "not found", bucket might exist
+                setBucketExists(true);
+              } else {
+                setBucketExists(false);
+              }
+            }
+          } catch (err) {
+            console.error('Test upload error:', err);
+            setBucketExists(false);
+          }
+        } else if (error.message.includes('Bucket not found')) {
+          setBucketExists(false);
+        } else {
+          // For unknown errors, assume bucket might exist but inaccessible
+          setBucketExists(null);
+        }
       } else {
         console.log('product-gallery bucket exists:', data);
         setBucketExists(true);
@@ -274,7 +326,7 @@ export default function ProductGalleryTab() {
     );
   }
   
-  // Show message if bucket doesn't exist
+  // Bucket access message - more nuanced approach
   if (bucketExists === false) {
     return (
       <div className="space-y-6">
@@ -282,7 +334,7 @@ export default function ProductGalleryTab() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex flex-col gap-4">
             <div>
-              The "product-gallery" bucket could not be found. Please make sure it exists in your Supabase project.
+              The "product-gallery" bucket could not be found. Please make sure it exists in your Supabase project and that your account has the necessary permissions.
             </div>
             <div className="text-sm">
               <a 
@@ -291,7 +343,7 @@ export default function ProductGalleryTab() {
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline flex items-center"
               >
-                Open Supabase Storage Dashboard
+                Open Supabase Storage Dashboard to Create/Configure Bucket
                 <ExternalLink className="h-3 w-3 ml-1" />
               </a>
             </div>
@@ -305,7 +357,7 @@ export default function ProductGalleryTab() {
           className="flex items-center gap-2"
         >
           <RefreshCw className="h-4 w-4" />
-          Refresh Status
+          Check Bucket Availability
         </Button>
       </div>
     );

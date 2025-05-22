@@ -55,14 +55,28 @@ const ImageUploadField = ({
   
   const checkBucket = async (): Promise<boolean> => {
     try {
-      // Check if bucket exists
+      console.log(`Checking bucket "${bucket}" availability...`);
+      
+      // First try to directly list files as this requires less permissions
+      const { data: files, error: listError } = await supabase.storage
+        .from(bucket)
+        .list();
+      
+      if (!listError) {
+        console.log(`Successfully listed files in bucket "${bucket}"`);
+        return true;
+      }
+      
+      console.log(`List operation failed, trying getBucket for "${bucket}"`);
+      
+      // If listing fails, try getBucket which requires more permissions
       const { data, error } = await supabase.storage.getBucket(bucket);
       
       if (error) {
         console.error(`Error checking bucket "${bucket}":`, error);
         
         if (error.message.includes("Bucket not found")) {
-          setBucketError(`Could not find storage bucket "${bucket}". Please make sure it exists in your Supabase project.`);
+          setBucketError(`Storage bucket "${bucket}" is not available. Please check that it exists in your Supabase project.`);
           return false;
         }
         

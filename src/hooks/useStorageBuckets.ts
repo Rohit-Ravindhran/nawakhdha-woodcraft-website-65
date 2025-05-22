@@ -23,6 +23,33 @@ export function useStorageBuckets() {
       const { data: existingBuckets, error: listError } = await supabase.storage.listBuckets();
       
       if (listError) {
+        // Check if this is a permissions error rather than a "bucket doesn't exist" error
+        if (listError.message && listError.message.includes("row-level security policy")) {
+          console.log("Permissions error when listing buckets - will try direct access");
+          
+          // Try to directly check specific required buckets
+          const requiredBuckets = ["product-gallery"];
+          const detectedBuckets: string[] = [];
+          
+          // Try to list objects in each bucket to verify existence
+          for (const bucketName of requiredBuckets) {
+            const { error: directError } = await supabase.storage.from(bucketName).list();
+            if (!directError) {
+              console.log(`Bucket "${bucketName}" exists and is accessible`);
+              detectedBuckets.push(bucketName);
+            } else {
+              console.log(`Could not access bucket "${bucketName}": ${directError.message}`);
+            }
+          }
+          
+          if (detectedBuckets.length > 0) {
+            console.log("Detected buckets:", detectedBuckets);
+            setBuckets(detectedBuckets);
+            setIsInitialized(true);
+            return;
+          }
+        }
+        
         console.error("Error listing buckets:", listError);
         setError(listError);
         return;
