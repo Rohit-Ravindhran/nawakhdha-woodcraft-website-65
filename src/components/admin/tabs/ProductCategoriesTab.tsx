@@ -52,7 +52,7 @@ export default function ProductCategoriesTab() {
   const [checkingBucket, setCheckingBucket] = useState(true);
   
   useEffect(() => {
-    const checkBucket = async () => {
+    const checkBucketExists = async () => {
       try {
         setCheckingBucket(true);
         
@@ -105,7 +105,7 @@ export default function ProductCategoriesTab() {
     };
     
     if (session) {
-      checkBucket();
+      checkBucketExists();
     } else {
       setCheckingBucket(false);
     }
@@ -355,7 +355,7 @@ export default function ProductCategoriesTab() {
         <Button 
           onClick={() => {
             setCheckingBucket(true);
-            checkBucket();
+            checkBucketExists(); // Fixed: Use the defined checkBucketExists function instead of checkBucket
           }}
           className="flex items-center gap-2"
         >
