@@ -355,7 +355,7 @@ export default function ProductCategoriesTab() {
         <Button 
           onClick={() => {
             setCheckingBucket(true);
-            checkBucketExists(); // Fixed: Use the defined checkBucketExists function instead of checkBucket
+            checkBucketExists(); // Use the function defined in the useEffect scope
           }}
           className="flex items-center gap-2"
         >
