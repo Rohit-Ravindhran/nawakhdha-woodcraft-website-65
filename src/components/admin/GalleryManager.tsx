@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGallery, useAddGalleryImage, useDeleteGalleryImage } from "@/hooks/content";
-import { useStorage } from "@/hooks/useStorage";
+import { useStorage } from "@/hooks/storage";
 import ImageUploader from "./ImageUploader";
 import { Loader2, X } from "lucide-react";
 

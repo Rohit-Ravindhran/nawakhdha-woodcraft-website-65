@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { AlertCircle } from "lucide-react";
 import { GalleryImage } from "@/components/admin/schemas/productSchema";
 import { OptimizedImage } from "@/components/ui/optimized-image";
-import { useStorage } from "@/hooks/useStorage";
+import { useStorage } from "@/hooks/storage";
 import { toast } from "sonner";
 
 interface ProductGalleryManagerProps {
