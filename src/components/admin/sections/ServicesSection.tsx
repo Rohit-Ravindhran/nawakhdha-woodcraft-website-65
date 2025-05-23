@@ -44,14 +44,14 @@ export default function ServicesSection({ control, isOpen, onToggle, watch, setV
     }
   };
 
-  const handleServiceImageUploaded = (index: number, url: string, alt: string) => {
+  const handleServiceImageUploaded = (index: number) => (url: string, alt?: string) => {
     const servicesData = getServicesData();
     servicesData.items = servicesData.items || [];
     if (!servicesData.items[index]) {
       servicesData.items[index] = {};
     }
     servicesData.items[index].image = url;
-    servicesData.items[index].image_alt = alt;
+    servicesData.items[index].image_alt = alt || "";
     servicesData.items[index].image_url = url; // Set both image and image_url for compatibility
     setValue("services", JSON.stringify(servicesData), { shouldValidate: true });
   };
@@ -106,10 +106,10 @@ export default function ServicesSection({ control, isOpen, onToggle, watch, setV
                 
                 <div className="mb-4">
                   <EnhancedImageUploader
-                    onImageUploaded={(url, alt) => handleServiceImageUploaded(index, url, alt)}
+                    onImageUploaded={handleServiceImageUploaded(index)}
                     bucket="homepage"
                     folder="services"
-                    initialImageUrl={item.image || ""}
+                    existingUrl={item.image || ""}
                     initialAltText={item.image_alt || ""}
                     imagePreviewHeight="24"
                   />

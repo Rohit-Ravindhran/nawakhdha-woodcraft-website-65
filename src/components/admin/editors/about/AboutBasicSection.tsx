@@ -18,9 +18,11 @@ interface AboutBasicSectionProps {
 }
 
 export default function AboutBasicSection({ control, watch, setValue }: AboutBasicSectionProps) {
-  const handleHeaderImageUploaded = (url: string, alt: string) => {
+  const handleHeaderImageUploaded = (url: string, alt?: string) => {
     setValue("header_image", url);
-    setValue("header_image_alt", alt);
+    if (alt) {
+      setValue("header_image_alt", alt);
+    }
   };
   
   return (
@@ -45,7 +47,7 @@ export default function AboutBasicSection({ control, watch, setValue }: AboutBas
           onImageUploaded={handleHeaderImageUploaded}
           bucket="pages"
           folder="about"
-          initialImageUrl={watch("header_image")}
+          existingUrl={watch("header_image")}
           initialAltText={watch("header_image_alt")}
         />
       </div>

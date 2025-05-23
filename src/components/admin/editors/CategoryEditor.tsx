@@ -20,6 +20,14 @@ import SeoFields from "@/components/admin/SeoFields";
 import ProductGalleryManager from "@/components/admin/ProductGalleryManager";
 import { GalleryImage } from "@/components/admin/schemas/productSchema";
 
+// Define image interface to align with ProductGalleryManager
+interface Image {
+  id: string;
+  url: string;
+  alt?: string;
+  caption?: string;
+}
+
 // Define the form schema for category editing
 const categorySchema = z.object({
   name: z.string().min(1, "Category name is required"),
@@ -30,7 +38,7 @@ const categorySchema = z.object({
 });
 
 type CategoryFormValues = z.infer<typeof categorySchema> & {
-  gallery_images?: GalleryImage[];
+  gallery_images?: Image[];
 };
 
 interface CategoryEditorProps {
@@ -40,7 +48,7 @@ interface CategoryEditorProps {
 
 export default function CategoryEditor({ categoryName, onSave }: CategoryEditorProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [galleryImages, setGalleryImages] = useState<Image[]>([]);
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -123,7 +131,8 @@ export default function CategoryEditor({ categoryName, onSave }: CategoryEditorP
           <ProductGalleryManager
             images={galleryImages}
             onChange={setGalleryImages}
-            productId={categoryName ? `category-${categoryName}` : "new-category"}
+            bucket="categories"
+            folder={categoryName ? `category-${categoryName}` : "new-category"}
           />
         </div>
 

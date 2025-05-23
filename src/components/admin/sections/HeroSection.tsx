@@ -79,9 +79,11 @@ export default function HeroSection({ control, isOpen, onToggle, watch, setValue
     }
   };
 
-  const handleHeroImageUploaded = (url: string, alt: string) => {
+  const handleHeroImageUploaded = (url: string, alt?: string) => {
     updateHeroField("background_image", url);
-    updateHeroField("background_image_alt", alt);
+    if (alt) {
+      updateHeroField("background_image_alt", alt);
+    }
   };
 
   return (
@@ -98,7 +100,7 @@ export default function HeroSection({ control, isOpen, onToggle, watch, setValue
             onImageUploaded={handleHeroImageUploaded} 
             bucket="homepage"
             folder="hero"
-            initialImageUrl={heroData.background_image || ""}
+            existingUrl={heroData.background_image || ""}
             initialAltText={heroData.background_image_alt || ""}
           />
         </div>

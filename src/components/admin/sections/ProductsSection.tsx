@@ -43,14 +43,14 @@ export default function ProductsSection({ control, isOpen, onToggle, watch, setV
     }
   };
 
-  const handleProductImageUploaded = (index: number, url: string, alt: string) => {
+  const handleProductImageUploaded = (index: number) => (url: string, alt?: string) => {
     const productsData = getProductsData();
     productsData.items = productsData.items || [];
     if (!productsData.items[index]) {
       productsData.items[index] = {};
     }
     productsData.items[index].image = url;
-    productsData.items[index].image_alt = alt;
+    productsData.items[index].image_alt = alt || "";
     setValue("products", JSON.stringify(productsData), { shouldValidate: true });
   };
 
@@ -136,10 +136,10 @@ export default function ProductsSection({ control, isOpen, onToggle, watch, setV
                 
                 <div className="mb-4">
                   <EnhancedImageUploader
-                    onImageUploaded={(url, alt) => handleProductImageUploaded(index, url, alt)}
+                    onImageUploaded={handleProductImageUploaded(index)}
                     bucket="homepage"
                     folder="products"
-                    initialImageUrl={item.image || ""}
+                    existingUrl={item.image || ""}
                     initialAltText={item.image_alt || ""}
                     imagePreviewHeight="24"
                   />

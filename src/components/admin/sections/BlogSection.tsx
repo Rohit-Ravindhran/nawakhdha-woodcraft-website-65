@@ -115,9 +115,11 @@ export default function BlogSection({ control, isOpen, onToggle, watch, setValue
     }
   };
 
-  const handleBlogImageUploaded = (index: number, url: string, alt: string) => {
+  const handleBlogImageUploaded = (index: number) => (url: string, alt?: string) => {
     updateBlogItem(index, "image", url);
-    updateBlogItem(index, "image_alt", alt);
+    if (alt) {
+      updateBlogItem(index, "image_alt", alt);
+    }
   };
 
   return (
@@ -147,10 +149,10 @@ export default function BlogSection({ control, isOpen, onToggle, watch, setValue
               
               <div className="mb-4">
                 <EnhancedImageUploader
-                  onImageUploaded={(url, alt) => handleBlogImageUploaded(index, url, alt)}
+                  onImageUploaded={handleBlogImageUploaded(index)}
                   bucket="homepage"
                   folder="blog"
-                  initialImageUrl={blogData.items?.[index]?.image || ""}
+                  existingUrl={blogData.items?.[index]?.image || ""}
                   initialAltText={blogData.items?.[index]?.image_alt || ""}
                   imagePreviewHeight="24"
                 />

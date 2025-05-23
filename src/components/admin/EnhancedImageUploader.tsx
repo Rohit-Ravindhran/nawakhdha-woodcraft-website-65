@@ -7,12 +7,14 @@ import { useStorage } from "@/hooks/storage";
 import { Loader2, X } from "lucide-react";
 
 interface EnhancedImageUploaderProps {
-  onImageUploaded: (url: string) => void;
+  onImageUploaded: (url: string, alt?: string) => void;
   bucket: string;
   folder?: string;
   accept?: string;
   className?: string;
   existingUrl?: string;
+  initialAltText?: string;
+  imagePreviewHeight?: string;
   onRemove?: () => void;
 }
 
@@ -23,9 +25,12 @@ export default function EnhancedImageUploader({
   accept = "image/*",
   className = "",
   existingUrl,
+  initialAltText = "",
+  imagePreviewHeight,
   onRemove,
 }: EnhancedImageUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [altText, setAltText] = useState(initialAltText || "");
   const { uploadImage, uploading, deleteImage, deleting } = useStorage();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +44,7 @@ export default function EnhancedImageUploader({
 
     const url = await uploadImage(file, bucket, folder);
     if (url) {
-      onImageUploaded(url);
+      onImageUploaded(url, altText);
       setFile(null);
     }
   };
@@ -71,9 +76,21 @@ export default function EnhancedImageUploader({
         <div className="relative">
           <img 
             src={existingUrl} 
-            alt="Uploaded image" 
-            className="max-w-full h-auto rounded-md border" 
+            alt={initialAltText || "Uploaded image"} 
+            className={`max-w-full h-auto rounded-md border ${imagePreviewHeight ? `h-${imagePreviewHeight} object-cover` : ''}`} 
           />
+          <div className="mt-2">
+            <Label htmlFor="alt-text" className="block text-sm font-medium mb-1">
+              Alt Text
+            </Label>
+            <Input
+              id="alt-text"
+              value={altText}
+              onChange={(e) => setAltText(e.target.value)}
+              placeholder="Describe this image"
+              className="mb-2"
+            />
+          </div>
           {onRemove && (
             <Button 
               type="button" 
@@ -109,6 +126,18 @@ export default function EnhancedImageUploader({
               accept={accept}
               onChange={handleFileChange}
               className="cursor-pointer"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="alt-text" className="block text-sm font-medium mb-1">
+              Alt Text
+            </Label>
+            <Input
+              id="alt-text"
+              value={altText}
+              onChange={(e) => setAltText(e.target.value)}
+              placeholder="Describe this image"
             />
           </div>
 
