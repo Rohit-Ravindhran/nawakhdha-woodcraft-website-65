@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
-import { useStorage } from "@/hooks/useStorage";
+import { useStorage } from "@/hooks/storage";
 import { useBucketCheck } from "./useBucketCheck";
 import BucketError from "./BucketError";
 import ImagePreview from "./ImagePreview";

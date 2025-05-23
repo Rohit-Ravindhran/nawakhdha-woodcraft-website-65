@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -355,7 +356,7 @@ export default function ProductCategoriesTab() {
         <Button 
           onClick={() => {
             setCheckingBucket(true);
-            checkBucketExists(); // Use the function defined in the useEffect scope
+            checkBucketExists(); // Now correctly referring to the function defined in useEffect
           }}
           className="flex items-center gap-2"
         >
