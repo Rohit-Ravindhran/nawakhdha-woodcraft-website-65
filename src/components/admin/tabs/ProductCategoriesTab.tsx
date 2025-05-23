@@ -109,6 +109,9 @@ export default function ProductCategoriesTab() {
     } else {
       setCheckingBucket(false);
     }
+    
+    // Make checkBucketExists available outside the useEffect
+    window.checkBucketExistsFunc = checkBucketExists;
   }, [session]);
   
   const { data: categories, isLoading, error } = useQuery({
@@ -355,7 +358,10 @@ export default function ProductCategoriesTab() {
         <Button 
           onClick={() => {
             setCheckingBucket(true);
-            checkBucketExists(); // This should call the function defined in useEffect
+            // Access the function from the window object
+            if (typeof window.checkBucketExistsFunc === 'function') {
+              window.checkBucketExistsFunc();
+            }
           }}
           className="flex items-center gap-2"
         >
@@ -585,4 +591,11 @@ export default function ProductCategoriesTab() {
       </Dialog>
     </div>
   );
+}
+
+// Add this type declaration to fix the TypeScript error
+declare global {
+  interface Window {
+    checkBucketExistsFunc?: () => Promise<void>;
+  }
 }
