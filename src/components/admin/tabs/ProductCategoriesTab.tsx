@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBucketOperations } from "@/hooks/storage/useBucketOperations";
 
 const productCategorySchema = z.object({
   id: z.string().optional(),
@@ -50,52 +51,17 @@ export default function ProductCategoriesTab() {
   // Check if the product-categories bucket exists
   const [bucketExists, setBucketExists] = useState<boolean | null>(null);
   const [checkingBucket, setCheckingBucket] = useState(true);
+  const { checkBucketExists, isChecking } = useBucketOperations();
   
   useEffect(() => {
-    const checkBucketExists = async () => {
+    const checkBucketExistsWrapper = async () => {
       try {
         setCheckingBucket(true);
         
-        // Try multiple methods to check if bucket exists
-        // Method 1: Try direct listing
-        const { data: files, error: listError } = await supabase.storage
-          .from('product-categories')
-          .list();
-        
-        if (!listError) {
-          console.log('product-categories bucket exists (verified by listing)');
-          setBucketExists(true);
-          setCheckingBucket(false);
-          return;
-        }
-        
-        // Method 2: Try a small file upload test
-        const testFile = new Blob([new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A])], { type: 'image/png' });
-        const testPath = `test-${Date.now()}.png`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('product-categories')
-          .upload(testPath, testFile, { upsert: true });
-          
-        if (!uploadError) {
-          console.log('product-categories bucket exists (verified by upload test)');
-          // Clean up the test file
-          await supabase.storage.from('product-categories').remove([testPath]);
-          setBucketExists(true);
-          setCheckingBucket(false);
-          return;
-        }
-        
-        // Method 3: Try getBucket
-        const { data, error } = await supabase.storage.getBucket('product-categories');
-        
-        if (error) {
-          console.error('Error checking product-categories bucket:', error);
-          setBucketExists(false);
-        } else {
-          console.log('product-categories bucket exists:', data);
-          setBucketExists(true);
-        }
+        // Use the imported checkBucketExists function
+        const exists = await checkBucketExists('product-categories');
+        console.log('product-categories bucket exists:', exists);
+        setBucketExists(exists);
       } catch (err) {
         console.error('Unexpected error checking bucket:', err);
         setBucketExists(false);
@@ -105,14 +71,14 @@ export default function ProductCategoriesTab() {
     };
     
     if (session) {
-      checkBucketExists();
+      checkBucketExistsWrapper();
     } else {
       setCheckingBucket(false);
     }
     
-    // Make checkBucketExists available outside the useEffect
-    window.checkBucketExistsFunc = checkBucketExists;
-  }, [session]);
+    // Make checkBucketExistsWrapper available outside the useEffect
+    window.checkBucketExistsFunc = checkBucketExistsWrapper;
+  }, [session, checkBucketExists]);
   
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],

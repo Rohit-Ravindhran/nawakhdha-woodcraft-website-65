@@ -1,156 +1,240 @@
 
-import React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import EnhancedImageUploader from "@/components/admin/EnhancedImageUploader";
-import { FormLabel, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AlertCircle } from "lucide-react";
-import { GalleryImage } from "@/components/admin/schemas/productSchema";
-import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStorage } from "@/hooks/storage";
-import { toast } from "sonner";
+import { Loader2, GripVertical, Trash, Plus } from "lucide-react";
+
+interface Image {
+  id: string;
+  url: string;
+  alt?: string;
+  caption?: string;
+  position?: number;
+}
 
 interface ProductGalleryManagerProps {
-  images: GalleryImage[];
-  onChange: (images: GalleryImage[]) => void;
-  productId?: number | string;
-  required?: boolean;
+  images: Image[];
+  onChange: (images: Image[]) => void;
+  bucket: string;
+  folder?: string;
 }
 
 export default function ProductGalleryManager({
   images,
   onChange,
-  productId = "new",
-  required = true
+  bucket,
+  folder = "",
 }: ProductGalleryManagerProps) {
-  const { purgeCDNCache } = useStorage();
-  
-  const handleImageUploaded = (url: string, alt: string, index?: number) => {
-    if (!url) return; // Don't add empty URLs
-    
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const { uploadImage } = useStorage();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+
+    setIsUploading(true);
     try {
-      if (index !== undefined && index >= 0 && index < images.length) {
-        // Update existing image
-        const updatedImages = [...images];
-        
-        // If URL changed, purge CDN cache for old URL
-        if (updatedImages[index].url !== url && updatedImages[index].url) {
-          purgeCDNCache(updatedImages[index].url);
-        }
-        
-        updatedImages[index] = { ...updatedImages[index], url, alt };
-        onChange(updatedImages);
-      } else {
-        // Add new image
-        onChange([...images, { url, caption: "", alt }]);
+      const url = await uploadImage(file, bucket, folder);
+      if (url) {
+        const newImage: Image = {
+          id: `img_${Date.now()}`,
+          url,
+          alt: "",
+          caption: "",
+          position: images.length,
+        };
+        onChange([...images, newImage]);
+        setFile(null);
       }
-      
-      toast.success("Image updated successfully");
-    } catch (error: any) {
-      console.error("Error handling image update:", error);
-      toast.error(error.message || "Failed to update image");
-      
-      // Check for specific RLS errors
-      if (error.message?.includes("new row violates row-level security policy")) {
-        toast.error("Permission denied: You don't have access to add images. Please contact an administrator.");
-      }
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  const handleCaptionChange = (caption: string, index: number) => {
-    try {
-      const updatedImages = [...images];
-      updatedImages[index] = { ...updatedImages[index], caption };
-      onChange(updatedImages);
-    } catch (error: any) {
-      console.error("Error updating caption:", error);
-      toast.error("Failed to update image caption");
-    }
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(images);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Update positions
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      position: index,
+    }));
+
+    onChange(updatedItems);
   };
 
-  const removeImage = (index: number) => {
-    try {
-      onChange(images.filter((_, i) => i !== index));
-      toast.success("Image removed successfully");
-    } catch (error: any) {
-      console.error("Error removing image:", error);
-      toast.error("Failed to remove image");
-    }
+  const handleRemove = (id: string) => {
+    const updatedImages = images
+      .filter((img) => img.id !== id)
+      .map((img, index) => ({ ...img, position: index }));
+    onChange(updatedImages);
   };
 
-  const hasValidImages = images.length > 0 && images.every(img => img.url && img.url.trim() !== '');
+  const handleImageUpdate = (id: string, field: "alt" | "caption", value: string) => {
+    onChange(
+      images.map((img) =>
+        img.id === id ? { ...img, [field]: value } : img
+      )
+    );
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Gallery Images</h4>
-        {required && images.length === 0 && (
-          <div className="flex items-center text-amber-500 text-sm">
-            <AlertCircle className="h-4 w-4 mr-1" />
-            <span>At least one image is required</span>
+    <div className="space-y-6">
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="gallery">
+          {(provided) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="space-y-2"
+            >
+              {images
+                .sort((a, b) => (a.position || 0) - (b.position || 0))
+                .map((image, index) => (
+                  <Draggable
+                    key={image.id}
+                    draggableId={image.id}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className="border rounded-md p-4 bg-white flex"
+                      >
+                        <div
+                          {...provided.dragHandleProps}
+                          className="flex items-center mr-4 text-gray-400"
+                        >
+                          <GripVertical className="h-5 w-5" />
+                        </div>
+
+                        <div className="h-24 w-24 relative bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                          <img
+                            src={image.url}
+                            alt={image.alt || "Gallery image"}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        <div className="ml-4 flex-grow space-y-2">
+                          <div>
+                            <Label
+                              htmlFor={`alt-${image.id}`}
+                              className="text-xs"
+                            >
+                              Alt Text
+                            </Label>
+                            <Input
+                              id={`alt-${image.id}`}
+                              value={image.alt || ""}
+                              onChange={(e) =>
+                                handleImageUpdate(
+                                  image.id,
+                                  "alt",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Image description"
+                              className="text-sm"
+                            />
+                          </div>
+
+                          <div>
+                            <Label
+                              htmlFor={`caption-${image.id}`}
+                              className="text-xs"
+                            >
+                              Caption
+                            </Label>
+                            <Textarea
+                              id={`caption-${image.id}`}
+                              value={image.caption || ""}
+                              onChange={(e) =>
+                                handleImageUpdate(
+                                  image.id,
+                                  "caption",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Image caption"
+                              className="text-sm"
+                              rows={1}
+                            />
+                          </div>
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-500 hover:text-red-700 self-start ml-2"
+                          onClick={() => handleRemove(image.id)}
+                        >
+                          <Trash className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+
+      <div className="border border-dashed rounded-md p-4 flex flex-col items-center justify-center space-y-2 min-h-[100px]">
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+          id="product-gallery-upload"
+        />
+        <Label
+          htmlFor="product-gallery-upload"
+          className="cursor-pointer flex items-center justify-center w-full"
+        >
+          <Plus className="h-5 w-5 text-gray-400 mr-2" />
+          <span className="text-sm text-gray-500">Add Image</span>
+        </Label>
+
+        {file && (
+          <div className="w-full max-w-xs">
+            <p className="text-sm text-gray-600 mb-2 truncate">{file.name}</p>
+            <Button
+              type="button"
+              onClick={handleUpload}
+              disabled={isUploading}
+              className="w-full"
+              size="sm"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                "Upload"
+              )}
+            </Button>
           </div>
         )}
       </div>
-      
-      {images.map((image, index) => (
-        <div key={index} className="flex flex-col gap-2 p-4 border rounded-md">
-          <div className="flex justify-between items-center">
-            <h5 className="font-medium">Image {index + 1}</h5>
-            <Button 
-              type="button" 
-              variant="destructive" 
-              size="sm" 
-              onClick={() => removeImage(index)}
-            >
-              Remove
-            </Button>
-          </div>
-          
-          {image.url && (
-            <div className="aspect-video w-full rounded-md overflow-hidden mb-2">
-              <OptimizedImage
-                src={image.url}
-                alt={image.alt || "Product image"}
-                imageType="productDetail"
-              />
-            </div>
-          )}
-          
-          <EnhancedImageUploader
-            onImageUploaded={(url, alt) => handleImageUploaded(url, alt, index)}
-            bucket="product-gallery"
-            folder={`product-${productId}`}
-            initialImageUrl={image.url}
-            initialAltText={image.alt}
-          />
-          
-          <FormItem>
-            <FormLabel>Caption</FormLabel>
-            <FormControl>
-              <Input 
-                value={image.caption || ""} 
-                onChange={(e) => handleCaptionChange(e.target.value, index)} 
-                placeholder="Enter a description for this image"
-              />
-            </FormControl>
-          </FormItem>
-        </div>
-      ))}
-      
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => handleImageUploaded("", "")}
-        className="w-full"
-      >
-        Add Image
-      </Button>
-      
-      {required && !hasValidImages && (
-        <p className="text-sm text-destructive">
-          Please add at least one image to the gallery
-        </p>
-      )}
     </div>
   );
 }

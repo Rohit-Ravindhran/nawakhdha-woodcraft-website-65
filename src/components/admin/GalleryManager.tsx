@@ -2,92 +2,166 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useGallery, useAddGalleryImage, useDeleteGalleryImage } from "@/hooks/content";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useStorage } from "@/hooks/storage";
-import ImageUploader from "./ImageUploader";
-import { Loader2, X } from "lucide-react";
+import { Loader2, Plus, Trash } from "lucide-react";
 
-export default function GalleryManager() {
-  const { data: galleryImages, isLoading } = useGallery();
-  const addGalleryImage = useAddGalleryImage();
-  const deleteGalleryImage = useDeleteGalleryImage();
-  const { deleteImage } = useStorage();
-  const [caption, setCaption] = useState("");
+interface Image {
+  id: string;
+  url: string;
+  alt?: string;
+  caption?: string;
+}
 
-  const handleImageUploaded = async (url: string) => {
-    addGalleryImage.mutate({ 
-      image_url: url,
-      caption: caption || ""
-    });
-    setCaption("");
+interface GalleryManagerProps {
+  images: Image[];
+  onChange: (images: Image[]) => void;
+  bucket: string;
+  folder?: string;
+}
+
+export default function GalleryManager({
+  images,
+  onChange,
+  bucket,
+  folder = "",
+}: GalleryManagerProps) {
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const { uploadImage } = useStorage();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
   };
 
-  const handleDeleteImage = async (id: string, url: string) => {
-    // Delete from storage - note the change from 'gallery' to 'gallery'
-    await deleteImage(url, 'gallery');
-    
-    // Delete from database
-    deleteGalleryImage.mutate(id);
+  const handleUpload = async () => {
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const url = await uploadImage(file, bucket, folder);
+      if (url) {
+        const newImage: Image = {
+          id: `img_${Date.now()}`,
+          url,
+          alt: "",
+          caption: "",
+        };
+        onChange([...images, newImage]);
+        setFile(null);
+      }
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+  const handleRemove = (id: string) => {
+    onChange(images.filter((img) => img.id !== id));
+  };
+
+  const handleImageUpdate = (id: string, field: "alt" | "caption", value: string) => {
+    onChange(
+      images.map((img) =>
+        img.id === id ? { ...img, [field]: value } : img
+      )
     );
-  }
+  };
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-border">
-      <h3 className="text-xl font-semibold mb-4">Gallery Management</h3>
-      
-      <div className="mb-6 space-y-4">
-        <h4 className="text-lg font-medium">Add New Image</h4>
-        
-        <Input
-          placeholder="Image Caption"
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          className="mb-3"
-        />
-        
-        <ImageUploader 
-          onImageUploaded={handleImageUploaded}
-          bucket="gallery" // No change needed since this doesn't use underscore format
-        />
-      </div>
-      
-      <div className="border-t pt-6">
-        <h4 className="text-lg font-medium mb-4">Current Gallery Images</h4>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {galleryImages && galleryImages.length > 0 ? (
-            galleryImages.map((image) => (
-              <div key={image.id} className="border rounded-md p-2 relative group">
-                <div className="aspect-square overflow-hidden rounded-md">
-                  <img 
-                    src={image.image_url} 
-                    alt={image.caption} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <p className="text-sm mt-1 truncate">{image.caption}</p>
-                
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDeleteImage(image.id as string, image.image_url)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {images.map((image) => (
+          <div key={image.id} className="border rounded-md p-4 space-y-3">
+            <div className="aspect-square relative bg-gray-200 rounded-md overflow-hidden">
+              <img
+                src={image.url}
+                alt={image.alt || "Gallery image"}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <div>
+                <Label htmlFor={`alt-${image.id}`} className="text-xs">
+                  Alt Text
+                </Label>
+                <Input
+                  id={`alt-${image.id}`}
+                  value={image.alt || ""}
+                  onChange={(e) => handleImageUpdate(image.id, "alt", e.target.value)}
+                  placeholder="Image description"
+                  className="text-sm"
+                />
               </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-8 text-muted-foreground">
-              No gallery images found. Add some images above.
+              
+              <div>
+                <Label htmlFor={`caption-${image.id}`} className="text-xs">
+                  Caption
+                </Label>
+                <Textarea
+                  id={`caption-${image.id}`}
+                  value={image.caption || ""}
+                  onChange={(e) => handleImageUpdate(image.id, "caption", e.target.value)}
+                  placeholder="Image caption"
+                  className="text-sm"
+                  rows={2}
+                />
+              </div>
+              
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                className="w-full mt-2"
+                onClick={() => handleRemove(image.id)}
+              >
+                <Trash className="h-4 w-4 mr-2" />
+                Remove
+              </Button>
+            </div>
+          </div>
+        ))}
+        
+        <div className="border border-dashed rounded-md p-4 flex flex-col items-center justify-center space-y-2 min-h-[200px]">
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            id="gallery-image-upload"
+          />
+          <Label
+            htmlFor="gallery-image-upload"
+            className="cursor-pointer flex flex-col items-center justify-center w-full h-full"
+          >
+            <Plus className="h-8 w-8 text-gray-400 mb-2" />
+            <span className="text-sm text-gray-500">Add Image</span>
+          </Label>
+          
+          {file && (
+            <div className="w-full mt-2">
+              <p className="text-sm text-gray-600 mb-2 truncate">
+                {file.name}
+              </p>
+              <Button
+                type="button"
+                onClick={handleUpload}
+                disabled={isUploading}
+                className="w-full"
+                size="sm"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Upload"
+                )}
+              </Button>
             </div>
           )}
         </div>
