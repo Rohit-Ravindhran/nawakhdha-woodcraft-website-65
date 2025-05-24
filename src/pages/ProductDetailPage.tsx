@@ -39,11 +39,14 @@ const ProductDetailPage: React.FC = () => {
     productCategory: productCategory ? {
       id: productCategory.id,
       category_name: productCategory.category_name,
-      hasSlug: !!productCategory.slug
+      hasSlug: !!productCategory.slug,
+      product_name: productCategory.product_name
     } : null,
     productData: productData ? {
       hasDescription: !!productData.description,
-      galleryCount: productData.gallery_images?.length || 0
+      galleryCount: productData.gallery_images?.length || 0,
+      product_name: productData.product_name,
+      category_id: productData.category_id
     } : null,
     isLoading,
     categoryError: categoryError?.message,
@@ -67,10 +70,17 @@ const ProductDetailPage: React.FC = () => {
     return <ProductNotFound />;
   }
 
-  // Get the product details and description (productData is optional)
-  const description = productData?.description || productCategory.description || "";
+  // Enhanced data extraction with proper fallback logic
   const categoryName = productCategory.category_name || "";
+  
+  // For product name, prioritize this order:
+  // 1. product_name from productData (product_category_details)
+  // 2. product_name from productCategory
+  // 3. category_name as fallback
   const productName = productData?.product_name || productCategory.product_name || categoryName;
+  
+  // For description, prioritize productData description over category description
+  const description = productData?.description || productCategory.description || "";
   
   // Choose the first gallery image as featured, or fall back to category image
   const featuredImage = productData?.gallery_images?.length > 0 
@@ -103,7 +113,9 @@ const ProductDetailPage: React.FC = () => {
     hasDescription: !!description,
     galleryCount: galleryImages.length,
     hasFeaturedImage: !!featuredImage,
-    categoryId: productCategory.id
+    categoryId: productCategory.id,
+    productDataId: productData?.id,
+    hasProductDetails: !!productData
   });
   
   return (

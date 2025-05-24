@@ -17,7 +17,7 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
       
       console.log('useProductDetail: Fetching data for productId:', productId);
       
-      // Enhanced debugging: Get category data with better error handling
+      // First try to get the category data by ID
       console.log('useProductDetail: Querying product_categories table...');
       const { data: categoryData, error: categoryError, count } = await supabase
         .from('product_categories')
@@ -30,14 +30,68 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
         count,
         searchingForId: productId
       });
-        
+
+      let categoryRecord = null;
+      
       if (categoryError) {
         console.error('useProductDetail: Category fetch error:', categoryError);
-        throw categoryError;
       }
       
-      // Check if we got any results
-      if (!categoryData || categoryData.length === 0) {
+      // If we found category data by ID, use it
+      if (categoryData && categoryData.length > 0) {
+        categoryRecord = categoryData[0];
+        console.log('useProductDetail: Found category by ID:', categoryRecord);
+      } else {
+        // If not found by ID, try to find by looking up home_products first
+        console.log('useProductDetail: No category found by ID, trying home_products lookup...');
+        
+        const { data: homeProductData, error: homeProductError } = await supabase
+          .from('home_products')
+          .select('*')
+          .eq('id', productId);
+          
+        console.log('useProductDetail: Home product lookup result:', {
+          data: homeProductData,
+          error: homeProductError,
+          searchedId: productId
+        });
+        
+        if (homeProductData && homeProductData.length > 0) {
+          const homeProduct = homeProductData[0];
+          
+          // Now try to find the category by category_name
+          if (homeProduct.category_name) {
+            const { data: categoryByName, error: categoryByNameError } = await supabase
+              .from('product_categories')
+              .select('*')
+              .eq('category_name', homeProduct.category_name);
+              
+            console.log('useProductDetail: Category by name lookup result:', {
+              data: categoryByName,
+              error: categoryByNameError,
+              categoryName: homeProduct.category_name
+            });
+            
+            if (categoryByName && categoryByName.length > 0) {
+              categoryRecord = categoryByName[0];
+              console.log('useProductDetail: Found category by name:', categoryRecord);
+            } else {
+              // Create a synthetic category record from home product data
+              categoryRecord = {
+                id: homeProduct.id,
+                category_name: homeProduct.category_name,
+                category_image_url: homeProduct.image_url,
+                alt_text: homeProduct.alt_text,
+                category_slug: productId,
+                product_name: homeProduct.category_name
+              };
+              console.log('useProductDetail: Created synthetic category from home product:', categoryRecord);
+            }
+          }
+        }
+      }
+      
+      if (!categoryRecord) {
         console.log('useProductDetail: No category data found for ID:', productId);
         
         // Additional debugging: Let's see what IDs actually exist
@@ -46,54 +100,103 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
           .select('id, category_name')
           .limit(10);
           
-        console.log('useProductDetail: Available category IDs in database:', {
+        const { data: allHomeProducts, error: allHomeProductsError } = await supabase
+          .from('home_products')
+          .select('id, category_name, slug')
+          .limit(10);
+          
+        console.log('useProductDetail: Available data in database:', {
           allCategories,
-          error: allCategoriesError,
+          allHomeProducts,
+          categoriesError: allCategoriesError,
+          homeProductsError: allHomeProductsError,
           searchedFor: productId
         });
         
         return null;
       }
       
-      const categoryRecord = categoryData[0];
-      console.log('useProductDetail: Found category:', categoryRecord);
-      
-      // Get detail data
+      // Get detail data - try both the original category ID and the productId
       console.log('useProductDetail: Fetching product_category_details...');
-      const { data: detailData, error: detailError } = await supabase
+      
+      // First try with the category record ID
+      let detailData = null;
+      let detailError = null;
+      
+      const { data: detailByCategory, error: detailByCategoryError } = await supabase
         .from('product_category_details')
         .select('*')
-        .eq('category_id', productId)
+        .eq('category_id', categoryRecord.id)
         .maybeSingle();
         
-      console.log('useProductDetail: Detail query result:', {
-        data: detailData,
-        error: detailError,
-        categoryId: productId
+      console.log('useProductDetail: Detail by category ID query result:', {
+        data: detailByCategory,
+        error: detailByCategoryError,
+        categoryId: categoryRecord.id
       });
+      
+      if (detailByCategory) {
+        detailData = detailByCategory;
+      } else if (productId !== categoryRecord.id) {
+        // If no details found with category ID, try with the original productId
+        const { data: detailByProductId, error: detailByProductIdError } = await supabase
+          .from('product_category_details')
+          .select('*')
+          .eq('category_id', productId)
+          .maybeSingle();
+          
+        console.log('useProductDetail: Detail by productId query result:', {
+          data: detailByProductId,
+          error: detailByProductIdError,
+          productId: productId
+        });
+        
+        if (detailByProductId) {
+          detailData = detailByProductId;
+        }
+      }
         
       if (detailError) {
         console.error('useProductDetail: Detail fetch error:', detailError);
         // Don't throw error for details - they're optional
       }
       
-      // Get gallery data
+      // Get gallery data - try both category ID and productId
       console.log('useProductDetail: Fetching product_gallery...');
-      const { data: galleryData, error: galleryError } = await supabase
+      
+      let galleryData = null;
+      
+      const { data: galleryByCategory, error: galleryByCategoryError } = await supabase
         .from('product_gallery')
         .select('*')
-        .eq('category_id', productId)
+        .eq('category_id', categoryRecord.id)
         .order('position', { ascending: true });
         
-      console.log('useProductDetail: Gallery query result:', {
-        data: galleryData,
-        error: galleryError,
-        categoryId: productId
+      console.log('useProductDetail: Gallery by category ID query result:', {
+        data: galleryByCategory,
+        error: galleryByCategoryError,
+        categoryId: categoryRecord.id
       });
+      
+      if (galleryByCategory && galleryByCategory.length > 0) {
+        galleryData = galleryByCategory;
+      } else if (productId !== categoryRecord.id) {
+        // Try with original productId
+        const { data: galleryByProductId, error: galleryByProductIdError } = await supabase
+          .from('product_gallery')
+          .select('*')
+          .eq('category_id', productId)
+          .order('position', { ascending: true });
+          
+        console.log('useProductDetail: Gallery by productId query result:', {
+          data: galleryByProductId,
+          error: galleryByProductIdError,
+          productId: productId
+        });
         
-      if (galleryError) {
-        console.error('useProductDetail: Gallery fetch error:', galleryError);
-        // Don't throw error for gallery - it's optional
+        if (galleryByProductId) {
+          galleryData = galleryByProductId;
+        }
       }
       
       // Get slug from home_products if exists

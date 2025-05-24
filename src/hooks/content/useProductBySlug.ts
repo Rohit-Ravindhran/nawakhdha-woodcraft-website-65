@@ -32,7 +32,7 @@ export function useProductBySlug(slug?: string) {
         console.log('useProductBySlug: Found home product:', homeProduct);
         
         // We found a match in home_products
-        // Now get the corresponding product category if possible
+        // Now get the corresponding product category by category_name (not ID)
         if (homeProduct.category_name) {
           console.log('useProductBySlug: Looking for category with name:', homeProduct.category_name);
           
@@ -50,7 +50,11 @@ export function useProductBySlug(slug?: string) {
           if (!catError && categoryData && categoryData.length > 0) {
             const category = categoryData[0];
             console.log('useProductBySlug: Found matching category:', category);
-            return category as ProductCategoryData;
+            // Return the category data with the slug from home_products
+            return {
+              ...category,
+              slug: homeProduct.slug
+            } as ProductCategoryData;
           }
           
           // Additional debugging: Let's see what categories exist
@@ -67,13 +71,16 @@ export function useProductBySlug(slug?: string) {
           
           // If we can't find a matching category, return the home product data
           // with some properties mapped to match ProductCategoryData interface
-          console.log('useProductBySlug: Using home product data as fallback');
+          console.log('useProductBySlug: Using home product data as fallback with proper mapping');
           return {
-            id: homeProduct.id,
+            id: homeProduct.id, // Keep the home_product ID for consistency
             category_name: homeProduct.category_name,
             category_image_url: homeProduct.image_url,
             alt_text: homeProduct.alt_text,
-            slug: homeProduct.slug
+            slug: homeProduct.slug,
+            // Add these for compatibility
+            product_name: homeProduct.category_name,
+            category_slug: homeProduct.slug
           } as ProductCategoryData;
         }
       }
