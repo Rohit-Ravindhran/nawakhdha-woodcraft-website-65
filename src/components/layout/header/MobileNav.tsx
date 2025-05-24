@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -11,7 +11,6 @@ interface MobileNavProps {
 
 const MobileNav = ({ products }: MobileNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProductsOpen, setIsProductsOpen] = useState(false);
   const location = useLocation();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -57,40 +56,15 @@ const MobileNav = ({ products }: MobileNavProps) => {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    onClick={() => setIsProductsOpen(!isProductsOpen)}
-                    className="flex items-center justify-between w-full text-base font-medium"
+                  <Link
+                    to="/products"
+                    className={cn(
+                      "block text-base font-medium",
+                      (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
+                    )}
                   >
-                    <span>Our Products</span>
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 transition-transform",
-                        isProductsOpen ? "rotate-180" : ""
-                      )}
-                    />
-                  </button>
-                  {isProductsOpen && (
-                    <ul className="mt-2 ml-4 space-y-2 max-h-[200px] overflow-y-auto">
-                      {products.map((product) => (
-                        <li key={product.path}>
-                          <Link
-                            to={product.path}
-                            className="block text-sm hover:text-primary"
-                          >
-                            {product.name}
-                          </Link>
-                        </li>
-                      ))}
-                      <li>
-                        <Link
-                          to="/products"
-                          className="block text-sm font-medium text-primary"
-                        >
-                          View All Products →
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
+                    Our Products
+                  </Link>
                 </li>
                 <li>
                   <Link
