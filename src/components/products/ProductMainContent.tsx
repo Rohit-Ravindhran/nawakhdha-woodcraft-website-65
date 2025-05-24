@@ -23,6 +23,15 @@ export function ProductMainContent({
   productSlug,
   galleryImages
 }: ProductMainContentProps) {
+  console.log('ProductMainContent: Rendering with data:', {
+    productName,
+    categoryName,
+    hasDescription: !!description,
+    descriptionLength: description?.length || 0,
+    productSlug,
+    hasFeaturedImage: !!featuredImage
+  });
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
       <div>
@@ -41,8 +50,6 @@ export function ProductMainContent({
             </div>
           )}
         </AspectRatio>
-        
-        {/* Removed the additional thumbnails section as requested */}
       </div>
       
       {/* Product Description */}
@@ -53,7 +60,7 @@ export function ProductMainContent({
           {description ? (
             <div dangerouslySetInnerHTML={{ __html: description }} />
           ) : (
-            <p>No description available for this product.</p>
+            <p className="text-gray-600 italic">No description available for this product. Please check the Product Details section in the admin panel to add a description.</p>
           )}
         </div>
         
@@ -61,12 +68,11 @@ export function ProductMainContent({
           <h3 className="text-lg font-medium mb-2">Product Details</h3>
           <ul className="space-y-2">
             <li><strong>Category:</strong> {categoryName}</li>
-            {productName && categoryName !== productName && (
-              <li><strong>Product Name:</strong> {productName}</li>
-            )}
+            <li><strong>Product Name:</strong> {productName}</li>
             {productSlug && (
               <li><strong>Slug:</strong> {productSlug}</li>
             )}
+            <li><strong>Description Status:</strong> {description ? 'Available' : 'Missing - Please add in admin panel'}</li>
           </ul>
         </div>
       </div>

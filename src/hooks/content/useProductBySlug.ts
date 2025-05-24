@@ -63,10 +63,34 @@ export function useProductBySlug(slug?: string) {
               .select('id, category_name, product_name')
               .limit(10);
               
-            console.log('useProductBySlug: Available categories:', {
+            console.log('useProductBySlug: Available categories for debugging:', {
               allCategories,
-              searchedFor: homeProduct.category_name
+              searchedFor: homeProduct.category_name,
+              availableCategoryNames: allCategories?.map(c => c.category_name)
             });
+            
+            // Try case-insensitive search
+            console.log('useProductBySlug: Trying case-insensitive category search...');
+            const { data: categoryDataInsensitive, error: catErrorInsensitive } = await supabase
+              .from('product_categories')
+              .select('*')
+              .ilike('category_name', homeProduct.category_name);
+              
+            console.log('useProductBySlug: Case-insensitive category lookup:', {
+              data: categoryDataInsensitive,
+              error: catErrorInsensitive
+            });
+            
+            if (!catErrorInsensitive && categoryDataInsensitive && categoryDataInsensitive.length > 0) {
+              const category = categoryDataInsensitive[0];
+              console.log('useProductBySlug: Found category with case-insensitive search:', category);
+              
+              return {
+                ...category,
+                slug: homeProduct.slug,
+                product_name: category.product_name || homeProduct.category_name
+              } as ProductCategoryData;
+            }
             
             // Return home product data as fallback category
             console.log('useProductBySlug: Using home product as fallback category');

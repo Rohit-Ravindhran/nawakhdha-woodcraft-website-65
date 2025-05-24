@@ -34,7 +34,7 @@ const ProductDetailPage: React.FC = () => {
   
   const isLoading = loadingCategory || loadingProductData;
   
-  console.log('ProductDetailPage: Current state:', {
+  console.log('ProductDetailPage: Current state analysis:', {
     slug,
     productCategory: productCategory ? {
       id: productCategory.id,
@@ -47,7 +47,8 @@ const ProductDetailPage: React.FC = () => {
       category_name: productData.category_name,
       product_name: productData.product_name,
       hasDescription: !!productData.description,
-      galleryCount: productData.gallery_images?.length || 0
+      galleryCount: productData.gallery_images?.length || 0,
+      dataSource: productData.description ? 'has_details' : 'category_only'
     } : null,
     isLoading,
     categoryError: categoryError?.message,
@@ -69,16 +70,19 @@ const ProductDetailPage: React.FC = () => {
     return <ProductNotFound />;
   }
 
-  // Use productData if available (has detailed info), otherwise fall back to productCategory
+  // Prioritize productData (from product_category_details) over productCategory
   const finalData = productData || productCategory;
   
+  // Get the correct data with priority to detailed information
   const categoryName = finalData.category_name || "";
   
-  // For product name, use the product_name from details if available
-  const productName = finalData.product_name || finalData.category_name || "";
+  // Product name priority: product_name from details > product_name from category > category_name
+  const productName = (productData?.product_name) || 
+                     (finalData.product_name) || 
+                     (finalData.category_name) || "";
   
-  // Use description from product details
-  const description = finalData.description || "";
+  // Description from product details (this is what was missing!)
+  const description = (productData?.description) || "";
   
   // Choose the first gallery image as featured, or fall back to category image
   const featuredImage = finalData.gallery_images?.length > 0 
@@ -89,22 +93,26 @@ const ProductDetailPage: React.FC = () => {
     ? finalData.gallery_images[0].alt
     : finalData.alt_text;
     
-  // SEO metadata
-  const seoTitle = finalData.seo_title || productName;
-  const seoDescription = finalData.seo_description || description.substring(0, 160);
-  const seoKeywords = finalData.seo_keywords || '';
+  // SEO metadata - prioritize from product details
+  const seoTitle = (productData?.seo_title) || finalData.seo_title || productName;
+  const seoDescription = (productData?.seo_description) || finalData.seo_description || description.substring(0, 160);
+  const seoKeywords = (productData?.seo_keywords) || finalData.seo_keywords || '';
   
   // Gallery images
   const galleryImages = finalData.gallery_images || [];
   
-  console.log('ProductDetailPage: Rendering product with final data:', {
+  console.log('ProductDetailPage: Final data for rendering:', {
     categoryName,
     productName,
     hasDescription: !!description,
+    descriptionLength: description.length,
     galleryCount: galleryImages.length,
     hasFeaturedImage: !!featuredImage,
-    dataSource: productData ? 'productData' : 'productCategory',
-    finalDataId: finalData.id
+    dataSource: productData ? 'productData_with_details' : 'productCategory_only',
+    finalDataId: finalData.id,
+    productDataExists: !!productData,
+    productDataHasDescription: !!(productData?.description),
+    productDataProductName: productData?.product_name
   });
   
   return (
