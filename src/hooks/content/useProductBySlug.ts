@@ -14,7 +14,7 @@ export function useProductBySlug(slug?: string) {
       
       console.log('useProductBySlug: Searching for slug:', slug);
       
-      // Enhanced debugging: First try to find by home_products slug
+      // First try to find by home_products slug
       console.log('useProductBySlug: Querying home_products table...');
       const { data: homeProductData, error: homeProductError } = await supabase
         .from('home_products')
@@ -31,8 +31,7 @@ export function useProductBySlug(slug?: string) {
         const homeProduct = homeProductData[0];
         console.log('useProductBySlug: Found home product:', homeProduct);
         
-        // We found a match in home_products
-        // Now get the corresponding product category by category_name (not ID)
+        // Look for matching category by category_name
         if (homeProduct.category_name) {
           console.log('useProductBySlug: Looking for category with name:', homeProduct.category_name);
           
@@ -50,42 +49,41 @@ export function useProductBySlug(slug?: string) {
           if (!catError && categoryData && categoryData.length > 0) {
             const category = categoryData[0];
             console.log('useProductBySlug: Found matching category:', category);
+            
             // Return the category data with the slug from home_products
             return {
               ...category,
-              slug: homeProduct.slug
+              slug: homeProduct.slug,
+              product_name: category.product_name || homeProduct.category_name
+            } as ProductCategoryData;
+          } else {
+            // Debug: Show available categories
+            const { data: allCategories } = await supabase
+              .from('product_categories')
+              .select('id, category_name, product_name')
+              .limit(10);
+              
+            console.log('useProductBySlug: Available categories:', {
+              allCategories,
+              searchedFor: homeProduct.category_name
+            });
+            
+            // Return home product data as fallback category
+            console.log('useProductBySlug: Using home product as fallback category');
+            return {
+              id: homeProduct.id,
+              category_name: homeProduct.category_name,
+              category_image_url: homeProduct.image_url,
+              alt_text: homeProduct.alt_text,
+              slug: homeProduct.slug,
+              product_name: homeProduct.category_name,
+              category_slug: homeProduct.slug
             } as ProductCategoryData;
           }
-          
-          // Additional debugging: Let's see what categories exist
-          const { data: allCategories, error: allCatError } = await supabase
-            .from('product_categories')
-            .select('id, category_name')
-            .limit(10);
-            
-          console.log('useProductBySlug: Available categories in database:', {
-            allCategories,
-            error: allCatError,
-            searchedFor: homeProduct.category_name
-          });
-          
-          // If we can't find a matching category, return the home product data
-          // with some properties mapped to match ProductCategoryData interface
-          console.log('useProductBySlug: Using home product data as fallback with proper mapping');
-          return {
-            id: homeProduct.id, // Keep the home_product ID for consistency
-            category_name: homeProduct.category_name,
-            category_image_url: homeProduct.image_url,
-            alt_text: homeProduct.alt_text,
-            slug: homeProduct.slug,
-            // Add these for compatibility
-            product_name: homeProduct.category_name,
-            category_slug: homeProduct.slug
-          } as ProductCategoryData;
         }
       }
       
-      // If we didn't find a home product by slug, try product categories
+      // Try product_categories by category_slug
       console.log('useProductBySlug: Trying product_categories by category_slug...');
       const { data: categoryBySlug, error: slugError } = await supabase
         .from('product_categories')
@@ -103,7 +101,7 @@ export function useProductBySlug(slug?: string) {
         return categoryBySlug[0] as ProductCategoryData;
       }
       
-      // Finally, try by ID (for backwards compatibility)
+      // Try by UUID if it looks like one
       if (slug && slug.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
         console.log('useProductBySlug: Trying as UUID in product_categories...');
         const { data: categoryById, error: idError } = await supabase
@@ -124,33 +122,10 @@ export function useProductBySlug(slug?: string) {
       }
       
       console.log('useProductBySlug: No product found for slug:', slug);
-      
-      // Final debugging: Show what's available in both tables
-      const { data: allHomeProducts } = await supabase
-        .from('home_products')
-        .select('id, slug, category_name')
-        .limit(5);
-        
-      const { data: allProductCategories } = await supabase
-        .from('product_categories')
-        .select('id, category_name, category_slug')
-        .limit(5);
-        
-      console.log('useProductBySlug: Debug - Available data:', {
-        homeProducts: allHomeProducts,
-        productCategories: allProductCategories,
-        searchedSlug: slug
-      });
-      
       return null;
     },
     enabled: !!slug,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    retry: (failureCount, error) => {
-      console.log('useProductBySlug: Retry attempt:', failureCount, 'Error:', error);
-      // Don't retry if it's a not found error
-      if (error?.message?.includes('not found')) return false;
-      return failureCount < 2;
-    }
+    staleTime: 5 * 60 * 1000,
+    retry: false // Disable retry for faster debugging
   });
 }

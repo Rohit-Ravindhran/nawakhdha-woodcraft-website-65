@@ -29,7 +29,7 @@ const ProductDetailPage: React.FC = () => {
     isLoading: loadingProductData,
     error: productDataError 
   } = useProductDetail(productCategory?.id, {
-    enabled: !!productCategory?.id // Only fetch when ID exists
+    enabled: !!productCategory?.id
   });
   
   const isLoading = loadingCategory || loadingProductData;
@@ -39,14 +39,15 @@ const ProductDetailPage: React.FC = () => {
     productCategory: productCategory ? {
       id: productCategory.id,
       category_name: productCategory.category_name,
-      hasSlug: !!productCategory.slug,
-      product_name: productCategory.product_name
+      product_name: productCategory.product_name,
+      hasSlug: !!productCategory.slug
     } : null,
     productData: productData ? {
-      hasDescription: !!productData.description,
-      galleryCount: productData.gallery_images?.length || 0,
+      id: productData.id,
+      category_name: productData.category_name,
       product_name: productData.product_name,
-      category_id: productData.category_id
+      hasDescription: !!productData.description,
+      galleryCount: productData.gallery_images?.length || 0
     } : null,
     isLoading,
     categoryError: categoryError?.message,
@@ -58,64 +59,52 @@ const ProductDetailPage: React.FC = () => {
     return <ProductLoading />;
   }
 
-  // Enhanced error handling - check both category and product data errors
   if (categoryError || productDataError) {
     console.error('ProductDetailPage: Error occurred:', { categoryError, productDataError });
     return <ProductNotFound />;
   }
 
-  // Data hydration guard - ensure we have the basic category data
   if (!productCategory) {
     console.log('ProductDetailPage: No product category found for slug:', slug);
     return <ProductNotFound />;
   }
 
-  // Enhanced data extraction with proper fallback logic
-  const categoryName = productCategory.category_name || "";
+  // Use productData if available (has detailed info), otherwise fall back to productCategory
+  const finalData = productData || productCategory;
   
-  // For product name, prioritize this order:
-  // 1. product_name from productData (product_category_details)
-  // 2. product_name from productCategory
-  // 3. category_name as fallback
-  const productName = productData?.product_name || productCategory.product_name || categoryName;
+  const categoryName = finalData.category_name || "";
   
-  // For description, prioritize productData description over category description
-  const description = productData?.description || productCategory.description || "";
+  // For product name, use the product_name from details if available
+  const productName = finalData.product_name || finalData.category_name || "";
+  
+  // Use description from product details
+  const description = finalData.description || "";
   
   // Choose the first gallery image as featured, or fall back to category image
-  const featuredImage = productData?.gallery_images?.length > 0 
-    ? productData.gallery_images[0].url 
-    : productCategory.category_image_url;
+  const featuredImage = finalData.gallery_images?.length > 0 
+    ? finalData.gallery_images[0].url 
+    : finalData.category_image_url;
     
-  const featuredImageAlt = productData?.gallery_images?.length > 0
-    ? productData.gallery_images[0].alt
-    : productCategory.alt_text;
+  const featuredImageAlt = finalData.gallery_images?.length > 0
+    ? finalData.gallery_images[0].alt
+    : finalData.alt_text;
     
-  // SEO metadata - prioritize productData, fallback to category
-  const seoTitle = productData?.seo_title || productCategory.seo_title || productName;
-  const seoDescription = productData?.seo_description || productCategory.seo_description || description.substring(0, 160);
-  const seoKeywords = productData?.seo_keywords || productCategory.seo_keywords || '';
+  // SEO metadata
+  const seoTitle = finalData.seo_title || productName;
+  const seoDescription = finalData.seo_description || description.substring(0, 160);
+  const seoKeywords = finalData.seo_keywords || '';
   
-  // Gallery images with fallback handling
-  const galleryImages = productData?.gallery_images ? [...productData.gallery_images] : [];
+  // Gallery images
+  const galleryImages = finalData.gallery_images || [];
   
-  // Sort images by position if available
-  galleryImages.sort((a, b) => {
-    if (a.position !== undefined && b.position !== undefined) {
-      return a.position - b.position;
-    }
-    return 0;
-  });
-  
-  console.log('ProductDetailPage: Rendering product with data:', {
+  console.log('ProductDetailPage: Rendering product with final data:', {
     categoryName,
     productName,
     hasDescription: !!description,
     galleryCount: galleryImages.length,
     hasFeaturedImage: !!featuredImage,
-    categoryId: productCategory.id,
-    productDataId: productData?.id,
-    hasProductDetails: !!productData
+    dataSource: productData ? 'productData' : 'productCategory',
+    finalDataId: finalData.id
   });
   
   return (
@@ -143,7 +132,7 @@ const ProductDetailPage: React.FC = () => {
             productName={productName}
             description={description}
             categoryName={categoryName}
-            productSlug={productCategory.slug}
+            productSlug={finalData.slug}
           />
           
           {galleryImages.length > 0 && (
