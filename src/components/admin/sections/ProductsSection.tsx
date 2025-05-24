@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -144,6 +143,7 @@ export default function ProductsSection({ control, isOpen, onToggle, watch, setV
                     imagePreviewHeight="24"
                   />
                 </div>
+                
                 
                 <FormItem>
                   <FormLabel>Product Title</FormLabel>

@@ -18,7 +18,6 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import SeoFields from "@/components/admin/SeoFields";
 import ProductGalleryManager from "@/components/admin/ProductGalleryManager";
-import { GalleryImage } from "@/components/admin/schemas/productSchema";
 
 // Define image interface to align with ProductGalleryManager
 interface Image {
@@ -26,6 +25,7 @@ interface Image {
   url: string;
   alt?: string;
   caption?: string;
+  position?: number;
 }
 
 // Define the form schema for category editing
@@ -131,7 +131,7 @@ export default function CategoryEditor({ categoryName, onSave }: CategoryEditorP
           <ProductGalleryManager
             images={galleryImages}
             onChange={setGalleryImages}
-            bucket="categories"
+            bucket="product-gallery"
             folder={categoryName ? `category-${categoryName}` : "new-category"}
           />
         </div>
