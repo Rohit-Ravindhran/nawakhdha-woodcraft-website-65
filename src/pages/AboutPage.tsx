@@ -1,44 +1,28 @@
+
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AboutTeamMemberData } from "@/hooks/content/types";
 
-interface TeamMember {
-  id: string;
-  name: string | null;
-  role: string | null;
-  bio: string | null;
-  image_url: string | null;
-  alt_text: string | null;
-}
-
 const AboutPage = () => {
-  const [teamMembers, setTeamMembers] = useState<AboutTeamMemberData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: teamMembers, isLoading } = useQuery({
+    queryKey: ["about_team"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("about_team")
+        .select("*")
+        .order("id");
 
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      try {
-        const { data, error } = await supabase.from("about_team").select("*");
+      if (error) throw error;
+      return data as AboutTeamMemberData[];
+    },
+  });
 
-        if (error) {
-          throw error;
-        }
-
-        setTeamMembers(data || []);
-      } catch (error) {
-        console.error("Error fetching team members:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTeamMembers();
-  }, []);
-
+  // Fallback team data for when no data exists in admin panel
   const defaultTeam = [
     {
       id: "1",
@@ -66,7 +50,7 @@ const AboutPage = () => {
     },
   ];
 
-  const teamToDisplay = teamMembers.length > 0 ? teamMembers : defaultTeam;
+  const teamToDisplay = teamMembers && teamMembers.length > 0 ? teamMembers : defaultTeam;
 
   return (
     <>
@@ -263,7 +247,7 @@ const AboutPage = () => {
               variant="outline"
               className="border-white text-white hover:bg-white/10"
             >
-              <Link to="/category">Browse Our Collections</Link>
+              <Link to="/products">Browse Our Collections</Link>
             </Button>
           </div>
         </div>
