@@ -56,7 +56,7 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
           homeProductRecord = homeProductData[0];
           console.log('useProductDetail: Found home product by ID:', homeProductRecord);
           
-          // Step 3: Find matching category by category_name from home_products
+          // Step 3: Enhanced category matching by category_name from home_products
           if (homeProductRecord.category_name) {
             console.log('useProductDetail: Looking for category by name:', homeProductRecord.category_name);
             
@@ -94,19 +94,24 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
                 actualCategoryId = categoryRecord.id;
                 console.log('useProductDetail: Found category with case-insensitive search, actualCategoryId:', actualCategoryId);
               } else {
-                // Try partial matching - remove "Custom" prefix and other common words
-                const cleanedName = homeProductRecord.category_name
-                  .replace(/^(Custom|Designer|Modern|Luxury|Premium)\s+/i, '')
+                // Enhanced partial matching with multiple strategies
+                const originalName = homeProductRecord.category_name;
+                console.log('useProductDetail: Trying enhanced partial matching for:', originalName);
+                
+                // Strategy 1: Remove common prefixes/suffixes
+                const cleanedName = originalName
+                  .replace(/^(Custom|Designer|Modern|Luxury|Premium|Traditional|Classic|Contemporary)\s+/i, '')
+                  .replace(/\s+(Design|Designs|Style|Styles|Collection)$/i, '')
                   .trim();
                 
-                console.log('useProductDetail: Trying partial match with cleaned name:', cleanedName);
+                console.log('useProductDetail: Strategy 1 - Cleaned name:', cleanedName);
                 
-                const { data: categoryPartial, error: categoryPartialError } = await supabase
+                let { data: categoryPartial, error: categoryPartialError } = await supabase
                   .from('product_categories')
                   .select('*')
                   .ilike('category_name', `%${cleanedName}%`);
                   
-                console.log('useProductDetail: Partial category search:', {
+                console.log('useProductDetail: Strategy 1 partial search result:', {
                   data: categoryPartial,
                   error: categoryPartialError,
                   cleanedName: cleanedName
@@ -115,7 +120,72 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
                 if (categoryPartial && categoryPartial.length > 0) {
                   categoryRecord = categoryPartial[0];
                   actualCategoryId = categoryRecord.id;
-                  console.log('useProductDetail: Found category with partial match, actualCategoryId:', actualCategoryId);
+                  console.log('useProductDetail: Found category with Strategy 1, actualCategoryId:', actualCategoryId);
+                } else {
+                  // Strategy 2: Word-by-word matching
+                  const words = originalName.split(/\s+/).filter(word => word.length > 2);
+                  console.log('useProductDetail: Strategy 2 - Extracted words:', words);
+                  
+                  for (const word of words) {
+                    console.log('useProductDetail: Strategy 2 - Trying word:', word);
+                    const { data: wordMatch, error: wordError } = await supabase
+                      .from('product_categories')
+                      .select('*')
+                      .ilike('category_name', `%${word}%`);
+                      
+                    console.log('useProductDetail: Strategy 2 word match result:', {
+                      word,
+                      data: wordMatch,
+                      error: wordError
+                    });
+                    
+                    if (wordMatch && wordMatch.length > 0) {
+                      categoryRecord = wordMatch[0];
+                      actualCategoryId = categoryRecord.id;
+                      console.log('useProductDetail: Found category with Strategy 2 (word match), actualCategoryId:', actualCategoryId);
+                      break;
+                    }
+                  }
+                  
+                  // Strategy 3: Fuzzy matching for common variations
+                  if (!categoryRecord) {
+                    console.log('useProductDetail: Strategy 3 - Trying fuzzy matching...');
+                    const fuzzyMappings = {
+                      'patio furniture': ['outdoor', 'garden', 'patio'],
+                      'western wooden doors': ['doors', 'wooden doors', 'modern design doors'],
+                      'western design doors': ['doors', 'wooden doors', 'modern design doors'],
+                      'wardrobes': ['wardrobe', 'closets', 'walk-in closets']
+                    };
+                    
+                    const lowerOriginal = originalName.toLowerCase();
+                    for (const [key, variations] of Object.entries(fuzzyMappings)) {
+                      if (lowerOriginal.includes(key.toLowerCase())) {
+                        console.log('useProductDetail: Strategy 3 - Found fuzzy mapping for:', key);
+                        
+                        for (const variation of variations) {
+                          console.log('useProductDetail: Strategy 3 - Trying variation:', variation);
+                          const { data: fuzzyMatch, error: fuzzyError } = await supabase
+                            .from('product_categories')
+                            .select('*')
+                            .ilike('category_name', `%${variation}%`);
+                            
+                          console.log('useProductDetail: Strategy 3 fuzzy match result:', {
+                            variation,
+                            data: fuzzyMatch,
+                            error: fuzzyError
+                          });
+                          
+                          if (fuzzyMatch && fuzzyMatch.length > 0) {
+                            categoryRecord = fuzzyMatch[0];
+                            actualCategoryId = categoryRecord.id;
+                            console.log('useProductDetail: Found category with Strategy 3 (fuzzy), actualCategoryId:', actualCategoryId);
+                            break;
+                          }
+                        }
+                        if (categoryRecord) break;
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -229,7 +299,8 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
         finalProductName: detailData?.product_name || categoryRecord.product_name || categoryRecord.category_name,
         dataSource: detailData ? 'product_category_details' : 'category_only',
         descriptionFromDetails: detailData?.description || 'No description found',
-        partialMatchUsed: !!actualCategoryId && actualCategoryId !== productId
+        partialMatchUsed: !!actualCategoryId && actualCategoryId !== productId,
+        matchingStrategy: detailData ? 'successful_match' : 'synthetic_fallback'
       });
       
       return result;
