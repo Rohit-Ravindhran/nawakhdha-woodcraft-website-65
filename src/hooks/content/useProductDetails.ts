@@ -16,7 +16,11 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
       
       console.log('useProductDetail: Fetching details for productId:', productId);
       
-      // Step 1: Get category data by ID first
+      let categoryRecord = null;
+      let homeProductRecord = null;
+      let actualCategoryId = null;
+      
+      // Step 1: Try to get category data by ID first
       console.log('useProductDetail: Step 1 - Querying product_categories by ID...');
       const { data: categoryData, error: categoryError } = await supabase
         .from('product_categories')
@@ -29,16 +33,14 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
         searchingForId: productId
       });
 
-      let categoryRecord = null;
-      let homeProductRecord = null;
-      
       if (categoryData && categoryData.length > 0) {
         categoryRecord = categoryData[0];
+        actualCategoryId = categoryRecord.id;
         console.log('useProductDetail: Found category by ID:', categoryRecord);
       } else {
+        // Step 2: Try to find by home_products ID
         console.log('useProductDetail: No category found by ID, trying home_products...');
         
-        // Step 2: Try to find by home_products ID
         const { data: homeProductData, error: homeProductError } = await supabase
           .from('home_products')
           .select('*')
@@ -54,7 +56,7 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
           homeProductRecord = homeProductData[0];
           console.log('useProductDetail: Found home product by ID:', homeProductRecord);
           
-          // Step 3: Try to find matching category by category_name
+          // Step 3: Find matching category by category_name from home_products
           if (homeProductRecord.category_name) {
             console.log('useProductDetail: Looking for category by name:', homeProductRecord.category_name);
             
@@ -71,7 +73,8 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
             
             if (categoryByName && categoryByName.length > 0) {
               categoryRecord = categoryByName[0];
-              console.log('useProductDetail: Found category by name:', categoryRecord);
+              actualCategoryId = categoryRecord.id;
+              console.log('useProductDetail: Found category by name, actualCategoryId:', actualCategoryId);
             } else {
               // Try case-insensitive search
               console.log('useProductDetail: Trying case-insensitive category search...');
@@ -87,7 +90,8 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
               
               if (categoryInsensitive && categoryInsensitive.length > 0) {
                 categoryRecord = categoryInsensitive[0];
-                console.log('useProductDetail: Found category with case-insensitive search:', categoryRecord);
+                actualCategoryId = categoryRecord.id;
+                console.log('useProductDetail: Found category with case-insensitive search, actualCategoryId:', actualCategoryId);
               }
             }
           }
@@ -105,64 +109,54 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
           category_slug: productId,
           product_name: homeProductRecord.category_name
         };
+        // For synthetic categories, we can't fetch details since there's no real category_id
+        actualCategoryId = null;
         console.log('useProductDetail: Created synthetic category:', categoryRecord);
       }
       
       if (!categoryRecord) {
-        console.log('useProductDetail: No category data found - checking RLS policies');
-        
-        // Debug RLS by checking current user
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        console.log('useProductDetail: Current user for RLS debugging:', {
-          user: user ? { id: user.id, email: user.email } : null,
-          error: userError
-        });
-        
-        // Try to get any categories to check RLS
-        const { data: anyCategoriesTest, error: anyCategoriesError } = await supabase
-          .from('product_categories')
-          .select('id, category_name')
-          .limit(5);
-          
-        console.log('useProductDetail: RLS test - any categories accessible:', {
-          data: anyCategoriesTest,
-          error: anyCategoriesError,
-          count: anyCategoriesTest?.length || 0
-        });
-        
+        console.log('useProductDetail: No category data found');
         return null;
       }
       
-      // Step 5: Get product details using the category ID
-      const searchCategoryId = categoryRecord.id;
-      console.log('useProductDetail: Step 5 - Fetching product_category_details for category:', searchCategoryId);
+      let detailData = null;
       
-      const { data: detailData, error: detailError } = await supabase
-        .from('product_category_details')
-        .select('*')
-        .eq('category_id', searchCategoryId)
-        .maybeSingle();
+      // Step 5: Get product details using the ACTUAL category ID (not home product ID)
+      if (actualCategoryId) {
+        console.log('useProductDetail: Step 5 - Fetching product_category_details for ACTUAL category ID:', actualCategoryId);
         
-      console.log('useProductDetail: Detail query result:', {
-        data: detailData,
-        error: detailError,
-        categoryId: searchCategoryId,
-        hasDescription: !!detailData?.description,
-        hasProductName: !!detailData?.product_name
-      });
+        const { data: detailDataResult, error: detailError } = await supabase
+          .from('product_category_details')
+          .select('*')
+          .eq('category_id', actualCategoryId)
+          .maybeSingle();
+          
+        console.log('useProductDetail: Detail query result:', {
+          data: detailDataResult,
+          error: detailError,
+          actualCategoryId: actualCategoryId,
+          hasDescription: !!detailDataResult?.description,
+          hasProductName: !!detailDataResult?.product_name
+        });
+        
+        detailData = detailDataResult;
+      } else {
+        console.log('useProductDetail: Skipping product_category_details fetch - no actual category ID');
+      }
       
       // Step 6: Get gallery images
-      console.log('useProductDetail: Step 6 - Fetching product_gallery for category:', searchCategoryId);
+      const gallerySearchId = actualCategoryId || categoryRecord.id;
+      console.log('useProductDetail: Step 6 - Fetching product_gallery for category:', gallerySearchId);
       const { data: galleryData, error: galleryError } = await supabase
         .from('product_gallery')
         .select('*')
-        .eq('category_id', searchCategoryId)
+        .eq('category_id', gallerySearchId)
         .order('position', { ascending: true });
         
       console.log('useProductDetail: Gallery query result:', {
         data: galleryData,
         error: galleryError,
-        categoryId: searchCategoryId,
+        categoryId: gallerySearchId,
         galleryCount: galleryData?.length || 0
       });
       
@@ -206,8 +200,10 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
         categoryName: result.category_name,
         productName: result.product_name,
         hasDescription: !!result.description,
+        actualCategoryIdUsed: actualCategoryId,
         finalProductName: detailData?.product_name || categoryRecord.product_name || categoryRecord.category_name,
-        dataSource: detailData ? 'product_category_details' : 'category_only'
+        dataSource: detailData ? 'product_category_details' : 'category_only',
+        descriptionFromDetails: detailData?.description || 'No description found'
       });
       
       return result;

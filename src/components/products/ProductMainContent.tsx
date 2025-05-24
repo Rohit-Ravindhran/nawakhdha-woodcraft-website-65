@@ -69,10 +69,6 @@ export function ProductMainContent({
           <ul className="space-y-2">
             <li><strong>Category:</strong> {categoryName}</li>
             <li><strong>Product Name:</strong> {productName}</li>
-            {productSlug && (
-              <li><strong>Slug:</strong> {productSlug}</li>
-            )}
-            <li><strong>Description Status:</strong> {description ? 'Available' : 'Missing - Please add in admin panel'}</li>
           </ul>
         </div>
       </div>
