@@ -34,10 +34,17 @@ const ProductDetailPage: React.FC = () => {
   
   const isLoading = loadingCategory || loadingProductData;
   
-  console.log('ProductDetailPage: State:', {
+  console.log('ProductDetailPage: Current state:', {
     slug,
-    productCategory: productCategory?.id,
-    productData: !!productData,
+    productCategory: productCategory ? {
+      id: productCategory.id,
+      category_name: productCategory.category_name,
+      hasSlug: !!productCategory.slug
+    } : null,
+    productData: productData ? {
+      hasDescription: !!productData.description,
+      galleryCount: productData.gallery_images?.length || 0
+    } : null,
     isLoading,
     categoryError: categoryError?.message,
     productDataError: productDataError?.message
@@ -56,7 +63,7 @@ const ProductDetailPage: React.FC = () => {
 
   // Data hydration guard - ensure we have the basic category data
   if (!productCategory) {
-    console.log('ProductDetailPage: No product category found');
+    console.log('ProductDetailPage: No product category found for slug:', slug);
     return <ProductNotFound />;
   }
 
@@ -90,12 +97,13 @@ const ProductDetailPage: React.FC = () => {
     return 0;
   });
   
-  console.log('ProductDetailPage: Rendering product:', {
+  console.log('ProductDetailPage: Rendering product with data:', {
     categoryName,
     productName,
     hasDescription: !!description,
     galleryCount: galleryImages.length,
-    hasFeaturedImage: !!featuredImage
+    hasFeaturedImage: !!featuredImage,
+    categoryId: productCategory.id
   });
   
   return (
