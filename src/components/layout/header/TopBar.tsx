@@ -9,11 +9,11 @@ const TopBar = () => {
       </div>
       <div className="flex items-center gap-4">
         <a
-          href="tel:+97337777777"
+          href="tel:+97333133750"
           className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
         >
           <Phone className="h-3 w-3" />
-          <span>+973 1777 7777</span>
+          <span>+973 3313 3750</span>
         </a>
       </div>
     </div>
