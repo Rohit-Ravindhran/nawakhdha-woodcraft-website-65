@@ -9,48 +9,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { AboutTeamMemberData } from "@/hooks/content/types";
 
 const AboutPage = () => {
-  const { data: teamMembers, isLoading } = useQuery({
+  const { data: teamMembers, isLoading, error } = useQuery({
     queryKey: ["about_team"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("about_team")
         .select("*")
-        .order("id");
+        .order("id", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Failed to fetch team:", error);
+        throw error;
+      }
       return data as AboutTeamMemberData[];
     },
   });
-
-  // Fallback team data for when no data exists in admin panel
-  const defaultTeam = [
-    {
-      id: "1",
-      name: "Adnan Al Hamar",
-      role: "Founder & Managing Director",
-      bio: "Founding Al Nawakhdha in 1975, Adnan brings over 50 years of expertise in furniture craftsmanship and wooden design.",
-      image_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format",
-      alt_text: "Adnan Al Hamar - Founder & Managing Director",
-    },
-    {
-      id: "2",
-      name: "Fatima Al Hamar",
-      role: "Design Director",
-      bio: "Leading our design team with innovative vision and an exceptional eye for detail in custom furniture creation.",
-      image_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format",
-      alt_text: "Fatima Al Hamar - Design Director",
-    },
-    {
-      id: "3",
-      name: "Mohammed Al Hamar",
-      role: "Operations Manager",
-      bio: "Overseeing workshop operations and ensuring the highest standards of quality in every project we undertake.",
-      image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format",
-      alt_text: "Mohammed Al Hamar - Operations Manager",
-    },
-  ];
-
-  const teamToDisplay = teamMembers && teamMembers.length > 0 ? teamMembers : defaultTeam;
 
   return (
     <>
@@ -196,8 +169,16 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {isLoading ? (
               <div className="col-span-3 text-center py-12">Loading team members...</div>
+            ) : error ? (
+              <div className="col-span-3 text-center py-12 text-red-600">
+                Failed to load team members. Please try again later.
+              </div>
+            ) : !teamMembers || teamMembers.length === 0 ? (
+              <div className="col-span-3 text-center py-12">
+                No team members found. Please add them via the Admin Panel.
+              </div>
             ) : (
-              teamToDisplay.map((member) => (
+              teamMembers.map((member) => (
                 <div
                   key={member.id}
                   className="bg-white p-6 rounded-lg shadow-sm border border-border text-center"
@@ -208,6 +189,9 @@ const AboutPage = () => {
                         src={member.image_url || "https://placehold.co/400x400"}
                         alt={member.alt_text || `${member.name} - ${member.role}`}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://placehold.co/400x400";
+                        }}
                       />
                     </div>
                     <figcaption>
