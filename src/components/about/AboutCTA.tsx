@@ -21,7 +21,7 @@ const AboutCTA = () => {
           <Button
             asChild
             variant="outline"
-            className="border-white text-white hover:bg-white/10"
+            className="border-white bg-white text-wood-dark hover:bg-white/90"
           >
             <Link to="/products">Browse Our Collections</Link>
           </Button>

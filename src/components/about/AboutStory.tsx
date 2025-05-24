@@ -43,7 +43,10 @@ const AboutStory = () => {
               </p>
 
               <div className="mt-8">
-                <Button asChild>
+                <Button 
+                  asChild
+                  className="bg-primary text-white hover:bg-primary/90"
+                >
                   <Link to="/contact">Get in Touch</Link>
                 </Button>
               </div>
