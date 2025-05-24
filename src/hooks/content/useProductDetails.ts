@@ -60,7 +60,20 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
           if (homeProductRecord.category_name) {
             console.log('useProductDetail: Looking for category by name:', homeProductRecord.category_name);
             
-            // First try exact match
+            // Create specific mapping for known mismatches
+            const categoryMappings = {
+              'Outdoor Wooden Furniture': 'Outdoor Furniture',
+              'Western Wooden Doors': 'Modern Design Doors',
+              'Western Design Doors': 'Modern Design Doors'
+            };
+            
+            const mappedCategoryName = categoryMappings[homeProductRecord.category_name] || homeProductRecord.category_name;
+            console.log('useProductDetail: Mapped category name:', {
+              original: homeProductRecord.category_name,
+              mapped: mappedCategoryName
+            });
+            
+            // First try exact match with original name
             const { data: categoryByName, error: categoryByNameError } = await supabase
               .from('product_categories')
               .select('*')
@@ -76,8 +89,29 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
               categoryRecord = categoryByName[0];
               actualCategoryId = categoryRecord.id;
               console.log('useProductDetail: Found category by exact name, actualCategoryId:', actualCategoryId);
-            } else {
-              // Try case-insensitive search
+            } else if (mappedCategoryName !== homeProductRecord.category_name) {
+              // Try with mapped name
+              console.log('useProductDetail: Trying mapped category name:', mappedCategoryName);
+              const { data: categoryByMapped, error: categoryByMappedError } = await supabase
+                .from('product_categories')
+                .select('*')
+                .eq('category_name', mappedCategoryName);
+                
+              console.log('useProductDetail: Category by mapped name lookup:', {
+                data: categoryByMapped,
+                error: categoryByMappedError,
+                mappedName: mappedCategoryName
+              });
+              
+              if (categoryByMapped && categoryByMapped.length > 0) {
+                categoryRecord = categoryByMapped[0];
+                actualCategoryId = categoryRecord.id;
+                console.log('useProductDetail: Found category by mapped name, actualCategoryId:', actualCategoryId);
+              }
+            }
+            
+            // If still no match, try case-insensitive search
+            if (!categoryRecord) {
               console.log('useProductDetail: Trying case-insensitive category search...');
               const { data: categoryInsensitive, error: categoryInsensitiveError } = await supabase
                 .from('product_categories')
@@ -93,97 +127,92 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
                 categoryRecord = categoryInsensitive[0];
                 actualCategoryId = categoryRecord.id;
                 console.log('useProductDetail: Found category with case-insensitive search, actualCategoryId:', actualCategoryId);
-              } else {
-                // Enhanced partial matching with multiple strategies
-                const originalName = homeProductRecord.category_name;
-                console.log('useProductDetail: Trying enhanced partial matching for:', originalName);
+              }
+            }
+            
+            // If still no match, try smart partial matching (more restrictive)
+            if (!categoryRecord) {
+              const originalName = homeProductRecord.category_name;
+              console.log('useProductDetail: Trying smart partial matching for:', originalName);
+              
+              // Strategy 1: Look for key category words with higher specificity
+              const keywordMappings = {
+                'outdoor wooden furniture': ['Outdoor Furniture'],
+                'wardrobes': ['Wardrobes'],
+                'western wooden doors': ['Modern Design Doors'],
+                'western design doors': ['Modern Design Doors']
+              };
+              
+              const lowerOriginal = originalName.toLowerCase();
+              const matchingKeywords = keywordMappings[lowerOriginal];
+              
+              if (matchingKeywords) {
+                console.log('useProductDetail: Found keyword mapping for:', lowerOriginal, 'trying:', matchingKeywords);
                 
-                // Strategy 1: Remove common prefixes/suffixes
-                const cleanedName = originalName
-                  .replace(/^(Custom|Designer|Modern|Luxury|Premium|Traditional|Classic|Contemporary)\s+/i, '')
-                  .replace(/\s+(Design|Designs|Style|Styles|Collection)$/i, '')
-                  .trim();
-                
-                console.log('useProductDetail: Strategy 1 - Cleaned name:', cleanedName);
-                
-                let { data: categoryPartial, error: categoryPartialError } = await supabase
-                  .from('product_categories')
-                  .select('*')
-                  .ilike('category_name', `%${cleanedName}%`);
-                  
-                console.log('useProductDetail: Strategy 1 partial search result:', {
-                  data: categoryPartial,
-                  error: categoryPartialError,
-                  cleanedName: cleanedName
-                });
-                
-                if (categoryPartial && categoryPartial.length > 0) {
-                  categoryRecord = categoryPartial[0];
-                  actualCategoryId = categoryRecord.id;
-                  console.log('useProductDetail: Found category with Strategy 1, actualCategoryId:', actualCategoryId);
-                } else {
-                  // Strategy 2: Word-by-word matching
-                  const words = originalName.split(/\s+/).filter(word => word.length > 2);
-                  console.log('useProductDetail: Strategy 2 - Extracted words:', words);
-                  
-                  for (const word of words) {
-                    console.log('useProductDetail: Strategy 2 - Trying word:', word);
-                    const { data: wordMatch, error: wordError } = await supabase
-                      .from('product_categories')
-                      .select('*')
-                      .ilike('category_name', `%${word}%`);
-                      
-                    console.log('useProductDetail: Strategy 2 word match result:', {
-                      word,
-                      data: wordMatch,
-                      error: wordError
-                    });
+                for (const keyword of matchingKeywords) {
+                  const { data: keywordMatch, error: keywordError } = await supabase
+                    .from('product_categories')
+                    .select('*')
+                    .ilike('category_name', `%${keyword}%`);
                     
-                    if (wordMatch && wordMatch.length > 0) {
-                      categoryRecord = wordMatch[0];
-                      actualCategoryId = categoryRecord.id;
-                      console.log('useProductDetail: Found category with Strategy 2 (word match), actualCategoryId:', actualCategoryId);
-                      break;
-                    }
+                  console.log('useProductDetail: Keyword match result:', {
+                    keyword,
+                    data: keywordMatch,
+                    error: keywordError
+                  });
+                  
+                  if (keywordMatch && keywordMatch.length > 0) {
+                    categoryRecord = keywordMatch[0];
+                    actualCategoryId = categoryRecord.id;
+                    console.log('useProductDetail: Found category with keyword mapping, actualCategoryId:', actualCategoryId);
+                    break;
                   }
-                  
-                  // Strategy 3: Fuzzy matching for common variations
-                  if (!categoryRecord) {
-                    console.log('useProductDetail: Strategy 3 - Trying fuzzy matching...');
-                    const fuzzyMappings = {
-                      'patio furniture': ['outdoor', 'garden', 'patio'],
-                      'western wooden doors': ['doors', 'wooden doors', 'modern design doors'],
-                      'western design doors': ['doors', 'wooden doors', 'modern design doors'],
-                      'wardrobes': ['wardrobe', 'closets', 'walk-in closets']
-                    };
+                }
+              }
+              
+              // Strategy 2: Only if no keyword mapping, try individual words (but be more selective)
+              if (!categoryRecord) {
+                const words = originalName.split(/\s+/).filter(word => 
+                  word.length > 3 && // Only words longer than 3 characters
+                  !['wooden', 'design', 'custom', 'luxury', 'modern'].includes(word.toLowerCase()) // Skip generic words
+                );
+                console.log('useProductDetail: Strategy 2 - Filtered meaningful words:', words);
+                
+                for (const word of words) {
+                  console.log('useProductDetail: Strategy 2 - Trying word:', word);
+                  const { data: wordMatch, error: wordError } = await supabase
+                    .from('product_categories')
+                    .select('*')
+                    .ilike('category_name', `%${word}%`);
                     
-                    const lowerOriginal = originalName.toLowerCase();
-                    for (const [key, variations] of Object.entries(fuzzyMappings)) {
-                      if (lowerOriginal.includes(key.toLowerCase())) {
-                        console.log('useProductDetail: Strategy 3 - Found fuzzy mapping for:', key);
-                        
-                        for (const variation of variations) {
-                          console.log('useProductDetail: Strategy 3 - Trying variation:', variation);
-                          const { data: fuzzyMatch, error: fuzzyError } = await supabase
-                            .from('product_categories')
-                            .select('*')
-                            .ilike('category_name', `%${variation}%`);
-                            
-                          console.log('useProductDetail: Strategy 3 fuzzy match result:', {
-                            variation,
-                            data: fuzzyMatch,
-                            error: fuzzyError
-                          });
-                          
-                          if (fuzzyMatch && fuzzyMatch.length > 0) {
-                            categoryRecord = fuzzyMatch[0];
-                            actualCategoryId = categoryRecord.id;
-                            console.log('useProductDetail: Found category with Strategy 3 (fuzzy), actualCategoryId:', actualCategoryId);
-                            break;
-                          }
-                        }
-                        if (categoryRecord) break;
-                      }
+                  console.log('useProductDetail: Strategy 2 word match result:', {
+                    word,
+                    data: wordMatch,
+                    error: wordError
+                  });
+                  
+                  if (wordMatch && wordMatch.length > 0) {
+                    // Additional validation: make sure it's a reasonable match
+                    const match = wordMatch[0];
+                    const matchName = match.category_name?.toLowerCase() || '';
+                    const originalLower = originalName.toLowerCase();
+                    
+                    // Check if this makes sense (avoid matching "outdoor" to "outdoor swings" when looking for "outdoor furniture")
+                    const isGoodMatch = 
+                      matchName.includes('furniture') && originalLower.includes('furniture') ||
+                      matchName.includes('wardrobe') && originalLower.includes('wardrobe') ||
+                      matchName.includes('door') && originalLower.includes('door');
+                    
+                    if (isGoodMatch) {
+                      categoryRecord = match;
+                      actualCategoryId = categoryRecord.id;
+                      console.log('useProductDetail: Found category with Strategy 2 (validated word match), actualCategoryId:', actualCategoryId);
+                      break;
+                    } else {
+                      console.log('useProductDetail: Skipping potential match as not semantically appropriate:', {
+                        found: matchName,
+                        looking: originalLower
+                      });
                     }
                   }
                 }
