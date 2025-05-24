@@ -21,6 +21,7 @@ import AdminLogin from "@/pages/AdminLogin";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Layout from "@/components/layout/Layout";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 
 // Import the ProductDetailPage
 import ProductDetailPage from "@/pages/ProductDetailPage";
@@ -37,6 +38,7 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
+        <ScrollToTop />
         <Routes>
           {/* Public routes with Layout */}
           <Route element={<Layout />}>
