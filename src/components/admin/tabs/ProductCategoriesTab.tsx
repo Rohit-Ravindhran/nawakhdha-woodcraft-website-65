@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,13 +18,12 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Edit, Plus, Save, Trash2, Loader2, AlertCircle, InfoIcon, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import SeoFields from "../SeoFields";
 import { useAuth } from "@/contexts/AuthContext";
-import { useBucketOperations } from "@/hooks/storage/useBucketOperations";
 
 const productCategorySchema = z.object({
   id: z.string().optional(),
@@ -39,6 +39,35 @@ const productCategorySchema = z.object({
 
 type ProductCategoryFormValues = z.infer<typeof productCategorySchema>;
 
+// Create a cached bucket check hook to prevent redundant API calls
+const useBucketCheck = (bucketName: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ['bucket-check', bucketName],
+    queryFn: async () => {
+      console.log(`Checking if bucket "${bucketName}" exists...`);
+      try {
+        const { data, error } = await supabase.storage
+          .from(bucketName)
+          .list('', { limit: 1 });
+        
+        if (!error) {
+          console.log(`Bucket "${bucketName}" exists and is accessible`);
+          return true;
+        }
+        
+        console.log(`Bucket "${bucketName}" check failed:`, error.message);
+        return false;
+      } catch (err) {
+        console.error(`Error checking bucket "${bucketName}":`, err);
+        return false;
+      }
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    retry: false,
+  });
+};
+
 export default function ProductCategoriesTab() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<ProductCategoryData | null>(null);
@@ -48,37 +77,11 @@ export default function ProductCategoriesTab() {
   const queryClient = useQueryClient();
   const { session } = useAuth();
   
-  // Check if the product-categories bucket exists
-  const [bucketExists, setBucketExists] = useState<boolean | null>(null);
-  const [checkingBucket, setCheckingBucket] = useState(true);
-  const { checkBucketExists, isChecking } = useBucketOperations();
-  
-  useEffect(() => {
-    const checkBucketExistsWrapper = async () => {
-      try {
-        setCheckingBucket(true);
-        
-        // Use the imported checkBucketExists function
-        const exists = await checkBucketExists('product-categories');
-        console.log('product-categories bucket exists:', exists);
-        setBucketExists(exists);
-      } catch (err) {
-        console.error('Unexpected error checking bucket:', err);
-        setBucketExists(false);
-      } finally {
-        setCheckingBucket(false);
-      }
-    };
-    
-    if (session) {
-      checkBucketExistsWrapper();
-    } else {
-      setCheckingBucket(false);
-    }
-    
-    // Make checkBucketExistsWrapper available outside the useEffect
-    window.checkBucketExistsFunc = checkBucketExistsWrapper;
-  }, [session, checkBucketExists]);
+  // Use the cached bucket check hook
+  const { data: bucketExists, isLoading: checkingBucket, error: bucketError } = useBucketCheck(
+    'product-categories',
+    !!session
+  );
   
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['product_categories'],
@@ -136,18 +139,18 @@ export default function ProductCategoriesTab() {
     setErrorMessage(null);
   }, [currentCategory, form]);
   
-  const handleEdit = (category: ProductCategoryData) => {
+  const handleEdit = useCallback((category: ProductCategoryData) => {
     setCurrentCategory(category);
     setIsDialogOpen(true);
-  };
+  }, []);
   
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     setCurrentCategory(null);
     setIsDialogOpen(true);
-  };
+  }, []);
   
   // Auto-generate slug from category name
-  const handleGenerateSlug = () => {
+  const handleGenerateSlug = useCallback(() => {
     const categoryName = form.getValues("category_name");
     if (categoryName) {
       const slug = categoryName
@@ -156,7 +159,7 @@ export default function ProductCategoriesTab() {
         .replace(/\s+/g, "-");
       form.setValue("category_slug", slug);
     }
-  };
+  }, [form]);
   
   const onSubmit = async (values: ProductCategoryFormValues) => {
     if (!session) {
@@ -283,6 +286,11 @@ export default function ProductCategoriesTab() {
       }
     }
   };
+
+  // Manual bucket refresh function with debouncing
+  const handleRefreshBucket = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['bucket-check', 'product-categories'] });
+  }, [queryClient]);
   
   if (isLoading || checkingBucket) {
     return (
@@ -322,13 +330,7 @@ export default function ProductCategoriesTab() {
         </Alert>
         
         <Button 
-          onClick={() => {
-            setCheckingBucket(true);
-            // Access the function from the window object
-            if (typeof window.checkBucketExistsFunc === 'function') {
-              window.checkBucketExistsFunc();
-            }
-          }}
+          onClick={handleRefreshBucket}
           className="flex items-center gap-2"
         >
           <Loader2 className={`h-4 w-4 ${checkingBucket ? 'animate-spin' : ''}`} />
@@ -370,83 +372,84 @@ export default function ProductCategoriesTab() {
         </Button>
       </div>
       
-      {isLoading ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Image</TableHead>
-              <TableHead>Category Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Product Name</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories && categories.length > 0 ? (
-              categories.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell>
-                    <div className="w-16 h-16 relative bg-gray-200 rounded overflow-hidden">
-                      {category.category_image_url ? (
-                        <img 
-                          src={category.category_image_url} 
-                          alt={category.alt_text || 'Category image'} 
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = "/placeholder.svg";
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          No img
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>{category.category_name || 'N/A'}</TableCell>
-                  <TableCell>{category.category_slug || 'N/A'}</TableCell>
-                  <TableCell>{category.product_name || 'N/A'}</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleEdit(category)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDelete(category.id!)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-4">
-                  No product categories found
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Image</TableHead>
+            <TableHead>Category Name</TableHead>
+            <TableHead>Slug</TableHead>
+            <TableHead>Product Name</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {categories && categories.length > 0 ? (
+            categories.map((category) => (
+              <TableRow key={category.id}>
+                <TableCell>
+                  <div className="w-16 h-16 relative bg-gray-200 rounded overflow-hidden">
+                    {category.category_image_url ? (
+                      <img 
+                        src={category.category_image_url} 
+                        alt={category.alt_text || 'Category image'} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        No img
+                      </div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>{category.category_name || 'N/A'}</TableCell>
+                <TableCell>{category.category_slug || 'N/A'}</TableCell>
+                <TableCell>{category.product_name || 'N/A'}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleEdit(category)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleDelete(category.id!)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      )}
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-4">
+                No product categories found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent 
+          className="max-w-3xl"
+          aria-label="Product Categories Manager"
+          aria-describedby="dialog-description"
+        >
           <DialogHeader>
             <DialogTitle>
               {currentCategory ? "Edit Product Category" : "Add New Product Category"}
             </DialogTitle>
+            <DialogDescription id="dialog-description">
+              {currentCategory ? "Modify the details of this product category." : "Create a new product category with images and SEO settings."}
+            </DialogDescription>
           </DialogHeader>
           
           {errorMessage && (
@@ -557,11 +560,4 @@ export default function ProductCategoriesTab() {
       </Dialog>
     </div>
   );
-}
-
-// Add this type declaration to fix the TypeScript error
-declare global {
-  interface Window {
-    checkBucketExistsFunc?: () => Promise<void>;
-  }
 }
