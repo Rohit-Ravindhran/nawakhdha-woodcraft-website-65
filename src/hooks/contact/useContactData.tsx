@@ -10,14 +10,19 @@ export function useContactData() {
   useEffect(() => {
     const fetchContactInfo = async () => {
       try {
+        console.log("🔍 Fetching contact info from database...");
+        
         const { data, error } = await supabase
           .from('contact_info')
           .select('*')
           .maybeSingle();
         
         if (error) {
+          console.error("❌ SUPABASE ERROR (contact_info):", error);
           throw error;
         }
+        
+        console.log("📋 Raw contact data from database:", data);
         
         if (data) {
           const contactData: ContactInfoData = {
@@ -30,15 +35,18 @@ export function useContactData() {
                 data.business_hours_json : 
                 JSON.stringify(data.business_hours_json)
               ) : null,
-            // Handle the map_url property which is missing in the database
-            map_url: null // Set to null as it's not present in the database schema
+            map_url: data.map_url || null // Now properly handle the map_url from database
           };
+          
+          console.log("✅ Processed contact data:", contactData);
           setContactInfo(contactData);
         } else {
+          console.warn("⚠️ No contact info found in database");
           setContactInfo(null);
         }
       } catch (error) {
-        console.error("Error fetching contact information:", error);
+        console.error("💥 Error fetching contact information:", error);
+        setContactInfo(null);
       } finally {
         setIsLoading(false);
       }

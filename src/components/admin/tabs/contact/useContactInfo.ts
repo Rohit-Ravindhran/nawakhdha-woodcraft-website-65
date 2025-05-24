@@ -12,6 +12,7 @@ export const contactInfoSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email("Invalid email format").optional().or(z.string().length(0)),
   business_hours_json: z.string().optional(),
+  map_url: z.string().optional(), // Add map_url to schema
 });
 
 export type ContactInfoFormValues = z.infer<typeof contactInfoSchema>;
@@ -23,12 +24,19 @@ export function useContactInfo() {
   const { data: contactInfo, isLoading } = useQuery({
     queryKey: ['contact_info'],
     queryFn: async () => {
+      console.log("🔍 Admin: Fetching contact info...");
+      
       const { data, error } = await supabase
         .from('contact_info')
         .select('*')
         .maybeSingle();
         
-      if (error) throw error;
+      if (error) {
+        console.error("❌ Admin SUPABASE ERROR:", error);
+        throw error;
+      }
+      
+      console.log("📋 Admin: Raw contact data:", data);
       return data as ContactInfoData;
     },
   });
@@ -36,6 +44,7 @@ export function useContactInfo() {
   const saveContactInfo = async (values: ContactInfoFormValues) => {
     try {
       setIsSaving(true);
+      console.log("💾 Saving contact info:", values);
       
       let businessHours;
       try {
@@ -49,6 +58,7 @@ export function useContactInfo() {
       
       if (values.id) {
         // Update existing
+        console.log("🔄 Updating existing contact info...");
         const { error } = await supabase
           .from('contact_info')
           .update({
@@ -56,6 +66,7 @@ export function useContactInfo() {
             phone: values.phone,
             email: values.email,
             business_hours_json: businessHours,
+            map_url: values.map_url, // Include map_url in update
           })
           .eq('id', values.id);
           
@@ -63,6 +74,7 @@ export function useContactInfo() {
         toast.success("Contact information updated successfully");
       } else {
         // Create new
+        console.log("➕ Creating new contact info...");
         const { error } = await supabase
           .from('contact_info')
           .insert({
@@ -70,6 +82,7 @@ export function useContactInfo() {
             phone: values.phone,
             email: values.email,
             business_hours_json: businessHours,
+            map_url: values.map_url, // Include map_url in insert
           });
           
         if (error) throw error;
@@ -79,6 +92,7 @@ export function useContactInfo() {
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ['contact_info'] });
     } catch (error: any) {
+      console.error("💥 Error saving contact information:", error);
       toast.error(`Error saving contact information: ${error.message}`);
     } finally {
       setIsSaving(false);

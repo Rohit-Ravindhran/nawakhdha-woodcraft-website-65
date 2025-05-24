@@ -114,6 +114,7 @@ export type Database = {
           business_hours_json: Json | null
           email: string | null
           id: string
+          map_url: string | null
           phone: string | null
         }
         Insert: {
@@ -121,6 +122,7 @@ export type Database = {
           business_hours_json?: Json | null
           email?: string | null
           id?: string
+          map_url?: string | null
           phone?: string | null
         }
         Update: {
@@ -128,6 +130,7 @@ export type Database = {
           business_hours_json?: Json | null
           email?: string | null
           id?: string
+          map_url?: string | null
           phone?: string | null
         }
         Relationships: []

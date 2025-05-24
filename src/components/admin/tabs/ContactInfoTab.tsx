@@ -8,6 +8,7 @@ import { Save } from "lucide-react";
 import { useContactInfo, contactInfoSchema, ContactInfoFormValues } from "./contact/useContactInfo";
 import ContactDetailsFields from "./contact/ContactDetailsFields";
 import BusinessHoursField from "./contact/BusinessHoursField";
+import MapUrlField from "./contact/MapUrlField";
 
 export default function ContactInfoTab() {
   const { contactInfo, isLoading, isSaving, saveContactInfo } = useContactInfo();
@@ -21,12 +22,14 @@ export default function ContactInfoTab() {
       business_hours_json: typeof contactInfo?.business_hours_json === 'object' 
         ? JSON.stringify(contactInfo?.business_hours_json, null, 2) 
         : contactInfo?.business_hours_json || "",
+      map_url: contactInfo?.map_url || "", // Add map_url default
     },
   });
   
   // Update form when data loads
   React.useEffect(() => {
     if (contactInfo) {
+      console.log("📝 Admin form: Loading contact info into form:", contactInfo);
       form.reset({
         id: contactInfo.id,
         address: contactInfo.address || "",
@@ -35,15 +38,17 @@ export default function ContactInfoTab() {
         business_hours_json: typeof contactInfo.business_hours_json === 'object' 
           ? JSON.stringify(contactInfo.business_hours_json, null, 2) 
           : contactInfo.business_hours_json || "",
+        map_url: contactInfo.map_url || "", // Include map_url in form reset
       });
     }
   }, [contactInfo, form]);
   
   const onSubmit = async (values: ContactInfoFormValues) => {
+    console.log("📤 Admin form: Submitting values:", values);
     await saveContactInfo(values);
   };
   
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading contact information...</div>;
   
   return (
     <div className="max-w-3xl">
@@ -57,6 +62,7 @@ export default function ContactInfoTab() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <ContactDetailsFields control={form.control} />
+          <MapUrlField control={form.control} />
           <BusinessHoursField control={form.control} />
           
           <div className="flex justify-end">

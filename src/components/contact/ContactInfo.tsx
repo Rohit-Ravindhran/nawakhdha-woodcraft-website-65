@@ -10,6 +10,8 @@ interface ContactInfoProps {
 }
 
 const ContactInfo: React.FC<ContactInfoProps> = ({ contactInfo, isLoading }) => {
+  console.log("🏪 ContactInfo component rendering with:", { contactInfo, isLoading });
+
   // Default business hours if not available from database
   const defaultBusinessHours: BusinessHours = {
     monday: "8:30 AM - 5:30 PM",
