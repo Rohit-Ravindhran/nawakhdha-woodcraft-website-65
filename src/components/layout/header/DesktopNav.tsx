@@ -2,14 +2,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import ProductsMenuContent from "./ProductsMenu";
 
 interface DesktopNavProps {
   products: Array<{ name: string; path: string }>;
@@ -45,24 +37,16 @@ const DesktopNav = ({ products }: DesktopNavProps) => {
               About
             </Link>
           </li>
-          <li className="relative">
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger
-                    className={cn(
-                      "text-sm font-medium transition-colors hover:text-primary p-0 h-auto bg-transparent",
-                      (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
-                    )}
-                  >
-                    Products
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ProductsMenuContent products={products} />
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+          <li>
+            <Link
+              to="/products"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
+              )}
+            >
+              Our Products
+            </Link>
           </li>
           <li>
             <Link

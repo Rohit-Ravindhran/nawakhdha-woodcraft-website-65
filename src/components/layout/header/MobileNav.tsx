@@ -61,7 +61,7 @@ const MobileNav = ({ products }: MobileNavProps) => {
                     onClick={() => setIsProductsOpen(!isProductsOpen)}
                     className="flex items-center justify-between w-full text-base font-medium"
                   >
-                    <span>Products</span>
+                    <span>Our Products</span>
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 transition-transform",
