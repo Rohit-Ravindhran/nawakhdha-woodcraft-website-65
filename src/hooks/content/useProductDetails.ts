@@ -60,12 +60,13 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
           if (homeProductRecord.category_name) {
             console.log('useProductDetail: Looking for category by name:', homeProductRecord.category_name);
             
+            // First try exact match
             const { data: categoryByName, error: categoryByNameError } = await supabase
               .from('product_categories')
               .select('*')
               .eq('category_name', homeProductRecord.category_name);
               
-            console.log('useProductDetail: Category by name lookup:', {
+            console.log('useProductDetail: Category by exact name lookup:', {
               data: categoryByName,
               error: categoryByNameError,
               categoryName: homeProductRecord.category_name
@@ -74,7 +75,7 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
             if (categoryByName && categoryByName.length > 0) {
               categoryRecord = categoryByName[0];
               actualCategoryId = categoryRecord.id;
-              console.log('useProductDetail: Found category by name, actualCategoryId:', actualCategoryId);
+              console.log('useProductDetail: Found category by exact name, actualCategoryId:', actualCategoryId);
             } else {
               // Try case-insensitive search
               console.log('useProductDetail: Trying case-insensitive category search...');
@@ -92,6 +93,30 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
                 categoryRecord = categoryInsensitive[0];
                 actualCategoryId = categoryRecord.id;
                 console.log('useProductDetail: Found category with case-insensitive search, actualCategoryId:', actualCategoryId);
+              } else {
+                // Try partial matching - remove "Custom" prefix and other common words
+                const cleanedName = homeProductRecord.category_name
+                  .replace(/^(Custom|Designer|Modern|Luxury|Premium)\s+/i, '')
+                  .trim();
+                
+                console.log('useProductDetail: Trying partial match with cleaned name:', cleanedName);
+                
+                const { data: categoryPartial, error: categoryPartialError } = await supabase
+                  .from('product_categories')
+                  .select('*')
+                  .ilike('category_name', `%${cleanedName}%`);
+                  
+                console.log('useProductDetail: Partial category search:', {
+                  data: categoryPartial,
+                  error: categoryPartialError,
+                  cleanedName: cleanedName
+                });
+                
+                if (categoryPartial && categoryPartial.length > 0) {
+                  categoryRecord = categoryPartial[0];
+                  actualCategoryId = categoryRecord.id;
+                  console.log('useProductDetail: Found category with partial match, actualCategoryId:', actualCategoryId);
+                }
               }
             }
           }
@@ -203,7 +228,8 @@ export function useProductDetail(productId?: string, options?: { enabled?: boole
         actualCategoryIdUsed: actualCategoryId,
         finalProductName: detailData?.product_name || categoryRecord.product_name || categoryRecord.category_name,
         dataSource: detailData ? 'product_category_details' : 'category_only',
-        descriptionFromDetails: detailData?.description || 'No description found'
+        descriptionFromDetails: detailData?.description || 'No description found',
+        partialMatchUsed: !!actualCategoryId && actualCategoryId !== productId
       });
       
       return result;
