@@ -8,18 +8,37 @@ const AboutTeam = () => {
   const { data: teamMembers, isLoading, error } = useQuery({
     queryKey: ["about_team"],
     queryFn: async () => {
+      console.log("🔍 Fetching team members from about_team table...");
+      
       const { data, error } = await supabase
         .from("about_team")
         .select("*")
+        .order("position", { ascending: true, nullsFirst: false })
         .order("id", { ascending: true });
 
       if (error) {
-        console.error("Failed to fetch team:", error);
+        console.error("❌ SUPABASE ERROR:", error);
+        console.error("Error details:", {
+          message: error.message,
+          code: error.code,
+          hint: error.hint,
+          details: error.details
+        });
         throw error;
       }
+      
+      console.log("✅ Fetched Team Data:", data);
+      console.log("📊 Team members count:", data?.length || 0);
+      
+      if (data && data.length > 0) {
+        console.log("👥 First team member:", data[0]);
+      }
+      
       return data as AboutTeamMemberData[];
     },
   });
+
+  console.log("🔄 Query state:", { isLoading, error: error?.message, dataLength: teamMembers?.length });
 
   return (
     <section className="section-padding bg-secondary/30">
@@ -35,11 +54,15 @@ const AboutTeam = () => {
             <div className="col-span-3 text-center py-12">Loading team members...</div>
           ) : error ? (
             <div className="col-span-3 text-center py-12 text-red-600">
-              Failed to load team members. Please try again later.
+              <p>Failed to load team members: {error.message}</p>
+              <p className="text-sm mt-2">Please check the console for detailed error information.</p>
             </div>
           ) : !teamMembers || teamMembers.length === 0 ? (
             <div className="col-span-3 text-center py-12">
-              No team members found. Please add them via the Admin Panel.
+              <p>No team members found.</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Please add team members via the Admin Panel.
+              </p>
             </div>
           ) : (
             teamMembers.map((member) => (
@@ -54,7 +77,11 @@ const AboutTeam = () => {
                       alt={member.alt_text || `${member.name} - ${member.role}`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
+                        console.warn(`❗ Image load error for ${member.name}:`, member.image_url);
                         e.currentTarget.src = "https://placehold.co/400x400";
+                      }}
+                      onLoad={() => {
+                        console.log(`✅ Image loaded successfully for ${member.name}`);
                       }}
                     />
                   </div>

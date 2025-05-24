@@ -16,6 +16,7 @@ const teamMemberSchema = z.object({
   bio: z.string().optional(),
   image_url: z.string().optional(),
   alt_text: z.string().optional(),
+  position: z.number().optional(),
 });
 
 export type TeamMemberFormValues = z.infer<typeof teamMemberSchema>;
@@ -29,12 +30,20 @@ export const useAboutTeam = () => {
   const { data: teamMembers, isLoading } = useQuery({
     queryKey: ["about_team"],
     queryFn: async () => {
+      console.log("🔍 Admin: Fetching team members...");
+      
       const { data, error } = await supabase
         .from("about_team")
         .select("*")
-        .order("id");
+        .order("position", { ascending: true, nullsFirst: false })
+        .order("id", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("❌ Admin SUPABASE ERROR:", error);
+        throw error;
+      }
+      
+      console.log("✅ Admin: Fetched Team Data:", data);
       return data as AboutTeamMemberData[];
     },
   });
@@ -47,6 +56,7 @@ export const useAboutTeam = () => {
       bio: "",
       image_url: "",
       alt_text: "",
+      position: 0,
     },
   });
 
@@ -59,18 +69,21 @@ export const useAboutTeam = () => {
       bio: member.bio || "",
       image_url: member.image_url || "",
       alt_text: member.alt_text || "",
+      position: (member as any).position || 0,
     });
     setIsDialogOpen(true);
   };
 
   const handleAdd = () => {
     setCurrentTeamMember(null);
+    const nextPosition = teamMembers ? Math.max(0, ...teamMembers.map((m: any) => m.position || 0)) + 1 : 0;
     form.reset({
       name: "",
       role: "",
       bio: "",
       image_url: "",
       alt_text: "",
+      position: nextPosition,
     });
     setIsDialogOpen(true);
   };
@@ -82,6 +95,8 @@ export const useAboutTeam = () => {
         return;
       }
 
+      console.log("💾 Saving team member:", values);
+
       if (values.id) {
         const { error } = await supabase
           .from("about_team")
@@ -91,6 +106,7 @@ export const useAboutTeam = () => {
             bio: values.bio,
             image_url: values.image_url,
             alt_text: values.alt_text,
+            position: values.position || 0,
           })
           .eq("id", values.id);
 
@@ -105,6 +121,7 @@ export const useAboutTeam = () => {
             bio: values.bio,
             image_url: values.image_url,
             alt_text: values.alt_text,
+            position: values.position || 0,
           });
 
         if (error) throw error;
@@ -114,6 +131,7 @@ export const useAboutTeam = () => {
       queryClient.invalidateQueries({ queryKey: ["about_team"] });
       setIsDialogOpen(false);
     } catch (error: any) {
+      console.error("❌ Error saving team member:", error);
       toast.error(`Error saving team member: ${error.message}`);
     }
   };
@@ -126,6 +144,8 @@ export const useAboutTeam = () => {
           return;
         }
         
+        console.log("🗑️ Deleting team member:", id);
+        
         const { error } = await supabase
           .from("about_team")
           .delete()
@@ -136,6 +156,7 @@ export const useAboutTeam = () => {
         toast.success("Team member deleted successfully");
         queryClient.invalidateQueries({ queryKey: ["about_team"] });
       } catch (error: any) {
+        console.error("❌ Error deleting team member:", error);
         toast.error(`Error deleting team member: ${error.message}`);
       }
     }

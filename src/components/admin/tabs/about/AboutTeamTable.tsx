@@ -21,10 +21,13 @@ interface AboutTeamTableProps {
 const AboutTeamTable = ({ teamMembers, isLoading, onEdit, onDelete }: AboutTeamTableProps) => {
   if (isLoading) return <div>Loading...</div>;
 
+  console.log("📋 Table rendering with team members:", teamMembers);
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead>Order</TableHead>
           <TableHead>Photo</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Role</TableHead>
@@ -37,6 +40,11 @@ const AboutTeamTable = ({ teamMembers, isLoading, onEdit, onDelete }: AboutTeamT
           teamMembers.map((member) => (
             <TableRow key={member.id}>
               <TableCell>
+                <span className="font-mono text-sm">
+                  {(member as any).position || 0}
+                </span>
+              </TableCell>
+              <TableCell>
                 <div className="w-16 h-16 relative bg-gray-200 rounded-full overflow-hidden">
                   {member.image_url ? (
                     <img
@@ -44,6 +52,7 @@ const AboutTeamTable = ({ teamMembers, isLoading, onEdit, onDelete }: AboutTeamT
                       alt={member.alt_text || `${member.name} photo`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
+                        console.warn(`❗ Admin table: Image load error for ${member.name}:`, member.image_url);
                         e.currentTarget.src = "/placeholder.svg";
                       }}
                     />
@@ -73,8 +82,8 @@ const AboutTeamTable = ({ teamMembers, isLoading, onEdit, onDelete }: AboutTeamT
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={5} className="text-center py-4">
-              No team members found
+            <TableCell colSpan={6} className="text-center py-4">
+              No team members found. Add your first team member to get started.
             </TableCell>
           </TableRow>
         )}

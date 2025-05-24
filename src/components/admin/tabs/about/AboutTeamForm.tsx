@@ -70,6 +70,26 @@ const AboutTeamForm = ({ isOpen, onClose, currentTeamMember, form, onSubmit }: A
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="position"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Display Order</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder="0" 
+                      {...field} 
+                      value={field.value || 0}
+                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <ImageUploadField
               control={form.control}
               name="image_url"
