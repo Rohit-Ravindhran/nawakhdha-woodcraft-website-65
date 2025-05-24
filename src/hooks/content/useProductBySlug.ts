@@ -7,7 +7,12 @@ export function useProductBySlug(slug?: string) {
   return useQuery({
     queryKey: ['product_by_slug', slug],
     queryFn: async (): Promise<ProductCategoryData | null> => {
-      if (!slug) return null;
+      if (!slug) {
+        console.log('useProductBySlug: No slug provided');
+        return null;
+      }
+      
+      console.log('useProductBySlug: Searching for slug:', slug);
       
       // First try to find by home_products slug
       const { data: homeProductData, error: homeProductError } = await supabase
@@ -17,6 +22,8 @@ export function useProductBySlug(slug?: string) {
         .maybeSingle();
         
       if (!homeProductError && homeProductData) {
+        console.log('useProductBySlug: Found home product:', homeProductData);
+        
         // We found a match in home_products
         // Now get the corresponding product category if possible
         if (homeProductData.category_name) {
@@ -27,11 +34,13 @@ export function useProductBySlug(slug?: string) {
             .maybeSingle();
             
           if (!catError && categoryData) {
+            console.log('useProductBySlug: Found matching category:', categoryData);
             return categoryData as ProductCategoryData;
           }
           
           // If we can't find a matching category, return the home product data
           // with some properties mapped to match ProductCategoryData interface
+          console.log('useProductBySlug: Using home product data as fallback');
           return {
             id: homeProductData.id,
             category_name: homeProductData.category_name,
@@ -50,6 +59,7 @@ export function useProductBySlug(slug?: string) {
         .maybeSingle();
         
       if (!slugError && categoryBySlug) {
+        console.log('useProductBySlug: Found category by slug:', categoryBySlug);
         return categoryBySlug as ProductCategoryData;
       }
       
@@ -62,12 +72,20 @@ export function useProductBySlug(slug?: string) {
           .maybeSingle();
           
         if (!idError && categoryById) {
+          console.log('useProductBySlug: Found category by ID:', categoryById);
           return categoryById as ProductCategoryData;
         }
       }
       
+      console.log('useProductBySlug: No product found for slug:', slug);
       return null;
     },
-    enabled: !!slug
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    retry: (failureCount, error) => {
+      // Don't retry if it's a not found error
+      if (error?.message?.includes('not found')) return false;
+      return failureCount < 2;
+    }
   });
 }

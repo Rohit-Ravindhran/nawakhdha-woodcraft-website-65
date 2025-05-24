@@ -14,30 +14,53 @@ import { Separator } from '@/components/ui/separator';
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   
-  // Use our new hook to find the product by slug
+  console.log('ProductDetailPage: Rendering with slug:', slug);
+  
+  // Step 1: Find the product by slug
   const { 
     data: productCategory,
     isLoading: loadingCategory,
     error: categoryError 
   } = useProductBySlug(slug);
 
-  // Use the enhanced product detail hook to fetch product details including gallery
+  // Step 2: Fetch product details only when we have a category ID
   const { 
     data: productData,
-    isLoading: loadingProductData
-  } = useProductDetail(productCategory?.id);
+    isLoading: loadingProductData,
+    error: productDataError 
+  } = useProductDetail(productCategory?.id, {
+    enabled: !!productCategory?.id // Only fetch when ID exists
+  });
   
   const isLoading = loadingCategory || loadingProductData;
   
+  console.log('ProductDetailPage: State:', {
+    slug,
+    productCategory: productCategory?.id,
+    productData: !!productData,
+    isLoading,
+    categoryError: categoryError?.message,
+    productDataError: productDataError?.message
+  });
+  
   if (isLoading) {
+    console.log('ProductDetailPage: Showing loading state');
     return <ProductLoading />;
   }
 
-  if (categoryError || !productCategory) {
+  // Enhanced error handling - check both category and product data errors
+  if (categoryError || productDataError) {
+    console.error('ProductDetailPage: Error occurred:', { categoryError, productDataError });
     return <ProductNotFound />;
   }
 
-  // Get the product details and description
+  // Data hydration guard - ensure we have the basic category data
+  if (!productCategory) {
+    console.log('ProductDetailPage: No product category found');
+    return <ProductNotFound />;
+  }
+
+  // Get the product details and description (productData is optional)
   const description = productData?.description || productCategory.description || "";
   const categoryName = productCategory.category_name || "";
   const productName = productData?.product_name || productCategory.product_name || categoryName;
@@ -51,12 +74,12 @@ const ProductDetailPage: React.FC = () => {
     ? productData.gallery_images[0].alt
     : productCategory.alt_text;
     
-  // SEO metadata
+  // SEO metadata - prioritize productData, fallback to category
   const seoTitle = productData?.seo_title || productCategory.seo_title || productName;
   const seoDescription = productData?.seo_description || productCategory.seo_description || description.substring(0, 160);
   const seoKeywords = productData?.seo_keywords || productCategory.seo_keywords || '';
   
-  // Gallery images - make a copy to avoid modifying the original data
+  // Gallery images with fallback handling
   const galleryImages = productData?.gallery_images ? [...productData.gallery_images] : [];
   
   // Sort images by position if available
@@ -65,6 +88,14 @@ const ProductDetailPage: React.FC = () => {
       return a.position - b.position;
     }
     return 0;
+  });
+  
+  console.log('ProductDetailPage: Rendering product:', {
+    categoryName,
+    productName,
+    hasDescription: !!description,
+    galleryCount: galleryImages.length,
+    hasFeaturedImage: !!featuredImage
   });
   
   return (
