@@ -83,6 +83,30 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
     ? servicesData.items.filter(item => item && (item.title || (item as HomeServiceData).title)) 
     : defaultServices;
 
+  // Define the desired order mapping
+  const getServiceOrder = (title: string): number => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('custom wooden doors') || lowerTitle.includes('doors & cabinets')) {
+      return 1;
+    } else if (lowerTitle.includes('civil maintenance') || lowerTitle.includes('carpentry services')) {
+      return 2;
+    } else if (lowerTitle.includes('bespoke interior') || lowerTitle.includes('interior design')) {
+      return 3;
+    } else if (lowerTitle.includes('gypsum') || lowerTitle.includes('partition works')) {
+      return 4;
+    } else if (lowerTitle.includes('aluminium works') || lowerTitle.includes('air conditioning')) {
+      return 5;
+    }
+    return 6; // Default order for any other services
+  };
+
+  // Sort services according to the specified order
+  const sortedServices = [...services].sort((a, b) => {
+    const titleA = (a as Service).title || (a as HomeServiceData).title || '';
+    const titleB = (b as Service).title || (b as HomeServiceData).title || '';
+    return getServiceOrder(titleA) - getServiceOrder(titleB);
+  });
+
   return (
     <section className="section-padding bg-secondary/30" data-testid="services-section">
       <div className="container-custom">
@@ -92,7 +116,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
           centered={true}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
-          {services.map((service, index) => {
+          {sortedServices.map((service, index) => {
             // Handle both HomeServiceData and Service types
             const title = (service as Service).title || (service as HomeServiceData).title || '';
             const description = (service as Service).description || (service as HomeServiceData).description || '';
