@@ -100,20 +100,31 @@ function ImageUploadField({
                       const file = e.target.files[0];
                       const fileExt = file.name.split(".").pop();
                       const fileName = `${Math.random()}.${fileExt}`;
-                      const filePath = `${fileName}`;
+                      const filePath = `blog/${fileName}`;
+
+                      console.log("Uploading to bucket 'blogs', path:", filePath);
 
                       const { data, error } = await supabase.storage
                         .from("blogs")
                         .upload(filePath, file);
 
-                      if (error) throw error;
+                      if (error) {
+                        console.error("Upload error details:", {
+                          code: error.code,
+                          message: error.message,
+                          details: error.details
+                        });
+                        throw error;
+                      }
 
                       const { data: { publicUrl } } = supabase.storage
                         .from("blogs")
                         .getPublicUrl(data.path);
 
                       field.onChange(publicUrl);
+                      toast.success("Image uploaded successfully");
                     } catch (error: any) {
+                      console.error("Upload failed:", error);
                       toast.error(`Upload failed: ${error.message}`);
                     } finally {
                       setUploading(false);
@@ -270,6 +281,7 @@ export default function BlogsTab() {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       setIsDialogOpen(false);
     } catch (error: any) {
+      console.error("Blog save error:", error);
       toast.error(`Error saving blog post: ${error.message}`);
     }
   };
