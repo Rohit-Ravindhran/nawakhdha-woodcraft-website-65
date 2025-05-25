@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -106,7 +105,6 @@ export default function BlogsTab() {
     setIsDialogOpen(true);
   };
   
-  // Auto-generate slug from title
   const handleGenerateSlug = () => {
     const title = form.getValues("title");
     if (title) {
@@ -352,7 +350,7 @@ export default function BlogsTab() {
                     name="featured_image_url"
                     label="Featured Image"
                     altTextName="alt_text"
-                    bucket="content"
+                    bucket="blogs"
                     folder="blog"
                   />
                   
@@ -360,7 +358,7 @@ export default function BlogsTab() {
                     control={form.control}
                     name="image_url"
                     label="Secondary Image"
-                    bucket="content"
+                    bucket="blogs"
                     folder="blog"
                   />
                 </div>
