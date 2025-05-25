@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +37,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ formRef }) => {
     
     try {
       // Store the form submission in Supabase
-      const { error } = await supabase
+      const { error: dbError } = await supabase
         .from('contact_form_submissions')
         .insert([
           {
@@ -51,12 +50,27 @@ const ContactForm: React.FC<ContactFormProps> = ({ formRef }) => {
           }
         ]);
       
-      if (error) throw error;
+      if (dbError) throw dbError;
       
-      toast({
-        title: "Message Sent!",
-        description: "We'll get back to you as soon as possible.",
+      // Send emails via edge function
+      const { error: emailError } = await supabase.functions.invoke('send-contact-email', {
+        body: formData
       });
+
+      if (emailError) {
+        console.error("Email sending error:", emailError);
+        // Don't throw error here - form was saved, just email failed
+        toast({
+          title: "Message Saved",
+          description: "Your message was saved but email notification failed. We'll still get back to you!",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Message Sent Successfully!",
+          description: "We've received your message and sent you a confirmation email. We'll get back to you soon!",
+        });
+      }
       
       // Reset form
       setFormData({
