@@ -2,61 +2,35 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useBlogBySlug } from "@/hooks/content/useBlogBySlug";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Helmet } from "react-helmet-async";
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  body_content: string;
-  image_url: string;
-  featured_image_url: string;
-  alt_text: string;
-  date: string;
-  excerpt: string;
-  author?: string;
-}
-
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  console.log('BlogPostPage: Rendering with slug:', slug);
+  
+  const { 
+    data: post, 
+    isLoading: loading, 
+    error 
+  } = useBlogBySlug(slug);
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('blogs')
-          .select('*')
-          .eq('slug', slug)
-          .single();
-
-        if (error) throw error;
-        if (!data) {
-          setError('Post not found');
-          return;
-        }
-
-        setPost(data);
-      } catch (err: any) {
-        console.error('Error fetching post:', err);
-        setError(err.message || 'Failed to load post');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-    window.scrollTo(0, 0);
-  }, [slug]);
+  console.log('BlogPostPage: Current state:', {
+    slug,
+    post: post ? {
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      hasContent: !!post.body_content || !!post.content,
+      hasFeaturedImage: !!post.featured_image_url,
+      hasImage: !!post.image_url
+    } : null,
+    loading,
+    error: error?.message
+  });
 
   if (loading) {
     return (
@@ -70,13 +44,14 @@ const BlogPostPage = () => {
     );
   }
 
-  if (error || !post) {
+  if (error) {
+    console.error('BlogPostPage: Error occurred:', error);
     return (
       <div className="section-padding bg-secondary/30">
         <div className="container-custom">
           <div className="bg-white p-8 rounded-lg shadow-sm border border-border">
-            <h1 className="heading-md mb-6">Blog Post Not Found</h1>
-            <p className="mb-6">{error || "The blog post you're looking for doesn't exist."}</p>
+            <h1 className="heading-md mb-6">Error Loading Blog Post</h1>
+            <p className="mb-6">There was an error loading the blog post: {error.message}</p>
             <Button asChild>
               <Link to="/">Return to Home</Link>
             </Button>
@@ -85,6 +60,35 @@ const BlogPostPage = () => {
       </div>
     );
   }
+
+  if (!post) {
+    console.log('BlogPostPage: No post found for slug:', slug);
+    return (
+      <div className="section-padding bg-secondary/30">
+        <div className="container-custom">
+          <div className="bg-white p-8 rounded-lg shadow-sm border border-border">
+            <h1 className="heading-md mb-6">Blog Post Not Found</h1>
+            <p className="mb-6">
+              The blog post with slug "{slug}" could not be found. This could mean:
+            </p>
+            <ul className="list-disc ml-6 mb-6">
+              <li>The blog post doesn't exist in the database</li>
+              <li>The slug format is incorrect</li>
+              <li>The blog post hasn't been published yet</li>
+            </ul>
+            <p className="mb-6 text-sm text-gray-600">
+              Check the browser console for detailed debugging information.
+            </p>
+            <Button asChild>
+              <Link to="/">Return to Home</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('BlogPostPage: Rendering blog post:', post.title);
 
   return (
     <>
@@ -106,25 +110,27 @@ const BlogPostPage = () => {
           
           <article className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
             {/* Featured Image */}
-            <AspectRatio ratio={16/9}>
-              <OptimizedImage 
-                src={post.featured_image_url || post.image_url || "https://placehold.co/800x450"} 
-                alt={post.alt_text || post.title} 
-                imageType="blog"
-                priority={true}
-                className="w-full h-full object-cover"
-              />
-            </AspectRatio>
+            {(post.featured_image_url || post.image_url) && (
+              <AspectRatio ratio={16/9}>
+                <OptimizedImage 
+                  src={post.featured_image_url || post.image_url || "https://placehold.co/800x450"} 
+                  alt={post.alt_text || post.title} 
+                  imageType="blog"
+                  priority={true}
+                  className="w-full h-full object-cover"
+                />
+              </AspectRatio>
+            )}
             
             {/* Blog Content */}
             <div className="p-6 md:p-10">
               <div className="mb-6">
                 <p className="text-sm text-muted-foreground mb-2">
-                  {new Date(post.date).toLocaleDateString('en-US', { 
+                  {post.date ? new Date(post.date).toLocaleDateString('en-US', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
-                  })}
+                  }) : 'No date available'}
                   {post.author && ` • By ${post.author}`}
                 </p>
                 <h1 className="heading-md">{post.title}</h1>
@@ -133,12 +139,17 @@ const BlogPostPage = () => {
                 )}
               </div>
               
-              <div 
-                className="prose max-w-none" 
-                dangerouslySetInnerHTML={{ 
-                  __html: post.body_content || post.content || '' 
-                }} 
-              />
+              <div className="prose max-w-none">
+                {post.body_content ? (
+                  <div dangerouslySetInnerHTML={{ __html: post.body_content }} />
+                ) : post.content ? (
+                  <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                ) : (
+                  <p className="text-gray-600 italic">
+                    No content available for this blog post. Please check the admin panel to add content.
+                  </p>
+                )}
+              </div>
             </div>
           </article>
         </div>

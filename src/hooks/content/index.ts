@@ -1,4 +1,3 @@
-
 // Re-export all hooks and types
 export * from './usePages';
 export * from './useProducts';
@@ -18,3 +17,5 @@ export { useHomeContent } from './useHomeContent';
 
 // Export json helpers (with corrected import path)
 export * from '../../utils/jsonHelpers';
+
+export { useBlogBySlug } from './useBlogBySlug';
