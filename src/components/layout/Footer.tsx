@@ -1,9 +1,11 @@
 
 import { Link } from "react-router-dom";
 import { PhoneCall, Mail, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
+import { useContactData } from "@/hooks/contact/useContactData";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { contactInfo, isLoading } = useContactData();
 
   return (
     <footer className="bg-secondary/50 border-t border-border">
@@ -117,34 +119,44 @@ const Footer = () => {
 
           <div>
             <h3 className="text-lg font-bold mb-4 font-playfair">Contact Us</h3>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2">
-                <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span>
-                  Building 1234, Road 5678, Block 123
-                  <br />
-                  Manama, Kingdom of Bahrain
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <PhoneCall className="h-5 w-5 text-primary shrink-0" />
-                <a
-                  href="tel:+97333133750"
-                  className="hover:text-primary transition-colors"
-                >
-                  +973 3313 3750
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-primary shrink-0" />
-                <a
-                  href="mailto:nawakhdha2058@gmail.com"
-                  className="hover:text-primary transition-colors"
-                >
-                  nawakhdha2058@gmail.com
-                </a>
-              </li>
-            </ul>
+            {isLoading ? (
+              <div className="text-sm text-muted-foreground">Loading contact info...</div>
+            ) : (
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2">
+                  <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span>
+                    {contactInfo?.address || "Address not available"}
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <PhoneCall className="h-5 w-5 text-primary shrink-0" />
+                  {contactInfo?.phone ? (
+                    <a
+                      href={`tel:${contactInfo.phone}`}
+                      className="hover:text-primary transition-colors"
+                    >
+                      {contactInfo.phone}
+                    </a>
+                  ) : (
+                    <span>Phone not available</span>
+                  )}
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="h-5 w-5 text-primary shrink-0" />
+                  {contactInfo?.email ? (
+                    <a
+                      href={`mailto:${contactInfo.email}`}
+                      className="hover:text-primary transition-colors"
+                    >
+                      {contactInfo.email}
+                    </a>
+                  ) : (
+                    <span>Email not available</span>
+                  )}
+                </li>
+              </ul>
+            )}
           </div>
         </div>
       </div>
