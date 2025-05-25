@@ -110,8 +110,7 @@ function ImageUploadField({
 
                       if (error) {
                         console.error("Upload error details:", {
-                          message: error.message,
-                          statusCode: error.statusCode || 'unknown'
+                          message: error.message
                         });
                         throw error;
                       }
