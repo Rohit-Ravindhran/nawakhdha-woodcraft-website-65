@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PhoneCall, Mail, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
 import { useContactData } from "@/hooks/contact/useContactData";
@@ -64,11 +63,6 @@ const Footer = () => {
               <li>
                 <Link to="/products" className="hover:text-primary transition-colors">
                   Products
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="hover:text-primary transition-colors">
-                  Blog
                 </Link>
               </li>
               <li>
