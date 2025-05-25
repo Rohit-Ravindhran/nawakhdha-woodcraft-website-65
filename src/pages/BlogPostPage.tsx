@@ -131,7 +131,6 @@ const BlogPostPage = () => {
                     month: 'long', 
                     day: 'numeric' 
                   }) : 'No date available'}
-                  {post.author && ` • By ${post.author}`}
                 </p>
                 <h1 className="heading-md">{post.title}</h1>
                 {post.excerpt && (
