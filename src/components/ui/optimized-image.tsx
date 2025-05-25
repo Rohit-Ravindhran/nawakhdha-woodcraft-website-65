@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
@@ -31,76 +31,110 @@ export function OptimizedImage({
   onLoad,
   onError,
   fallbackSrc = '/placeholder.svg',
-  cacheBusting = true,
+  cacheBusting = false,
   ...props
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(!priority);
   const [imgSrc, setImgSrc] = useState<string>('');
   const [error, setError] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
+  // Intersection Observer for lazy loading
   useEffect(() => {
-    // Get optimized URL
+    if (priority || isInView) return;
+
+    observerRef.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observerRef.current?.disconnect();
+        }
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before the image enters viewport
+        threshold: 0.1
+      }
+    );
+
+    if (imgRef.current) {
+      observerRef.current.observe(imgRef.current);
+    }
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [priority, isInView]);
+
+  // Set optimized image source
+  useEffect(() => {
+    if (!isInView && !priority) return;
+
     let optimizedUrl = getOptimizedImageUrl(src, imageType, { width, height });
     
-    // Add cache busting parameter if enabled
+    // Only add cache busting for non-SVG images when explicitly requested
     if (cacheBusting && optimizedUrl !== '/placeholder.svg' && !optimizedUrl.includes('.svg')) {
-      // Use a timestamp-based query parameter for cache busting
       const separator = optimizedUrl.includes('?') ? '&' : '?';
-      optimizedUrl = `${optimizedUrl}${separator}v=${Date.now()}`;
+      optimizedUrl = `${optimizedUrl}${separator}v=${Math.floor(Date.now() / 60000)}`; // Cache for 1 minute
     }
     
     setImgSrc(optimizedUrl);
     setError(false);
-    if (!priority) setIsLoading(true);
-  }, [src, imageType, width, height, priority, cacheBusting]);
+  }, [src, imageType, width, height, isInView, priority, cacheBusting]);
 
-  // Only measure LCP for hero images
+  // Performance monitoring for critical images
   useEffect(() => {
-    if (imageType === 'hero' && typeof window !== 'undefined') {
-      // Report LCP to analytics when available
+    if (priority && imageType === 'hero' && typeof window !== 'undefined') {
+      // Monitor Largest Contentful Paint for hero images
       const observer = new PerformanceObserver((entryList) => {
         for (const entry of entryList.getEntries()) {
-          // Using type assertion to handle LargestContentfulPaint type
           const lcpEntry = entry as any;
-          if (lcpEntry.element?.tagName === 'IMG') {
-            console.debug('LCP image loaded:', {
+          if (lcpEntry.element?.tagName === 'IMG' && lcpEntry.element.getAttribute('src')?.includes(src)) {
+            console.debug('LCP Hero Image:', {
               src: lcpEntry.element.getAttribute('src'),
               time: entry.startTime,
+              size: lcpEntry.size
             });
-            
-            // Send to analytics if available
-            if (typeof window !== 'undefined' && window.ga) {
-              // Use type assertion for analytics
-              const windowWithGa = window as any;
-              if (typeof windowWithGa.ga === 'function') {
-                windowWithGa.ga('send', 'timing', 'Images', 'LCP', entry.startTime);
-              }
-            }
           }
         }
       });
       
-      observer.observe({ type: 'largest-contentful-paint', buffered: true });
+      try {
+        observer.observe({ type: 'largest-contentful-paint', buffered: true });
+      } catch (e) {
+        // LCP not supported in this browser
+      }
       
       return () => observer.disconnect();
     }
-  }, [imageType]);
+  }, [priority, imageType, src]);
 
-  const handleLoad = () => {
+  const handleLoad = useCallback(() => {
     setIsLoading(false);
-    if (onLoad) onLoad();
-  };
+    onLoad?.();
+  }, [onLoad]);
 
-  const handleError = () => {
+  const handleError = useCallback(() => {
     setIsLoading(false);
     setError(true);
-    if (onError) onError();
+    onError?.();
     
     // Use fallback if available and different from current source
     if (fallbackSrc && fallbackSrc !== imgSrc) {
       setImgSrc(fallbackSrc);
+      setError(false);
     }
-  };
+  }, [onError, fallbackSrc, imgSrc]);
+
+  // Don't render anything until in view (unless priority)
+  if (!isInView && !priority) {
+    return (
+      <div ref={imgRef} className={cn('w-full h-full', className)}>
+        <Skeleton className="w-full h-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full">
@@ -112,6 +146,7 @@ export function OptimizedImage({
       )}
       
       <img
+        ref={imgRef}
         src={error ? fallbackSrc : imgSrc}
         alt={alt}
         width={width}
@@ -119,7 +154,7 @@ export function OptimizedImage({
         onLoad={handleLoad}
         onError={handleError}
         className={cn(
-          'w-full h-full transition-opacity',
+          'w-full h-full transition-opacity duration-300',
           isLoading ? 'opacity-0' : 'opacity-100',
           {
             'object-cover': objectFit === 'cover',
@@ -131,7 +166,8 @@ export function OptimizedImage({
           className
         )}
         loading={priority ? 'eager' : 'lazy'}
-        {...(priority ? { fetchpriority: 'high' } : {})}
+        decoding={priority ? 'sync' : 'async'}
+        {...(priority ? { fetchpriority: 'high' } : { fetchpriority: 'low' })}
         {...props}
       />
     </div>
