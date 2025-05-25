@@ -100,7 +100,7 @@ function ImageUploadField({
                       const file = e.target.files[0];
                       const fileExt = file.name.split(".").pop();
                       const fileName = `${Math.random()}.${fileExt}`;
-                      const filePath = `blog/${fileName}`;
+                      const filePath = `${fileName}`;
 
                       const { data, error } = await supabase.storage
                         .from("blogs")
