@@ -8,13 +8,22 @@ const TopBar = () => {
         Since 1975 | Bahrain's Premier Furniture Workshop
       </div>
       <div className="flex items-center gap-4">
-        <a
-          href="tel:+97333133750"
-          className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
-        >
+        <div className="flex items-center gap-1 text-sm">
           <Phone className="h-3 w-3" />
-          <span>+973 3313 3750</span>
-        </a>
+          <a
+            href="tel:+97365008793"
+            className="hover:text-primary transition-colors"
+          >
+            +973 65008793
+          </a>
+          <span className="mx-2">|</span>
+          <a
+            href="tel:+97333133750"
+            className="hover:text-primary transition-colors"
+          >
+            +973 33133750
+          </a>
+        </div>
       </div>
     </div>
   );
