@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PhoneCall, Mail, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
 import { useContactData } from "@/hooks/contact/useContactData";
@@ -120,9 +119,12 @@ const Footer = () => {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span>
-                    {contactInfo?.address || "Address not available"}
-                  </span>
+                  <div>
+                    <p className="font-medium">Al Nawakhdha Furniture W.L.L.</p>
+                    <span>
+                      {contactInfo?.address || "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
+                    </span>
+                  </div>
                 </li>
                 <li className="flex items-center gap-2">
                   <PhoneCall className="h-5 w-5 text-primary shrink-0" />

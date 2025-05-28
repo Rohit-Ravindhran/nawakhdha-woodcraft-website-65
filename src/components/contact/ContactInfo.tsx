@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { ContactInfoData, BusinessHours } from "@/hooks/content/types";
@@ -45,9 +44,12 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ contactInfo, isLoading }) => 
               <MapPin className="h-5 w-5 text-primary shrink-0 mt-1" />
               <div>
                 <p className="font-medium">Address</p>
-                <p className="text-sm text-muted-foreground">
-                  {contactInfo?.address || "Address not available"}
-                </p>
+                <div className="text-sm text-muted-foreground">
+                  <p className="font-medium">Al Nawakhdha Furniture W.L.L.</p>
+                  <p>
+                    {contactInfo?.address || "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
+                  </p>
+                </div>
               </div>
             </li>
             <li className="flex items-start gap-3">
