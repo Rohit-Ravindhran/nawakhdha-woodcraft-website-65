@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,12 +18,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Plus, Save, Trash2, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
+import { Edit, Plus, Save, Trash2, AlertCircle, RefreshCw, ExternalLink, Upload } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ImageUploadField from "../ImageUploadField";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import BulkImageUpload from "../gallery/BulkImageUpload";
 
 const galleryImageSchema = z.object({
   id: z.string().optional(),
@@ -383,89 +386,108 @@ export default function ProductGalleryTab() {
         </p>
       </div>
       
-      <div className="mb-6 flex items-center justify-between">
-        <div className="w-72">
-          <Select 
-            value={selectedCategory || "all-categories"} 
-            onValueChange={(value) => setSelectedCategory(value === "all-categories" ? null : value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-categories">All Categories</SelectItem>
-              {productCategories?.map(category => (
-                <SelectItem key={category.id} value={category.id!}>
-                  {category.category_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <Button onClick={handleAdd} className="flex items-center">
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Image
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {galleryImages && galleryImages.length > 0 ? (
-          galleryImages.map((image) => (
-            <div key={image.id} className="border rounded-lg overflow-hidden bg-white">
-              <div className="aspect-video relative bg-gray-100">
-                {image.image_url ? (
-                  <img 
-                    src={image.image_url} 
-                    alt={image.alt_text || 'Gallery image'} 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg";
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    No image
-                  </div>
-                )}
-                <div className="absolute top-2 right-2 bg-white/80 px-2 py-1 rounded text-xs">
-                  Position: {image.position || 0}
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="text-sm font-medium">
-                  {image.product_categories?.category_name || 'Unknown category'}
-                </div>
-                <div className="text-sm text-gray-500 mt-1 line-clamp-2">
-                  {image.caption || 'No caption'}
-                </div>
-                <div className="flex justify-between mt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(image)}
-                    className="flex items-center"
-                  >
-                    <Edit className="h-4 w-4 mr-1" /> Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDelete(image.id!)}
-                    className="flex items-center text-red-500 hover:text-red-600"
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" /> Delete
-                  </Button>
-                </div>
-              </div>
+      <Tabs defaultValue="bulk-upload" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="bulk-upload" className="flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Bulk Upload
+          </TabsTrigger>
+          <TabsTrigger value="manage-existing" className="flex items-center gap-2">
+            <Edit className="h-4 w-4" />
+            Manage Existing
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="bulk-upload" className="space-y-6">
+          <BulkImageUpload categories={productCategories || []} />
+        </TabsContent>
+
+        <TabsContent value="manage-existing" className="space-y-6">
+          <div className="mb-6 flex items-center justify-between">
+            <div className="w-72">
+              <Select 
+                value={selectedCategory || "all-categories"} 
+                onValueChange={(value) => setSelectedCategory(value === "all-categories" ? null : value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all-categories">All Categories</SelectItem>
+                  {productCategories?.map(category => (
+                    <SelectItem key={category.id} value={category.id!}>
+                      {category.category_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          ))
-        ) : (
-          <div className="col-span-full py-8 text-center text-gray-500">
-            No gallery images found. {selectedCategory ? 'Try selecting a different category or ' : ''}
-            Click "Add New Image" to add one.
+            <Button onClick={handleAdd} className="flex items-center">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Single Image
+            </Button>
           </div>
-        )}
-      </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {galleryImages && galleryImages.length > 0 ? (
+              galleryImages.map((image) => (
+                <div key={image.id} className="border rounded-lg overflow-hidden bg-white">
+                  <div className="aspect-video relative bg-gray-100">
+                    {image.image_url ? (
+                      <img 
+                        src={image.image_url} 
+                        alt={image.alt_text || 'Gallery image'} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        No image
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2 bg-white/80 px-2 py-1 rounded text-xs">
+                      Position: {image.position || 0}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="text-sm font-medium">
+                      {image.product_categories?.category_name || 'Unknown category'}
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1 line-clamp-2">
+                      {image.caption || 'No caption'}
+                    </div>
+                    <div className="flex justify-between mt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(image)}
+                        className="flex items-center"
+                      >
+                        <Edit className="h-4 w-4 mr-1" /> Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(image.id!)}
+                        className="flex items-center text-red-500 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" /> Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full py-8 text-center text-gray-500">
+                No gallery images found. {selectedCategory ? 'Try selecting a different category or ' : ''}
+                Click "Add Single Image" to add one.
+              </div>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl">
