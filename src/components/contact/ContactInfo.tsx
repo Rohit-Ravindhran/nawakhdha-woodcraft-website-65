@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { ContactInfoData, BusinessHours } from "@/hooks/content/types";
@@ -30,6 +31,16 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ contactInfo, isLoading }) => 
       ) || defaultBusinessHours
     : defaultBusinessHours;
 
+  // Format address with line breaks
+  const formatAddress = (address: string) => {
+    return address.split('\n').map((line, index) => (
+      <span key={index}>
+        {line}
+        {index < address.split('\n').length - 1 && <br />}
+      </span>
+    ));
+  };
+
   return (
     <div className="sticky top-24">
       {isLoading ? (
@@ -45,10 +56,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ contactInfo, isLoading }) => 
               <div>
                 <p className="font-medium">Address</p>
                 <div className="text-sm text-muted-foreground">
-                  <p className="font-medium">Al Nawakhdha Furniture W.L.L.</p>
-                  <p>
-                    {contactInfo?.address || "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
-                  </p>
+                  {contactInfo?.address ? formatAddress(contactInfo.address) : "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
                 </div>
               </div>
             </li>

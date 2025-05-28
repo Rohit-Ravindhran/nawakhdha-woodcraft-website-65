@@ -6,6 +6,16 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { contactInfo, isLoading } = useContactData();
 
+  // Format address with line breaks
+  const formatAddress = (address: string) => {
+    return address.split('\n').map((line, index) => (
+      <span key={index}>
+        {line}
+        {index < address.split('\n').length - 1 && <br />}
+      </span>
+    ));
+  };
+
   return (
     <footer className="bg-secondary/50 border-t border-border">
       <div className="container-custom py-12 md:py-16">
@@ -119,12 +129,9 @@ const Footer = () => {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
                   <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Al Nawakhdha Furniture W.L.L.</p>
-                    <span>
-                      {contactInfo?.address || "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
-                    </span>
-                  </div>
+                  <span>
+                    {contactInfo?.address ? formatAddress(contactInfo.address) : "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
+                  </span>
                 </li>
                 <li className="flex items-center gap-2">
                   <PhoneCall className="h-5 w-5 text-primary shrink-0" />
