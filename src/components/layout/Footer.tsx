@@ -7,17 +7,20 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { contactInfo, isLoading } = useContactData();
 
-  // Format address with line breaks, handling both \n and /n patterns
+  // Format address with proper line breaks, removing any /n or \n patterns
   const formatAddress = (address: string) => {
-    // Replace both \n and /n with actual line breaks
-    const cleanAddress = address.replace(/\\n|\/n/g, '\n');
+    // Clean up the address by removing literal /n and \n patterns
+    const cleanAddress = address.replace(/\/n|\\n/g, '\n').trim();
     return cleanAddress.split('\n').map((line, index) => (
       <span key={index}>
-        {line}
+        {line.trim()}
         {index < cleanAddress.split('\n').length - 1 && <br />}
       </span>
     ));
   };
+
+  // Default address if none provided
+  const defaultAddress = "Building #3828\nRoad No: 4368\nBlock No: 643\nNuwaidrat\nKingdom of Bahrain";
 
   return (
     <footer className="bg-secondary/50 border-t border-border">
@@ -133,7 +136,7 @@ const Footer = () => {
                 <li className="flex items-start gap-2">
                   <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <span>
-                    {contactInfo?.address ? formatAddress(contactInfo.address) : "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
+                    {contactInfo?.address ? formatAddress(contactInfo.address) : formatAddress(defaultAddress)}
                   </span>
                 </li>
                 <li className="flex items-center gap-2">

@@ -31,15 +31,20 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ contactInfo, isLoading }) => 
       ) || defaultBusinessHours
     : defaultBusinessHours;
 
-  // Format address with line breaks
+  // Format address with proper line breaks, removing any /n or \n patterns
   const formatAddress = (address: string) => {
-    return address.split('\n').map((line, index) => (
+    // Clean up the address by removing literal /n and \n patterns
+    const cleanAddress = address.replace(/\/n|\\n/g, '\n').trim();
+    return cleanAddress.split('\n').map((line, index) => (
       <span key={index}>
-        {line}
-        {index < address.split('\n').length - 1 && <br />}
+        {line.trim()}
+        {index < cleanAddress.split('\n').length - 1 && <br />}
       </span>
     ));
   };
+
+  // Default address if none provided
+  const defaultAddress = "Building #3828\nRoad No: 4368\nBlock No: 643\nNuwaidrat\nKingdom of Bahrain";
 
   return (
     <div className="sticky top-24">
@@ -56,7 +61,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ contactInfo, isLoading }) => 
               <div>
                 <p className="font-medium">Address</p>
                 <div className="text-sm text-muted-foreground">
-                  {contactInfo?.address ? formatAddress(contactInfo.address) : "Building #3828, Road No: 4368, Block No: 643, Nuwaidrat, Kingdom of Bahrain"}
+                  {contactInfo?.address ? formatAddress(contactInfo.address) : formatAddress(defaultAddress)}
                 </div>
               </div>
             </li>
