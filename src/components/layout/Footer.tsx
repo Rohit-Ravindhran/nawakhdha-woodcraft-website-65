@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { PhoneCall, Mail, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
 import { useContactData } from "@/hooks/contact/useContactData";
@@ -6,12 +7,14 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { contactInfo, isLoading } = useContactData();
 
-  // Format address with line breaks
+  // Format address with line breaks, handling both \n and /n patterns
   const formatAddress = (address: string) => {
-    return address.split('\n').map((line, index) => (
+    // Replace both \n and /n with actual line breaks
+    const cleanAddress = address.replace(/\\n|\/n/g, '\n');
+    return cleanAddress.split('\n').map((line, index) => (
       <span key={index}>
         {line}
-        {index < address.split('\n').length - 1 && <br />}
+        {index < cleanAddress.split('\n').length - 1 && <br />}
       </span>
     ));
   };
