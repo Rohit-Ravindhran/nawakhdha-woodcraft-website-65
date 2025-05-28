@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStorage } from '@/hooks/storage';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -24,9 +24,53 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
   const [imageItems, setImageItems] = useState<ImageUploadItem[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
+  const [nextPosition, setNextPosition] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadImage } = useStorage();
   const queryClient = useQueryClient();
+
+  // Fetch the next available position when category changes
+  useEffect(() => {
+    const fetchNextPosition = async () => {
+      if (!selectedCategory) {
+        setNextPosition(0);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('product_gallery')
+          .select('position')
+          .eq('category_id', selectedCategory)
+          .order('position', { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.error('Error fetching positions:', error);
+          setNextPosition(0);
+          return;
+        }
+
+        const lastPosition = data && data.length > 0 ? data[0].position : -1;
+        setNextPosition((lastPosition || -1) + 1);
+      } catch (error) {
+        console.error('Error fetching positions:', error);
+        setNextPosition(0);
+      }
+    };
+
+    fetchNextPosition();
+  }, [selectedCategory]);
+
+  // Update positions of existing items when nextPosition changes
+  useEffect(() => {
+    setImageItems(prev => 
+      prev.map((item, index) => ({
+        ...item,
+        position: nextPosition + index
+      }))
+    );
+  }, [nextPosition]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -38,7 +82,7 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
       preview: URL.createObjectURL(file),
       altText: '',
       caption: '',
-      position: imageItems.length + index,
+      position: nextPosition + imageItems.length + index,
       uploading: false,
       uploaded: false,
       error: null
@@ -63,8 +107,11 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
   const removeImageItem = (id: string) => {
     setImageItems(prev => {
       const filtered = prev.filter(item => item.id !== id);
-      // Reorder positions
-      return filtered.map((item, index) => ({ ...item, position: index }));
+      // Reorder positions starting from nextPosition
+      return filtered.map((item, index) => ({ 
+        ...item, 
+        position: nextPosition + index 
+      }));
     });
   };
 
@@ -157,6 +204,9 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
       
       // Refresh gallery data
       queryClient.invalidateQueries({ queryKey: ['product_gallery'] });
+      
+      // Update nextPosition for future uploads
+      setNextPosition(prev => prev + successCount);
     }
     
     if (errorCount > 0) {
