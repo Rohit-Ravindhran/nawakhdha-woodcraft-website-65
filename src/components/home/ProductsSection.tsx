@@ -64,23 +64,40 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
 
   // Use products from props if provided, otherwise use home products from DB
   const products = React.useMemo(() => {
+    // First try products from props (CMS data)
     if (productsData?.items && productsData.items.length > 0) {
-      return productsData.items.filter(item => item.title && item.image);
-    } else if (mappedHomeProducts.length > 0) {
-      return mappedHomeProducts;
-    } else {
-      return defaultProducts;
+      // Filter out items that don't have the minimum required data
+      const validPropsProducts = productsData.items.filter(item => 
+        item && (item.title || item.category_slug) && item.image
+      );
+      
+      if (validPropsProducts.length > 0) {
+        return validPropsProducts;
+      }
     }
+    
+    // If no valid props products, use mapped home products from DB
+    if (mappedHomeProducts.length > 0) {
+      return mappedHomeProducts;
+    }
+    
+    // Finally fall back to default products
+    return defaultProducts;
   }, [productsData, mappedHomeProducts, defaultProducts]);
 
   // Debug information
   React.useEffect(() => {
     console.log('ProductsSection - Data loaded:', {
       fromPropsCount: productsData?.items?.length || 0,
+      validPropsProducts: productsData?.items?.filter(item => 
+        item && (item.title || item.category_slug) && item.image
+      ).length || 0,
       fromDBCount: mappedHomeProducts.length,
       fromDefaultCount: defaultProducts.length,
       displayingCount: products.length,
-      error: error ? String(error) : null
+      error: error ? String(error) : null,
+      productsDataItems: productsData?.items,
+      mappedHomeProducts: mappedHomeProducts
     });
   }, [productsData, mappedHomeProducts, defaultProducts, products, error]);
 
@@ -167,10 +184,10 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
             return (
               <CategoryCard
                 key={product.id || index}
-                title={product.title}
+                title={product.title || product.category_slug || `Product ${index + 1}`}
                 image={product.image}
                 href={productUrl}
-                imageAlt={product.image_alt || `${product.title} product`}
+                imageAlt={product.image_alt || `${product.title || 'Product'} image`}
               />
             );
           })}
