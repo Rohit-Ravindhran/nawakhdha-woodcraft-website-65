@@ -7,11 +7,12 @@ import ProductsSection from "@/components/home/ProductsSection";
 import BlogSection from "@/components/home/BlogSection";
 import CallToActionSection from "@/components/home/CallToActionSection";
 import HomePageSEO from "@/components/home/HomePageSEO";
+import { safeJsonParse } from "@/utils/jsonHelpers";
 
 const HomePage = () => {
-  const { data: homeData, isLoading, error } = useHomeContent();
+  const { pageData, services, blogPosts, homeProductsWithItems, isLoading, error } = useHomeContent();
 
-  console.log("🏠 HomePage rendering with data:", { homeData, isLoading, error });
+  console.log("🏠 HomePage rendering with data:", { homeData: pageData, isLoading, error });
 
   if (isLoading) {
     return (
@@ -38,20 +39,38 @@ const HomePage = () => {
   const defaultDescription = "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, wardrobes, dining tables and more crafted with excellence in Nuwaidrat, Bahrain.";
   const defaultKeywords = "furniture Bahrain, custom furniture, wooden doors Bahrain, kitchen cabinets, wardrobes, dining tables, carpentry Bahrain, Al Nawakhdha, Nuwaidrat furniture, handcrafted furniture, wooden furniture manufacturer";
 
+  // Parse JSON data from pageData if available
+  const heroData = pageData?.hero ? safeJsonParse(pageData.hero) : null;
+  const servicesData = pageData?.services ? safeJsonParse(pageData.services) : { section_title: "Our Services", items: services };
+  const productsData = pageData?.products ? safeJsonParse(pageData.products) : { section_title: "Our Products", items: homeProductsWithItems };
+  const blogData = pageData?.blog ? safeJsonParse(pageData.blog) : { section_title: "From Our Workshop Blog", items: blogPosts };
+
   return (
     <>
       <HomePageSEO
-        title={homeData?.seo_title || defaultTitle}
-        description={homeData?.seo_description || defaultDescription}
-        keywords={homeData?.seo_keywords || defaultKeywords}
-        data={homeData}
+        title={pageData?.seo_title || defaultTitle}
+        description={pageData?.seo_description || defaultDescription}
+        keywords={pageData?.seo_keywords || defaultKeywords}
+        data={pageData}
       />
       
       <div className="min-h-screen">
-        <HeroSection />
-        <ServicesSection />
-        <ProductsSection />
-        <BlogSection />
+        <HeroSection heroData={heroData} />
+        <ServicesSection 
+          servicesData={servicesData}
+          isLoading={isLoading}
+          error={error}
+        />
+        <ProductsSection 
+          productsData={productsData}
+          isLoading={isLoading}
+          error={error}
+        />
+        <BlogSection 
+          blogData={blogData}
+          isLoading={isLoading}
+          error={error}
+        />
         <CallToActionSection />
       </div>
     </>
