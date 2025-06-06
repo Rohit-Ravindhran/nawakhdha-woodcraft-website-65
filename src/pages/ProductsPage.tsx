@@ -90,11 +90,11 @@ const ProductsPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => {
-              // Use the slug for URL if available, otherwise fall back to category_slug, and finally to ID
-              const productUrl = product.slug 
-                ? `/product/${product.slug}` 
-                : product.category_slug 
-                  ? `/product/${product.category_slug}` 
+              // Prioritize category_slug over other URL options
+              const productUrl = product.category_slug 
+                ? `/product/${product.category_slug}` 
+                : product.slug 
+                  ? `/product/${product.slug}` 
                   : `/product/${product.id}`;
                 
               const imageUrl = product.category_image_url || product.image_url || "/placeholder.svg";

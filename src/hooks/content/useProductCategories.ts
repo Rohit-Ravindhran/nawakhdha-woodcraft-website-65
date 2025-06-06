@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ProductCategoryData } from './types';
 
-// Get all product categories with their slugs from home_products
+// Get all product categories with proper slug handling
 export function useProductCategories() {
   return useQuery({
     queryKey: ['products'],
@@ -14,14 +14,14 @@ export function useProductCategories() {
 
       if (categoryError) throw categoryError;
       
-      // Fetch home products to get the slugs
+      // Fetch home products to get additional slug mappings
       const { data: homeProductsData, error: homeProductsError } = await supabase
         .from('home_products')
         .select('*');
         
       if (homeProductsError) throw homeProductsError;
       
-      // Map the categories with their corresponding home product slugs
+      // Map the categories with proper slug priority
       return categoryData.map((category): ProductCategoryData => {
         const matchingHomeProduct = homeProductsData.find(
           hp => hp.category_name === category.category_name
@@ -29,7 +29,8 @@ export function useProductCategories() {
         
         return {
           ...category,
-          slug: matchingHomeProduct?.slug || category.category_slug
+          // Prioritize category_slug from product_categories, then home_products slug
+          slug: category.category_slug || matchingHomeProduct?.slug
         };
       });
     }

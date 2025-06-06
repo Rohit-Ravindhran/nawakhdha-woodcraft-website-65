@@ -174,11 +174,11 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product, index) => {
-            // Use the appropriate routing approach based on available data
-            const productUrl = product.slug 
-              ? `/product/${product.slug}`
-              : product.category_slug
-                ? `/product/${product.category_slug}`
+            // Prioritize category_slug over other URL options
+            const productUrl = product.category_slug 
+              ? `/product/${product.category_slug}`
+              : product.slug
+                ? `/product/${product.slug}`
                 : `/product/${product.id || `product-${index}`}`;
                 
             return (
