@@ -1,11 +1,12 @@
-
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBlogBySlug } from "@/hooks/content/useBlogBySlug";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Helmet } from "react-helmet-async";
+import PageSEO from "@/components/seo/PageSEO";
+import BreadcrumbNavigation from "@/components/ui/breadcrumb-navigation";
+import InternalLinks from "@/components/seo/InternalLinks";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -34,77 +35,133 @@ const BlogPostPage = () => {
 
   if (loading) {
     return (
-      <div className="section-padding bg-secondary/30">
-        <div className="container-custom">
-          <div className="bg-white p-8 rounded-lg shadow-sm border border-border text-center">
-            <p>Loading post...</p>
+      <>
+        <PageSEO
+          title={`Loading Blog Post... | Al Nawakhdha Furniture W.L.L`}
+          description="Loading blog post from Al Nawakhdha Furniture workshop blog"
+          url={`/blog/${slug}`}
+          type="article"
+        />
+        <div className="section-padding bg-secondary/30">
+          <div className="container-custom">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-border text-center">
+              <p>Loading post...</p>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error) {
     console.error('BlogPostPage: Error occurred:', error);
     return (
-      <div className="section-padding bg-secondary/30">
-        <div className="container-custom">
-          <div className="bg-white p-8 rounded-lg shadow-sm border border-border">
-            <h1 className="heading-md mb-6">Error Loading Blog Post</h1>
-            <p className="mb-6">There was an error loading the blog post: {error.message}</p>
-            <Button asChild>
-              <Link to="/">Return to Home</Link>
-            </Button>
+      <>
+        <PageSEO
+          title="Blog Post Error | Al Nawakhdha Furniture W.L.L"
+          description="Error loading blog post"
+          url={`/blog/${slug}`}
+          noIndex={true}
+        />
+        <div className="section-padding bg-secondary/30">
+          <div className="container-custom">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-border">
+              <h1 className="heading-md mb-6">Error Loading Blog Post</h1>
+              <p className="mb-6">There was an error loading the blog post: {error.message}</p>
+              <Button asChild>
+                <Link to="/">Return to Home</Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!post) {
     console.log('BlogPostPage: No post found for slug:', slug);
     return (
-      <div className="section-padding bg-secondary/30">
-        <div className="container-custom">
-          <div className="bg-white p-8 rounded-lg shadow-sm border border-border">
-            <h1 className="heading-md mb-6">Blog Post Not Found</h1>
-            <p className="mb-6">
-              The blog post with slug "{slug}" could not be found. This could mean:
-            </p>
-            <ul className="list-disc ml-6 mb-6">
-              <li>The blog post doesn't exist in the database</li>
-              <li>The slug format is incorrect</li>
-              <li>The blog post hasn't been published yet</li>
-            </ul>
-            <p className="mb-6 text-sm text-gray-600">
-              Check the browser console for detailed debugging information.
-            </p>
-            <Button asChild>
-              <Link to="/">Return to Home</Link>
-            </Button>
+      <>
+        <PageSEO
+          title="Blog Post Not Found | Al Nawakhdha Furniture W.L.L"
+          description="The requested blog post could not be found"
+          url={`/blog/${slug}`}
+          noIndex={true}
+        />
+        <div className="section-padding bg-secondary/30">
+          <div className="container-custom">
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-border">
+              <h1 className="heading-md mb-6">Blog Post Not Found</h1>
+              <p className="mb-6">
+                The blog post with slug "{slug}" could not be found. This could mean:
+              </p>
+              <ul className="list-disc ml-6 mb-6">
+                <li>The blog post doesn't exist in the database</li>
+                <li>The slug format is incorrect</li>
+                <li>The blog post hasn't been published yet</li>
+              </ul>
+              <p className="mb-6 text-sm text-gray-600">
+                Check the browser console for detailed debugging information.
+              </p>
+              <Button asChild>
+                <Link to="/">Return to Home</Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   console.log('BlogPostPage: Rendering blog post:', post.title);
 
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Blog', href: '/blog' },
+    { label: post.title }
+  ];
+
+  const relatedLinks = [
+    {
+      title: 'All Blog Posts',
+      href: '/blog',
+      description: 'Read more insights from our workshop'
+    },
+    {
+      title: 'Our Products',
+      href: '/products',
+      description: 'Explore our handcrafted furniture collection'
+    },
+    {
+      title: 'Contact Us',
+      href: '/contact',
+      description: 'Discuss your custom furniture project'
+    }
+  ];
+
+  const publishedDate = post.date ? new Date(post.date).toISOString() : undefined;
+
   return (
     <>
-      <Helmet>
-        <title>{post.title} | Al Nawakhdha Furniture W.L.L</title>
-        <meta name="description" content={post.excerpt || `Read about ${post.title}`} />
-        <link rel="icon" href="/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png" />
-      </Helmet>
+      <PageSEO
+        title={`${post.title} | Al Nawakhdha Furniture W.L.L`}
+        description={post.excerpt || `Read about ${post.title} from Al Nawakhdha Furniture workshop blog`}
+        image={post.featured_image_url || post.image_url}
+        url={`/blog/${slug}`}
+        type="article"
+        publishedTime={publishedDate}
+        author="Al Nawakhdha Furniture"
+        category="Furniture & Woodworking"
+      />
       
       <div className="section-padding bg-secondary/30">
         <div className="container-custom max-w-4xl">
+          <BreadcrumbNavigation items={breadcrumbItems} className="mb-6" />
+          
           <Button variant="outline" asChild className="mb-8">
-            <Link to="/">
+            <Link to="/blog">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
+              Back to Blog
             </Link>
           </Button>
           
@@ -151,6 +208,13 @@ const BlogPostPage = () => {
               </div>
             </div>
           </article>
+          
+          <InternalLinks 
+            title="Related Content" 
+            links={relatedLinks}
+            variant="grid"
+            className="mt-8"
+          />
         </div>
       </div>
     </>

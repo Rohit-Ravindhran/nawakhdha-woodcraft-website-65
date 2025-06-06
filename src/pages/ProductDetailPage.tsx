@@ -8,8 +8,10 @@ import { ProductMainContent } from '@/components/products/ProductMainContent';
 import { ProductGalleryGrid } from '@/components/products/ProductGalleryGrid';
 import { ProductLoading } from '@/components/products/ProductLoading';
 import { ProductNotFound } from '@/components/products/ProductNotFound';
-import { Helmet } from 'react-helmet-async';
 import { Separator } from '@/components/ui/separator';
+import PageSEO from '@/components/seo/PageSEO';
+import BreadcrumbNavigation from '@/components/ui/breadcrumb-navigation';
+import InternalLinks from '@/components/seo/InternalLinks';
 
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -94,12 +96,38 @@ const ProductDetailPage: React.FC = () => {
     : finalData.alt_text;
     
   // SEO metadata - prioritize from product details
-  const seoTitle = (productData?.seo_title) || finalData.seo_title || productName;
-  const seoDescription = (productData?.seo_description) || finalData.seo_description || description.substring(0, 160);
-  const seoKeywords = (productData?.seo_keywords) || finalData.seo_keywords || '';
+  const seoTitle = (productData?.seo_title) || finalData.seo_title || `${productName} - Al Nawakhdha Furniture W.L.L`;
+  const seoDescription = (productData?.seo_description) || finalData.seo_description || description.substring(0, 160) || `Premium ${productName} crafted by Al Nawakhdha Furniture in Bahrain. Custom wooden furniture manufacturing since 1975.`;
+  const seoKeywords = (productData?.seo_keywords) || finalData.seo_keywords || `${productName}, furniture Bahrain, custom furniture, wooden furniture, Al Nawakhdha`;
   
   // Gallery images
   const galleryImages = finalData.gallery_images || [];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Products', href: '/products' },
+    { label: productName }
+  ];
+  
+  // Related internal links
+  const relatedLinks = [
+    {
+      title: 'All Products',
+      href: '/products',
+      description: 'Explore our complete collection of handcrafted furniture'
+    },
+    {
+      title: 'Contact Us',
+      href: '/contact',
+      description: 'Get a custom quote for your furniture needs'
+    },
+    {
+      title: 'About Us',
+      href: '/about',
+      description: 'Learn about our craftsmanship and heritage since 1975'
+    }
+  ];
   
   console.log('ProductDetailPage: Final data for rendering:', {
     categoryName,
@@ -117,18 +145,19 @@ const ProductDetailPage: React.FC = () => {
   
   return (
     <>
-      <Helmet>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        {seoKeywords && <meta name="keywords" content={seoKeywords} />}
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        {featuredImage && <meta property="og:image" content={featuredImage} />}
-        <meta property="og:type" content="product" />
-      </Helmet>
+      <PageSEO
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        image={featuredImage}
+        url={`/product/${slug}`}
+        type="product"
+      />
       
-      <div className="py-12">
+      <div className="py-6">
         <div className="container-custom">
+          <BreadcrumbNavigation items={breadcrumbItems} className="mb-6" />
+          
           <ProductHeader 
             categoryName={categoryName} 
             productName={productName} 
@@ -152,6 +181,13 @@ const ProductDetailPage: React.FC = () => {
               />
             </>
           )}
+          
+          <Separator className="my-10" />
+          <InternalLinks 
+            title="Related Pages" 
+            links={relatedLinks}
+            variant="grid"
+          />
         </div>
       </div>
     </>
