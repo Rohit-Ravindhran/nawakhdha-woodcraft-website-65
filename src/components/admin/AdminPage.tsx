@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import ProductCategoriesTab from "./tabs/ProductCategoriesTab";
 import HomeProductsTab from "./tabs/HomeProductsTab";
-import HomeContentTab from "./tabs/HomeContentTab";
+import HomeServicesTab from "./tabs/HomeServicesTab";
 import BlogsTab from "./tabs/BlogsTab";
 import PagesTab from "./tabs/PagesTab";
 import SitemapTab from "./tabs/SitemapTab";
@@ -30,10 +31,10 @@ const AdminPage = () => {
 
   const tabs = [
     { 
-      id: "home-content", 
-      label: "Home Content", 
-      component: HomeContentTab,
-      description: "Manage content sections on the homepage"
+      id: "home-services", 
+      label: "Home Services", 
+      component: HomeServicesTab,
+      description: "Manage services section on the homepage"
     },
     { 
       id: "home-products", 
