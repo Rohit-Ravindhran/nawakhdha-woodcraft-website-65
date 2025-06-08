@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Homepage -->
@@ -38,8 +37,7 @@
     <priority>0.6</priority>
   </url>
   
-  <!-- Product Category Pages (these should be dynamically populated based on actual category_slug values) -->
-  <!-- The following are placeholder URLs - these should match actual category_slug values from product_categories table -->
+  <!-- Product Category Pages -->
   <url>
     <loc>https://anfurnwll.com/product/wardrobes-bahrain</loc>
     <lastmod>2025-06-06</lastmod>
@@ -180,8 +178,7 @@
     <priority>0.7</priority>
   </url>
   
-  <!-- Blog Post Pages (these should be dynamically populated based on actual slug values from blogs table) -->
-  <!-- Placeholder blog URLs - these should match actual slug values from blogs table -->
+  <!-- Blog Post Pages -->
   <url>
     <loc>https://anfurnwll.com/blog/craftsmanship-heritage</loc>
     <lastmod>2025-06-06</lastmod>
