@@ -1,3 +1,4 @@
+
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -159,9 +160,9 @@ const BlogPostPage = () => {
           <BreadcrumbNavigation items={breadcrumbItems} className="mb-6" />
           
           <Button variant="outline" asChild className="mb-8">
-            <Link to="/blog">
+            <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
+              Back to Home
             </Link>
           </Button>
           
