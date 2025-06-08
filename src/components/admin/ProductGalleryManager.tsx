@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,10 +95,7 @@ export default function ProductGalleryManager({
   };
 
   // Handle image click to open lightbox
-  const handleImageClick = (image: Image, e: React.MouseEvent) => {
-    // Prevent drag start when clicking on image
-    e.stopPropagation();
-    
+  const handleImageClick = (image: Image) => {
     openLightbox({
       src: image.url,
       alt: image.alt || 'Gallery image',
@@ -143,14 +139,17 @@ export default function ProductGalleryManager({
                             src={image.url}
                             alt={image.alt || "Gallery image"}
                             className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                            onClick={(e) => handleImageClick(image, e)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleImageClick(image);
+                            }}
                             role="button"
                             tabIndex={0}
                             aria-label={`View enlarged image: ${image.caption || image.alt || 'Gallery image'}`}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ' ') {
                                 e.preventDefault();
-                                handleImageClick(image, e);
+                                handleImageClick(image);
                               }
                             }}
                           />

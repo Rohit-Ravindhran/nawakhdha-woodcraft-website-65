@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
@@ -40,10 +39,7 @@ export default function GalleryImageGrid({
   }
 
   // Handle image click to open lightbox
-  const handleImageClick = (image: GalleryImage, e: React.MouseEvent) => {
-    // Prevent event bubbling to avoid triggering edit/delete actions
-    e.stopPropagation();
-    
+  const handleImageClick = (image: GalleryImage) => {
     if (image.image_url) {
       openLightbox({
         src: image.image_url,
@@ -63,7 +59,10 @@ export default function GalleryImageGrid({
                 src={image.image_url} 
                 alt={image.alt_text || 'Gallery image'} 
                 className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                onClick={(e) => handleImageClick(image, e)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageClick(image);
+                }}
                 onError={(e) => {
                   e.currentTarget.src = "/placeholder.svg";
                 }}
@@ -73,7 +72,7 @@ export default function GalleryImageGrid({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    handleImageClick(image, e);
+                    handleImageClick(image);
                   }
                 }}
               />
