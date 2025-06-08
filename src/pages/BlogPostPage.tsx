@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -124,9 +123,9 @@ const BlogPostPage = () => {
 
   const relatedLinks = [
     {
-      title: 'All Blog Posts',
-      href: '/blog',
-      description: 'Read more insights from our workshop'
+      title: 'Home',
+      href: '/',
+      description: 'Return to our main page'
     },
     {
       title: 'Our Products',
