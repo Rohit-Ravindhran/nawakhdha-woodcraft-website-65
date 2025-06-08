@@ -12,7 +12,6 @@ interface BlogPostHeaderProps {
 const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({ postTitle }) => {
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
-    { label: 'Blog', href: '/blog' },
     { label: postTitle }
   ];
 
