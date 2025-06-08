@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { GalleryImage } from '@/hooks/content/types';
 import { OptimizedImage } from '@/components/ui/optimized-image';
+import { ImageLightbox } from '@/components/ui/image-lightbox';
+import { useImageLightbox } from '@/hooks/use-image-lightbox';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { preloadImage } from '@/utils/imageOptimization';
@@ -13,6 +15,7 @@ interface ProductGalleryGridProps {
 
 export function ProductGalleryGrid({ images, productName }: ProductGalleryGridProps) {
   const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
+  const { isOpen, currentImage, openLightbox, closeLightbox } = useImageLightbox();
 
   // Preload first few images for better perceived performance
   useEffect(() => {
@@ -29,6 +32,15 @@ export function ProductGalleryGrid({ images, productName }: ProductGalleryGridPr
   // Track loaded images for progressive enhancement
   const handleImageLoad = (index: number) => {
     setImagesLoaded(prev => new Set(prev).add(index));
+  };
+
+  // Handle image click to open lightbox
+  const handleImageClick = (image: GalleryImage, index: number) => {
+    openLightbox({
+      src: image.url,
+      alt: image.alt || `${productName} - Image ${index + 1}`,
+      caption: image.caption || image.alt || `${productName} - Image ${index + 1}`,
+    });
   };
 
   // Use structured data for SEO
@@ -60,9 +72,19 @@ export function ProductGalleryGrid({ images, productName }: ProductGalleryGridPr
           <div 
             key={index} 
             className={cn(
-              "border rounded-md overflow-hidden group hover:shadow-md transition-all duration-300",
+              "border rounded-md overflow-hidden group hover:shadow-md transition-all duration-300 cursor-pointer",
               imagesLoaded.has(index) ? "opacity-100" : "opacity-90"
             )}
+            onClick={() => handleImageClick(image, index)}
+            role="button"
+            tabIndex={0}
+            aria-label={`View enlarged image: ${image.caption || image.alt || `${productName} - Image ${index + 1}`}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleImageClick(image, index);
+              }
+            }}
           >
             <AspectRatio ratio={4/3} className="bg-gray-100">
               <OptimizedImage
@@ -85,6 +107,15 @@ export function ProductGalleryGrid({ images, productName }: ProductGalleryGridPr
           </div>
         ))}
       </div>
+
+      {/* Lightbox */}
+      <ImageLightbox
+        isOpen={isOpen}
+        onClose={closeLightbox}
+        src={currentImage?.src || ''}
+        alt={currentImage?.alt || ''}
+        caption={currentImage?.caption}
+      />
     </div>
   );
 }

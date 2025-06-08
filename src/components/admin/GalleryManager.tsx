@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useStorage } from "@/hooks/storage";
 import { Loader2, Plus, Trash } from "lucide-react";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
+import { useImageLightbox } from "@/hooks/use-image-lightbox";
 
 interface Image {
   id: string;
@@ -30,6 +32,7 @@ export default function GalleryManager({
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { uploadImage } = useStorage();
+  const { isOpen, currentImage, openLightbox, closeLightbox } = useImageLightbox();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -70,6 +73,15 @@ export default function GalleryManager({
     );
   };
 
+  // Handle image click to open lightbox
+  const handleImageClick = (image: Image) => {
+    openLightbox({
+      src: image.url,
+      alt: image.alt || 'Gallery image',
+      caption: image.caption || image.alt || 'Gallery image',
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -79,7 +91,17 @@ export default function GalleryManager({
               <img
                 src={image.url}
                 alt={image.alt || "Gallery image"}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                onClick={() => handleImageClick(image)}
+                role="button"
+                tabIndex={0}
+                aria-label={`View enlarged image: ${image.caption || image.alt || 'Gallery image'}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleImageClick(image);
+                  }
+                }}
               />
             </div>
             
@@ -166,6 +188,15 @@ export default function GalleryManager({
           )}
         </div>
       </div>
+
+      {/* Lightbox */}
+      <ImageLightbox
+        isOpen={isOpen}
+        onClose={closeLightbox}
+        src={currentImage?.src || ''}
+        alt={currentImage?.alt || ''}
+        caption={currentImage?.caption}
+      />
     </div>
   );
 }

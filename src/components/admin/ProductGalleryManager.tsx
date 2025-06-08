@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useStorage } from "@/hooks/storage";
 import { Loader2, GripVertical, Trash, Plus } from "lucide-react";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
+import { useImageLightbox } from "@/hooks/use-image-lightbox";
 
 interface Image {
   id: string;
@@ -32,6 +34,7 @@ export default function ProductGalleryManager({
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { uploadImage } = useStorage();
+  const { isOpen, currentImage, openLightbox, closeLightbox } = useImageLightbox();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -92,6 +95,18 @@ export default function ProductGalleryManager({
     );
   };
 
+  // Handle image click to open lightbox
+  const handleImageClick = (image: Image, e: React.MouseEvent) => {
+    // Prevent drag start when clicking on image
+    e.stopPropagation();
+    
+    openLightbox({
+      src: image.url,
+      alt: image.alt || 'Gallery image',
+      caption: image.caption || image.alt || 'Gallery image',
+    });
+  };
+
   return (
     <div className="space-y-6">
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -127,7 +142,17 @@ export default function ProductGalleryManager({
                           <img
                             src={image.url}
                             alt={image.alt || "Gallery image"}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                            onClick={(e) => handleImageClick(image, e)}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`View enlarged image: ${image.caption || image.alt || 'Gallery image'}`}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleImageClick(image, e);
+                              }
+                            }}
                           />
                         </div>
 
@@ -235,6 +260,15 @@ export default function ProductGalleryManager({
           </div>
         )}
       </div>
+
+      {/* Lightbox */}
+      <ImageLightbox
+        isOpen={isOpen}
+        onClose={closeLightbox}
+        src={currentImage?.src || ''}
+        alt={currentImage?.alt || ''}
+        caption={currentImage?.caption}
+      />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
+import { useImageLightbox } from "@/hooks/use-image-lightbox";
 
 interface GalleryImage {
   id: string;
@@ -26,6 +28,8 @@ export default function GalleryImageGrid({
   onEdit, 
   onDelete 
 }: GalleryImageGridProps) {
+  const { isOpen, currentImage, openLightbox, closeLightbox } = useImageLightbox();
+
   if (!images || images.length === 0) {
     return (
       <div className="col-span-full py-8 text-center text-gray-500">
@@ -34,6 +38,20 @@ export default function GalleryImageGrid({
       </div>
     );
   }
+
+  // Handle image click to open lightbox
+  const handleImageClick = (image: GalleryImage, e: React.MouseEvent) => {
+    // Prevent event bubbling to avoid triggering edit/delete actions
+    e.stopPropagation();
+    
+    if (image.image_url) {
+      openLightbox({
+        src: image.image_url,
+        alt: image.alt_text || 'Gallery image',
+        caption: image.caption || image.alt_text || 'Gallery image',
+      });
+    }
+  };
 
   return (
     <>
@@ -44,9 +62,19 @@ export default function GalleryImageGrid({
               <img 
                 src={image.image_url} 
                 alt={image.alt_text || 'Gallery image'} 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                onClick={(e) => handleImageClick(image, e)}
                 onError={(e) => {
                   e.currentTarget.src = "/placeholder.svg";
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`View enlarged image: ${image.caption || image.alt_text || 'Gallery image'}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleImageClick(image, e);
+                  }
                 }}
               />
             ) : (
@@ -86,6 +114,15 @@ export default function GalleryImageGrid({
           </div>
         </div>
       ))}
+
+      {/* Lightbox */}
+      <ImageLightbox
+        isOpen={isOpen}
+        onClose={closeLightbox}
+        src={currentImage?.src || ''}
+        alt={currentImage?.alt || ''}
+        caption={currentImage?.caption}
+      />
     </>
   );
 }
