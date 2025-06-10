@@ -58,6 +58,7 @@ export function ImageLightbox({ isOpen, onClose, src, alt, caption }: ImageLight
         "fixed inset-0 z-50 flex items-center justify-center",
         "bg-black/80 backdrop-blur-sm",
         "transition-opacity duration-300 ease-out",
+        "p-4", // Add padding for mobile devices
         isOpen ? "opacity-100" : "opacity-0"
       )}
       onClick={handleOverlayClick}
@@ -72,23 +73,25 @@ export function ImageLightbox({ isOpen, onClose, src, alt, caption }: ImageLight
           "absolute top-4 right-4 z-10",
           "p-2 rounded-full bg-black/50 text-white",
           "hover:bg-black/70 transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-white/50"
+          "focus:outline-none focus:ring-2 focus:ring-white/50",
+          "touch-manipulation" // Improves touch responsiveness on mobile
         )}
         aria-label="Close lightbox"
       >
         <X className="h-6 w-6" />
       </button>
 
-      {/* Image container */}
+      {/* Content container with proper constraints */}
       <div
         className={cn(
-          "relative max-w-[90vw] max-h-[90vh] flex flex-col",
+          "relative flex flex-col items-center justify-center",
+          "w-full h-full max-w-[90vw] max-h-[90vh]",
           "transition-transform duration-300 ease-out",
           isOpen ? "scale-100" : "scale-95"
         )}
       >
-        {/* Image */}
-        <div className="relative flex-1 flex items-center justify-center">
+        {/* Image container with aspect ratio preservation */}
+        <div className="relative flex items-center justify-center flex-1 w-full">
           <OptimizedImage
             src={src}
             alt={alt}
@@ -97,6 +100,11 @@ export function ImageLightbox({ isOpen, onClose, src, alt, caption }: ImageLight
               "transition-opacity duration-300",
               isImageLoaded ? "opacity-100" : "opacity-0"
             )}
+            style={{
+              // Ensure image fits within available space accounting for caption
+              maxHeight: caption ? 'calc(85vh - 4rem)' : '85vh',
+              maxWidth: '90vw'
+            }}
             width={1920}
             height={1080}
             priority={true}
@@ -111,10 +119,10 @@ export function ImageLightbox({ isOpen, onClose, src, alt, caption }: ImageLight
           )}
         </div>
 
-        {/* Caption */}
+        {/* Caption with proper text wrapping */}
         {caption && (
-          <div className="mt-4 px-4 py-2 bg-black/50 text-white text-center rounded">
-            <p className="text-sm">{caption}</p>
+          <div className="mt-4 px-4 py-3 bg-black/60 text-white text-center rounded-lg max-w-full">
+            <p className="text-sm leading-relaxed break-words">{caption}</p>
           </div>
         )}
       </div>
