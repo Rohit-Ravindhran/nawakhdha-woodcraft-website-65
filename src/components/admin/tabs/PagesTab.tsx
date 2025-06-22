@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Edit, Save } from "lucide-react";
+import { Edit, Save, Plus } from "lucide-react";
 import SeoFields from "../SeoFields";
 
 const pageSchema = z.object({
@@ -63,6 +63,47 @@ export default function PagesTab() {
       seo_keywords: "",
     },
   });
+
+  const ensureBuildingMaintenanceServicesPage = async () => {
+    try {
+      // Check if the page already exists
+      const { data: existingPage } = await supabase
+        .from('pages')
+        .select('*')
+        .eq('page_name', 'building-maintenance-services')
+        .maybeSingle();
+
+      if (!existingPage) {
+        // Create the building maintenance services page
+        const { error } = await supabase
+          .from('pages')
+          .insert({
+            page_name: 'building-maintenance-services',
+            hero: JSON.stringify({
+              title: 'Professional Building Maintenance Services',
+              subtitle: 'Comprehensive maintenance solutions for your building needs',
+              description: 'Our expert team provides reliable and efficient maintenance services to keep your building in optimal condition.'
+            }),
+            seo_title: 'Building Maintenance Services - Professional Solutions',
+            seo_description: 'Expert building maintenance services including repairs, upkeep, and facility management. Professional solutions for all your building maintenance needs.',
+            seo_keywords: 'building maintenance, facility management, building repairs, maintenance services, professional maintenance'
+          });
+
+        if (error) throw error;
+        
+        // Refresh the pages data
+        queryClient.invalidateQueries({ queryKey: ['pages'] });
+        toast.success("Building Maintenance Services page created successfully");
+      }
+    } catch (error: any) {
+      toast.error(`Error creating page: ${error.message}`);
+    }
+  };
+
+  // Ensure the building maintenance services page exists when component mounts
+  useState(() => {
+    ensureBuildingMaintenanceServicesPage();
+  });
   
   const handleEdit = (page: PageData) => {
     setCurrentPage(page);
@@ -73,6 +114,18 @@ export default function PagesTab() {
       seo_title: page.seo_title || "",
       seo_description: page.seo_description || "",
       seo_keywords: page.seo_keywords || "",
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setCurrentPage(null);
+    form.reset({
+      page_name: "",
+      hero: "",
+      seo_title: "",
+      seo_description: "",
+      seo_keywords: "",
     });
     setIsDialogOpen(true);
   };
@@ -122,11 +175,16 @@ export default function PagesTab() {
   
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">Pages</h2>
-        <p className="text-gray-500 mt-1">
-          Edit page content and SEO settings.
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-semibold">Pages</h2>
+          <p className="text-gray-500 mt-1">
+            Edit page content and SEO settings.
+          </p>
+        </div>
+        <Button onClick={handleAddNew} className="flex items-center">
+          <Plus className="h-4 w-4 mr-1" /> Add New Page
+        </Button>
       </div>
       
       <Table>
@@ -185,7 +243,7 @@ export default function PagesTab() {
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>
-              Edit {currentPage?.page_name || "Page"}
+              {currentPage ? `Edit ${currentPage.page_name}` : "Add New Page"}
             </DialogTitle>
           </DialogHeader>
           
