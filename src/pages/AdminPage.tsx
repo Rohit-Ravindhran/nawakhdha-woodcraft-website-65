@@ -10,6 +10,8 @@ import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
 import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
 import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
 import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
+import MaintenanceCategoriesTab from "@/components/admin/tabs/MaintenanceCategoriesTab";
+import MaintenanceDetailsTab from "@/components/admin/tabs/MaintenanceDetailsTab";
 import BlogsTab from "@/components/admin/tabs/BlogsTab";
 import PagesTab from "@/components/admin/tabs/PagesTab";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -57,6 +59,8 @@ const AdminPageContainer = () => {
               <TabsTrigger value="product_categories" className="px-4 py-2 mx-1">Product Categories</TabsTrigger>
               <TabsTrigger value="product_details" className="px-4 py-2 mx-1">Product Details</TabsTrigger>
               <TabsTrigger value="product_gallery" className="px-4 py-2 mx-1">Product Gallery</TabsTrigger>
+              <TabsTrigger value="maintenance_categories" className="px-4 py-2 mx-1">Maintenance Categories</TabsTrigger>
+              <TabsTrigger value="maintenance_details" className="px-4 py-2 mx-1">Service Details</TabsTrigger>
               <TabsTrigger value="blogs" className="px-4 py-2 mx-1">Blogs</TabsTrigger>
               <TabsTrigger value="pages" className="px-4 py-2 mx-1">Pages</TabsTrigger>
             </TabsList>
@@ -91,6 +95,14 @@ const AdminPageContainer = () => {
             
             <TabsContent value="product_gallery">
               <ProductGalleryTab />
+            </TabsContent>
+            
+            <TabsContent value="maintenance_categories">
+              <MaintenanceCategoriesTab />
+            </TabsContent>
+            
+            <TabsContent value="maintenance_details">
+              <MaintenanceDetailsTab />
             </TabsContent>
             
             <TabsContent value="blogs">

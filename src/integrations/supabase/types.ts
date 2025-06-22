@@ -210,6 +210,133 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenance_categories: {
+        Row: {
+          alt_text: string | null
+          category_image_url: string | null
+          category_name: string | null
+          category_slug: string | null
+          created_at: string
+          id: string
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
+          service_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          category_image_url?: string | null
+          category_name?: string | null
+          category_slug?: string | null
+          created_at?: string
+          id?: string
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          service_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          category_image_url?: string | null
+          category_name?: string | null
+          category_slug?: string | null
+          created_at?: string
+          id?: string
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          service_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      maintenance_category_details: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
+          service_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          service_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          service_name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_category_details_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_gallery: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          category_id: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          position: number | null
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          position?: number | null
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          position?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_gallery_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pages: {
         Row: {
           hero: string | null

@@ -1,69 +1,60 @@
 
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from "sonner";
-
-// Import pages
-import HomePage from "@/pages/HomePage";
-import AboutPage from "@/pages/AboutPage";
-import ProductsPage from "@/pages/ProductsPage";
-import BlogPage from "@/pages/BlogPage";
-import BlogPostPage from "@/pages/BlogPostPage";
-import ContactPage from "@/pages/ContactPage";
-import NotFound from "@/pages/NotFound";
-
-// Import admin pages
-import AdminPage from "@/pages/AdminPage";
-import AdminLogin from "@/pages/AdminLogin";
-
-// Import components
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { HelmetProvider } from 'react-helmet-async';
 import Layout from "@/components/layout/Layout";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import Index from "./pages/Index";
+import HomePage from "./pages/HomePage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import MaintenanceServicesPage from "./pages/MaintenanceServicesPage";
+import MaintenanceServiceDetailPage from "./pages/MaintenanceServiceDetailPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import AdminPage from "./pages/AdminPage";
+import AdminLogin from "./pages/AdminLogin";
+import NotFound from "./pages/NotFound";
 
-// Import the ProductDetailPage
-import ProductDetailPage from "@/pages/ProductDetailPage";
+const queryClient = new QueryClient();
 
-function App() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000, // 1 minute
-      },
-    },
-  });
-
-  return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <ScrollToTop />
-        <Routes>
-          {/* Public routes with Layout */}
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/product/:slug" element={<ProductDetailPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:slug" element={<BlogPostPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          
-          {/* Admin routes without Layout */}
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/login" element={<AdminLogin />} />
-        </Routes>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <HelmetProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products/:slug" element={<ProductDetailPage />} />
+                <Route path="/building-maintenance-services" element={<MaintenanceServicesPage />} />
+                <Route path="/building-maintenance-services/:slug" element={<MaintenanceServiceDetailPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogPostPage />} />
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/login" element={<AdminLogin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </HelmetProvider>
+  </QueryClientProvider>
+);
 
 export default App;

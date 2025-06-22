@@ -1,94 +1,92 @@
 
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
+import { ProductsData } from "./ProductsData";
 
-interface MobileNavProps {
-  products: Array<{ name: string; path: string }>;
-}
+export function MobileNav() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
 
-const MobileNav = ({ products }: MobileNavProps) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const closeMenu = () => setIsMenuOpen(false);
-
-  useEffect(() => {
-    closeMenu();
-  }, [location]);
+  const handleLinkClick = () => {
+    setIsOpen(false);
+    setIsProductsOpen(false);
+  };
 
   return (
-    <>
-      {/* Mobile Menu Toggle */}
-      <button className="md:hidden" onClick={toggleMenu}>
-        {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-      </button>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+        <nav className="flex flex-col space-y-4">
+          <a 
+            href="/" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            Home
+          </a>
+          
+          <Collapsible open={isProductsOpen} onOpenChange={setIsProductsOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 text-lg font-medium">
+                Our Products
+                <ChevronDown className={`h-4 w-4 transition-transform ${isProductsOpen ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-2 mt-2 ml-4">
+              <a 
+                href="/products" 
+                className="block py-2 text-sm transition-colors hover:text-primary"
+                onClick={handleLinkClick}
+              >
+                All Products
+              </a>
+              {ProductsData.map((product) => (
+                <a 
+                  key={product.title}
+                  href={product.href} 
+                  className="block py-2 text-sm transition-colors hover:text-primary"
+                  onClick={handleLinkClick}
+                >
+                  {product.title}
+                </a>
+              ))}
+            </CollapsibleContent>
+          </Collapsible>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-border/50">
-          <div className="container-custom py-4">
-            <nav>
-              <ul className="space-y-4">
-                <li>
-                  <Link
-                    to="/"
-                    className={cn(
-                      "block text-base font-medium",
-                      location.pathname === "/" ? "text-primary" : ""
-                    )}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/about"
-                    className={cn(
-                      "block text-base font-medium",
-                      location.pathname === "/about" ? "text-primary" : ""
-                    )}
-                  >
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/products"
-                    className={cn(
-                      "block text-base font-medium",
-                      (location.pathname.includes("/product") || location.pathname === "/products") ? "text-primary" : ""
-                    )}
-                  >
-                    Our Products
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/contact"
-                    className={cn(
-                      "block text-base font-medium",
-                      location.pathname === "/contact" ? "text-primary" : ""
-                    )}
-                  >
-                    Contact
-                  </Link>
-                </li>
-                <li className="pt-2">
-                  <Button asChild className="w-full">
-                    <Link to="/contact">Request a Quote</Link>
-                  </Button>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-      )}
-    </>
+          <a 
+            href="/building-maintenance-services" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            Building Maintenance Services
+          </a>
+          
+          <a 
+            href="/about" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            About
+          </a>
+          
+          <a 
+            href="/contact" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            Contact
+          </a>
+        </nav>
+      </SheetContent>
+    </Sheet>
   );
-};
-
-export default MobileNav;
+}
