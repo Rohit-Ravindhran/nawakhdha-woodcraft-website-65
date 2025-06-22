@@ -35,10 +35,18 @@ const Header = () => {
 
         {/* Main Header */}
         <div className="flex items-center justify-between py-4">
-          <Logo />
-          
-          {/* Desktop Navigation */}
-          <DesktopNav />
+          {/* Logo and Navigation in one line for desktop */}
+          <div className="hidden md:flex items-center w-full">
+            <Logo />
+            <div className="ml-8">
+              <DesktopNav />
+            </div>
+          </div>
+
+          {/* Mobile: Logo only */}
+          <div className="md:hidden">
+            <Logo />
+          </div>
 
           {/* Mobile Navigation */}
           <MobileNav />
