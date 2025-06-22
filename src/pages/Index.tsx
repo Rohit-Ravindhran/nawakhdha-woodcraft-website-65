@@ -8,7 +8,7 @@ const Index = () => {
     console.log("Index page loaded, redirecting to HomePage");
   }, []);
   
-  return <Navigate to="/" replace />;
+  return <Navigate to="/home" replace />;
 };
 
 export default Index;

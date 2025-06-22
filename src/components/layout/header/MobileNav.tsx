@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
 import { products } from "./ProductsData";
 
 export function MobileNav() {
@@ -26,13 +27,13 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
         <nav className="flex flex-col space-y-4">
-          <a 
-            href="/" 
+          <Link 
+            to="/" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
             Home
-          </a>
+          </Link>
           
           <Collapsible open={isProductsOpen} onOpenChange={setIsProductsOpen}>
             <CollapsibleTrigger asChild>
@@ -42,49 +43,49 @@ export function MobileNav() {
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-2 mt-2 ml-4">
-              <a 
-                href="/products" 
+              <Link 
+                to="/products" 
                 className="block py-2 text-sm transition-colors hover:text-primary"
                 onClick={handleLinkClick}
               >
                 All Products
-              </a>
+              </Link>
               {products.map((product) => (
-                <a 
+                <Link 
                   key={product.name}
-                  href={product.path} 
+                  to={product.path} 
                   className="block py-2 text-sm transition-colors hover:text-primary"
                   onClick={handleLinkClick}
                 >
                   {product.name}
-                </a>
+                </Link>
               ))}
             </CollapsibleContent>
           </Collapsible>
 
-          <a 
-            href="/building-maintenance-services" 
+          <Link 
+            to="/building-maintenance-services" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
             Building Maintenance Services
-          </a>
+          </Link>
           
-          <a 
-            href="/about" 
+          <Link 
+            to="/about" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
             About
-          </a>
+          </Link>
           
-          <a 
-            href="/contact" 
+          <Link 
+            to="/contact" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
             Contact
-          </a>
+          </Link>
         </nav>
       </SheetContent>
     </Sheet>

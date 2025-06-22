@@ -8,7 +8,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { HelmetProvider } from 'react-helmet-async';
 import Layout from "@/components/layout/Layout";
 import ScrollToTop from "@/components/layout/ScrollToTop";
-import Index from "./pages/Index";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -34,10 +33,9 @@ const App = () => (
           <ScrollToTop />
           <Layout>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/home" element={<HomePage />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/products" element={<ProductsPage />} />
-              <Route path="/products/:slug" element={<ProductDetailPage />} />
+              <Route path="/product/:slug" element={<ProductDetailPage />} />
               <Route path="/building-maintenance-services" element={<MaintenanceServicesPage />} />
               <Route path="/building-maintenance-services/:slug" element={<MaintenanceServiceDetailPage />} />
               <Route path="/about" element={<AboutPage />} />
