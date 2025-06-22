@@ -38,11 +38,11 @@ export function DesktopNav() {
               </li>
               {products.slice(0, 3).map((product) => (
                 <ListItem
-                  key={product.title}
-                  title={product.title}
-                  href={product.href}
+                  key={product.name}
+                  title={product.name}
+                  href={product.path}
                 >
-                  {product.description}
+                  {product.name}
                 </ListItem>
               ))}
             </ul>

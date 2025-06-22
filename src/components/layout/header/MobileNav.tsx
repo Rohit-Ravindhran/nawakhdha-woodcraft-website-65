@@ -51,12 +51,12 @@ export function MobileNav() {
               </a>
               {products.map((product) => (
                 <a 
-                  key={product.title}
-                  href={product.href} 
+                  key={product.name}
+                  href={product.path} 
                   className="block py-2 text-sm transition-colors hover:text-primary"
                   onClick={handleLinkClick}
                 >
-                  {product.title}
+                  {product.name}
                 </a>
               ))}
             </CollapsibleContent>
