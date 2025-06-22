@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { AlertCircle, Lock, LogOut } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
+import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
 import HomeProductsTab from "@/components/admin/tabs/HomeProductsTab";
 import HomeServicesTab from "@/components/admin/tabs/HomeServicesTab";
 import BlogsTab from "@/components/admin/tabs/BlogsTab";
@@ -49,6 +49,12 @@ const AdminPage = () => {
       label: "Product Categories", 
       component: ProductCategoriesTab,
       description: "Manage product categories and details"
+    },
+    { 
+      id: "product-details", 
+      label: "Product Details", 
+      component: ProductDetailsTab,
+      description: "Manage detailed descriptions and SEO for product categories"
     },
     { 
       id: "maintenance-categories", 
