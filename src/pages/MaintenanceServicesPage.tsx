@@ -63,8 +63,8 @@ export default function MaintenanceServicesPage() {
               <CategoryCard
                 key={category.id}
                 title={category.service_name || category.category_name || 'Maintenance Service'}
-                image={category.category_image_url}
-                alt={category.alt_text || category.category_name || 'Service image'}
+                image={category.category_image_url || ''}
+                imageAlt={category.alt_text || category.category_name || 'Service image'}
                 href={`/building-maintenance-services/${category.category_slug}`}
               />
             ))}

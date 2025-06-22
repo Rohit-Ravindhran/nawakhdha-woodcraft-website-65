@@ -6,12 +6,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Lock, LogOut } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import ProductCategoriesTab from "./tabs/ProductCategoriesTab";
-import HomeProductsTab from "./tabs/HomeProductsTab";
-import HomeServicesTab from "./tabs/HomeServicesTab";
-import BlogsTab from "./tabs/BlogsTab";
-import PagesTab from "./tabs/PagesTab";
-import SitemapTab from "./tabs/SitemapTab";
+import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
+import HomeProductsTab from "@/components/admin/tabs/HomeProductsTab";
+import HomeServicesTab from "@/components/admin/tabs/HomeServicesTab";
+import BlogsTab from "@/components/admin/tabs/BlogsTab";
+import PagesTab from "@/components/admin/tabs/PagesTab";
+import SitemapTab from "@/components/admin/tabs/SitemapTab";
 import MaintenanceCategoriesTab from "@/components/admin/tabs/MaintenanceCategoriesTab";
 import MaintenanceDetailsTab from "@/components/admin/tabs/MaintenanceDetailsTab";
 

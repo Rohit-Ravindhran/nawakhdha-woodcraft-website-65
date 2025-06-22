@@ -80,6 +80,7 @@ export default function MaintenanceServiceDetailPage() {
             <h2 className="text-2xl font-semibold mb-8 text-center">Service Gallery</h2>
             <ProductGalleryGrid 
               images={convertedGalleryImages}
+              productName={serviceName}
             />
           </div>
         )}
