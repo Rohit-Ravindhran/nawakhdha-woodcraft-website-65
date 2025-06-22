@@ -1,6 +1,6 @@
 
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { ProductsData } from "./ProductsData";
+import { products } from "./ProductsData";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -36,7 +36,7 @@ export function DesktopNav() {
                   </a>
                 </NavigationMenuLink>
               </li>
-              {ProductsData.slice(0, 3).map((product) => (
+              {products.slice(0, 3).map((product) => (
                 <ListItem
                   key={product.title}
                   title={product.title}

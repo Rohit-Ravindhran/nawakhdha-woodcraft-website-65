@@ -1,122 +1,137 @@
 
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
-import HomeServicesTab from "@/components/admin/tabs/HomeServicesTab";
-import HomeProductsTab from "@/components/admin/tabs/HomeProductsTab";
-import HomeBlogCardsTab from "@/components/admin/tabs/HomeBlogCardsTab";
-import AboutTeamTab from "@/components/admin/tabs/AboutTeamTab";
-import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
-import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
-import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
-import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
+import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Lock, LogOut } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import ProductCategoriesTab from "./tabs/ProductCategoriesTab";
+import HomeProductsTab from "./tabs/HomeProductsTab";
+import HomeServicesTab from "./tabs/HomeServicesTab";
+import BlogsTab from "./tabs/BlogsTab";
+import PagesTab from "./tabs/PagesTab";
+import SitemapTab from "./tabs/SitemapTab";
 import MaintenanceCategoriesTab from "@/components/admin/tabs/MaintenanceCategoriesTab";
 import MaintenanceDetailsTab from "@/components/admin/tabs/MaintenanceDetailsTab";
-import BlogsTab from "@/components/admin/tabs/BlogsTab";
-import PagesTab from "@/components/admin/tabs/PagesTab";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
 
-const AdminPageContainer = () => {
-  const { signOut, user } = useAuth();
-  const [activeTab, setActiveTab] = useState("home_services");
+const AdminPage = () => {
+  const { session, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const handleLogout = async () => {
-    await signOut();
+    setLogoutError(null);
+    try {
+      await signOut();
+      navigate("/login");
+    } catch (error: any) {
+      console.error("Logout failed:", error);
+      setLogoutError(error.message || "Logout failed. Please try again.");
+    }
   };
 
-  return (
-    <ProtectedRoute>
-      <div className="min-h-screen bg-white">
-        <div className="container px-4 py-8 mx-auto max-w-6xl">
-          <header className="mb-8">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Content Management</h1>
-              <div className="flex items-center gap-3">
-                {user && (
-                  <span className="text-sm text-gray-600">
-                    Logged in as: {user.email}
-                  </span>
-                )}
-                <button 
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </header>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full mb-8 overflow-x-auto flex border-b border-gray-200 pb-1">
-              <TabsTrigger value="home_services" className="px-4 py-2 mx-1">Home Services</TabsTrigger>
-              <TabsTrigger value="home_products" className="px-4 py-2 mx-1">Home Products</TabsTrigger>
-              <TabsTrigger value="home_blog_cards" className="px-4 py-2 mx-1">Home Blog Cards</TabsTrigger>
-              <TabsTrigger value="about_team" className="px-4 py-2 mx-1">About Team</TabsTrigger>
-              <TabsTrigger value="contact_info" className="px-4 py-2 mx-1">Contact Info</TabsTrigger>
-              <TabsTrigger value="product_categories" className="px-4 py-2 mx-1">Product Categories</TabsTrigger>
-              <TabsTrigger value="product_details" className="px-4 py-2 mx-1">Product Details</TabsTrigger>
-              <TabsTrigger value="product_gallery" className="px-4 py-2 mx-1">Product Gallery</TabsTrigger>
-              <TabsTrigger value="maintenance_categories" className="px-4 py-2 mx-1">Maintenance Categories</TabsTrigger>
-              <TabsTrigger value="maintenance_details" className="px-4 py-2 mx-1">Service Details</TabsTrigger>
-              <TabsTrigger value="blogs" className="px-4 py-2 mx-1">Blogs</TabsTrigger>
-              <TabsTrigger value="pages" className="px-4 py-2 mx-1">Pages</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="home_services">
-              <HomeServicesTab />
-            </TabsContent>
-            
-            <TabsContent value="home_products">
-              <HomeProductsTab />
-            </TabsContent>
-            
-            <TabsContent value="home_blog_cards">
-              <HomeBlogCardsTab />
-            </TabsContent>
-            
-            <TabsContent value="about_team">
-              <AboutTeamTab />
-            </TabsContent>
-            
-            <TabsContent value="contact_info">
-              <ContactInfoTab />
-            </TabsContent>
-            
-            <TabsContent value="product_categories">
-              <ProductCategoriesTab />
-            </TabsContent>
-            
-            <TabsContent value="product_details">
-              <ProductDetailsTab />
-            </TabsContent>
-            
-            <TabsContent value="product_gallery">
-              <ProductGalleryTab />
-            </TabsContent>
-            
-            <TabsContent value="maintenance_categories">
-              <MaintenanceCategoriesTab />
-            </TabsContent>
-            
-            <TabsContent value="maintenance_details">
-              <MaintenanceDetailsTab />
-            </TabsContent>
-            
-            <TabsContent value="blogs">
-              <BlogsTab />
-            </TabsContent>
-            
-            <TabsContent value="pages">
-              <PagesTab />
-            </TabsContent>
-          </Tabs>
-        </div>
+  const tabs = [
+    { 
+      id: "home-services", 
+      label: "Home Services", 
+      component: HomeServicesTab,
+      description: "Manage services section on the homepage"
+    },
+    { 
+      id: "home-products", 
+      label: "Home Products", 
+      component: HomeProductsTab,
+      description: "Manage featured products on the homepage"
+    },
+    { 
+      id: "product-categories", 
+      label: "Product Categories", 
+      component: ProductCategoriesTab,
+      description: "Manage product categories and details"
+    },
+    { 
+      id: "maintenance-categories", 
+      label: "Maintenance Categories", 
+      component: MaintenanceCategoriesTab,
+      description: "Manage building maintenance service categories"
+    },
+    { 
+      id: "maintenance-details", 
+      label: "Maintenance Details", 
+      component: MaintenanceDetailsTab,
+      description: "Manage building maintenance service details"
+    },
+    { 
+      id: "blogs", 
+      label: "Blogs", 
+      component: BlogsTab,
+      description: "Manage blog posts"
+    },
+    { 
+      id: "pages", 
+      label: "Pages", 
+      component: PagesTab,
+      description: "Manage static pages content"
+    },
+    { 
+      id: "sitemap", 
+      label: "Sitemap", 
+      component: SitemapTab,
+      description: "Generate and manage sitemap.xml"
+    },
+  ];
+
+  if (!session) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            You must be logged in to view this page. <a href="/login" className="underline">Login</a>
+          </AlertDescription>
+        </Alert>
       </div>
-    </ProtectedRoute>
+    );
+  }
+
+  return (
+    <div className="container-custom section-padding">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight">Admin Dashboard</h1>
+        <Button variant="destructive" onClick={handleLogout} className="gap-2">
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
+      </div>
+
+      {logoutError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{logoutError}</AlertDescription>
+        </Alert>
+      )}
+
+      <Tabs defaultValue={tabs[0].id} className="w-full space-y-4">
+        <TabsList>
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id} className="capitalize">
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {tabs.map((tab) => (
+          <TabsContent key={tab.id} value={tab.id} className="space-y-4">
+            <div className="rounded-md border p-4">
+              <h2 className="text-xl font-semibold mb-2">{tab.label}</h2>
+              <p className="text-sm text-muted-foreground">{tab.description}</p>
+            </div>
+            {<tab.component />}
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
   );
 };
 
-export default AdminPageContainer;
+export default AdminPage;

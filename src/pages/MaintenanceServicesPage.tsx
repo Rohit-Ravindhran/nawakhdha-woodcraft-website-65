@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import BreadcrumbNavigation from '@/components/ui/breadcrumb-navigation';
-import { PageSEO } from '@/components/seo/PageSEO';
+import PageSEO from '@/components/seo/PageSEO';
 
 export default function MaintenanceServicesPage() {
   const { data: categories, isLoading, error } = useMaintenanceCategories();
@@ -63,8 +63,8 @@ export default function MaintenanceServicesPage() {
               <CategoryCard
                 key={category.id}
                 title={category.service_name || category.category_name || 'Maintenance Service'}
-                imageUrl={category.category_image_url}
-                imageAlt={category.alt_text || category.category_name || 'Service image'}
+                image={category.category_image_url}
+                alt={category.alt_text || category.category_name || 'Service image'}
                 href={`/building-maintenance-services/${category.category_slug}`}
               />
             ))}

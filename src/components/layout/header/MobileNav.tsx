@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { ProductsData } from "./ProductsData";
+import { products } from "./ProductsData";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +49,7 @@ export function MobileNav() {
               >
                 All Products
               </a>
-              {ProductsData.map((product) => (
+              {products.map((product) => (
                 <a 
                   key={product.title}
                   href={product.href} 

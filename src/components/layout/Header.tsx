@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import TopBar from "./header/TopBar";
 import Logo from "./header/Logo";
-import DesktopNav from "./header/DesktopNav";
-import MobileNav from "./header/MobileNav";
+import { DesktopNav } from "./header/DesktopNav";
+import { MobileNav } from "./header/MobileNav";
 import { products } from "./header/ProductsData";
 
 const Header = () => {
@@ -38,10 +38,10 @@ const Header = () => {
           <Logo />
           
           {/* Desktop Navigation */}
-          <DesktopNav products={products} />
+          <DesktopNav />
 
           {/* Mobile Navigation */}
-          <MobileNav products={products} />
+          <MobileNav />
         </div>
       </div>
     </header>

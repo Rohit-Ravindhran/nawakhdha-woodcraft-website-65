@@ -8,7 +8,7 @@ import { ProductGalleryGrid } from '@/components/products/ProductGalleryGrid';
 import { ProductNotFound } from '@/components/products/ProductNotFound';
 import { ProductLoading } from '@/components/products/ProductLoading';
 import BreadcrumbNavigation from '@/components/ui/breadcrumb-navigation';
-import { PageSEO } from '@/components/seo/PageSEO';
+import PageSEO from '@/components/seo/PageSEO';
 
 export default function MaintenanceServiceDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -38,6 +38,16 @@ export default function MaintenanceServiceDetailPage() {
   const seoTitle = details?.seo_title || `${serviceName} | Building Maintenance Services`;
   const seoDescription = details?.seo_description || `Professional ${serviceName} services. ${description.substring(0, 120)}...`;
 
+  // Convert maintenance gallery images to match expected format
+  const convertedGalleryImages = galleryImages?.map(img => ({
+    id: img.id,
+    url: img.image_url || '',
+    image_url: img.image_url,
+    alt_text: img.alt_text,
+    caption: img.caption,
+    position: img.position
+  })) || [];
+
   return (
     <>
       <PageSEO 
@@ -62,20 +72,14 @@ export default function MaintenanceServiceDetailPage() {
           description={description}
           categoryName={categoryName}
           productSlug={slug}
-          galleryImages={galleryImages}
+          galleryImages={convertedGalleryImages}
         />
 
-        {galleryImages && galleryImages.length > 0 && (
+        {convertedGalleryImages && convertedGalleryImages.length > 0 && (
           <div className="mt-16">
             <h2 className="text-2xl font-semibold mb-8 text-center">Service Gallery</h2>
             <ProductGalleryGrid 
-              images={galleryImages.map(img => ({
-                id: img.id,
-                image_url: img.image_url,
-                alt_text: img.alt_text,
-                caption: img.caption,
-                position: img.position
-              }))}
+              images={convertedGalleryImages}
             />
           </div>
         )}
