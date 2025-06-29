@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Lock, LogOut } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
 import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
@@ -14,6 +16,10 @@ import PagesTab from "@/components/admin/tabs/PagesTab";
 import SitemapTab from "@/components/admin/tabs/SitemapTab";
 import MaintenanceCategoriesTab from "@/components/admin/tabs/MaintenanceCategoriesTab";
 import MaintenanceDetailsTab from "@/components/admin/tabs/MaintenanceDetailsTab";
+import HomeBlogCardsTab from "@/components/admin/tabs/HomeBlogCardsTab";
+import AboutTeamTab from "@/components/admin/tabs/AboutTeamTab";
+import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
+import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
 
 const AdminPage = () => {
   const { session, signOut } = useAuth();
@@ -45,6 +51,12 @@ const AdminPage = () => {
       description: "Manage featured products on the homepage"
     },
     { 
+      id: "home-blog-cards", 
+      label: "Home Blog Cards", 
+      component: HomeBlogCardsTab,
+      description: "Manage blog cards displayed on the homepage"
+    },
+    { 
       id: "product-categories", 
       label: "Product Categories", 
       component: ProductCategoriesTab,
@@ -57,6 +69,12 @@ const AdminPage = () => {
       description: "Manage detailed descriptions and SEO for product categories"
     },
     { 
+      id: "product-gallery", 
+      label: "Product Gallery", 
+      component: ProductGalleryTab,
+      description: "Manage product gallery images"
+    },
+    { 
       id: "maintenance-categories", 
       label: "Maintenance Categories", 
       component: MaintenanceCategoriesTab,
@@ -67,6 +85,18 @@ const AdminPage = () => {
       label: "Maintenance Details", 
       component: MaintenanceDetailsTab,
       description: "Manage building maintenance service details"
+    },
+    { 
+      id: "about-team", 
+      label: "About Team", 
+      component: AboutTeamTab,
+      description: "Manage team members for the about page"
+    },
+    { 
+      id: "contact-info", 
+      label: "Contact Info", 
+      component: ContactInfoTab,
+      description: "Manage contact information and business hours"
     },
     { 
       id: "blogs", 
@@ -119,13 +149,16 @@ const AdminPage = () => {
       )}
 
       <Tabs defaultValue={tabs[0].id} className="w-full space-y-4">
-        <TabsList>
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab.id} value={tab.id} className="capitalize">
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+          <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-max">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.id} value={tab.id} className="capitalize whitespace-nowrap">
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         {tabs.map((tab) => (
           <TabsContent key={tab.id} value={tab.id} className="space-y-4">
             <div className="rounded-md border p-4">
