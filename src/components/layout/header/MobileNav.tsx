@@ -64,11 +64,11 @@ export function MobileNav() {
           </Collapsible>
 
           <Link 
-            to="/building-maintenance-services" 
+            to="/fire-rated-doors" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
-            Building Maintenance Services
+            Fire Rated Doors
           </Link>
           
           <Link 
