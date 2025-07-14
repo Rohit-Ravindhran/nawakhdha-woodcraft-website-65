@@ -21,7 +21,7 @@ const FireRatedDoorsPage = () => {
       "name": "Al Nawakhdha Furnitures",
       "url": "https://anfurnwll.com"
     },
-    "description": "Elevated wooden fire-rated doors (30–120 min) with flame-retardant core, intumescent seals, smoke seals, self-closing hardware, sound-insulation, compliant with UL, NFPA, EN standards.",
+    "description": "Certified wooden fire-rated doors designed to protect homes and commercial spaces in Bahrain. Rated for 30, 60, 90, and 120 minutes of fire resistance. Manufactured using flame-retardant cores, intumescent seals, and UL/EN/GSO-compliant fire hardware.",
     "image": "https://anfurnwll.com/images/fire-rated-door.jpg",
     "offers": {
       "@type": "Offer",
@@ -34,6 +34,27 @@ const FireRatedDoorsPage = () => {
       "name": "Al Nawakhdha Furnitures",
       "url": "https://anfurnwll.com"
     },
+    "keywords": [
+      "fire rated doors",
+      "wooden fire doors",
+      "fire resistant doors",
+      "steel fire doors",
+      "fire rated door Bahrain",
+      "2 hour fire rated door",
+      "90 minute fire door",
+      "Class A fire door",
+      "Class B fire door",
+      "fire door manufacturers in Bahrain",
+      "GSO certified fire door",
+      "UL listed fire door",
+      "EN 1634 fire door",
+      "NFPA 80 fire door",
+      "fireproof doors for homes",
+      "commercial fire doors",
+      "explosion proof door",
+      "self-closing fire door",
+      "double-leaf fire rated door"
+    ],
     "additionalProperty": [
       {
         "@type": "PropertyValue",
@@ -43,12 +64,12 @@ const FireRatedDoorsPage = () => {
       {
         "@type": "PropertyValue",
         "name": "Compliance",
-        "value": "UL 10B/C, NFPA 80, EN 1634, BS 476"
+        "value": "UL 10B/C, NFPA 80, EN 1634, BS 476, GSO"
       },
       {
         "@type": "PropertyValue",
         "name": "Features",
-        "value": "Intumescent seals, Smoke seals, Self-closing hardware, Solid wood core"
+        "value": "Intumescent seals, Smoke seals, Self-closing hardware, Solid wood or steel core"
       }
     ]
   };
@@ -63,7 +84,7 @@ const FireRatedDoorsPage = () => {
         />
         <meta 
           name="keywords" 
-          content="wooden fire doors, fire-rated doors, fire-resistant doors, safety doors, flame retardant doors, 30-minute fire door, 60-minute fire door, 90-minute fire door, 120-minute fire door, fire door assemblies, UL-listed fire doors, NFPA 80 compliant doors, EN 1634 rated doors, BS 476 fire doors, intumescent seals, smoke seals, fire-rated hardware, self-closing fire doors, self-latching fire doors, sound-insulated fire doors, custom fire doors, elegant fire doors, residential fire doors, commercial fire doors" 
+          content="fire rated doors, fire resistant doors, wooden fire doors, steel fire doors, fire rated door Bahrain, 2 hour fire rated door, 90 minute fire door, Class A fire door, Class B fire door, fire door manufacturers in Bahrain, GSO certified fire door, UL listed fire door, EN 1634 fire door, NFPA 80 fire door, fireproof doors for homes, commercial fire doors, self-closing fire door, smoke-seal fire door, explosion proof door, double-leaf fire rated door" 
         />
         <link rel="canonical" href="https://anfurnwll.com/fire-rated-doors" />
         
@@ -97,9 +118,9 @@ const FireRatedDoorsPage = () => {
                 Fire-Rated & Fire-Resistant Doors
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Al Nawakhdha Furnitures is a trusted manufacturer of premium wooden fire-rated doors, 
-                located in Nuwaidrat, Bahrain. Our doors are crafted to combine safety, compliance, 
-                and elegant design, perfect for residential and commercial use.
+                Al Nawakhdha Furnitures is a trusted fire door manufacturer in Bahrain of premium wooden fire doors and steel fire doors, 
+                located in Nuwaidrat, Bahrain. Our GSO certified fire doors are crafted to combine safety, compliance, 
+                and elegant design, perfect for fireproof doors for homes and commercial fire doors.
               </p>
             </div>
           </div>
@@ -115,7 +136,7 @@ const FireRatedDoorsPage = () => {
                 <CardContent className="p-6">
                   <Clock className="h-8 w-8 text-primary mb-4" />
                   <h3 className="text-lg font-semibold mb-3 text-foreground">Certified Fire Protection</h3>
-                  <p className="text-muted-foreground">30, 60, 90, or 120 minutes of certified fire protection for maximum safety compliance.</p>
+                  <p className="text-muted-foreground">90 minute fire door and 2 hour fire rated door options with Class A fire door and Class B fire door certifications for maximum safety compliance.</p>
                 </CardContent>
               </Card>
 
@@ -123,7 +144,7 @@ const FireRatedDoorsPage = () => {
                 <CardContent className="p-6">
                   <Shield className="h-8 w-8 text-primary mb-4" />
                   <h3 className="text-lg font-semibold mb-3 text-foreground">Solid Construction</h3>
-                  <p className="text-muted-foreground">Built with flame-retardant cores and equipped with intumescent seals and smoke seals for comprehensive protection.</p>
+                  <p className="text-muted-foreground">Built with flame-retardant cores and equipped with smoke-seal fire door technology and intumescent seals for comprehensive protection.</p>
                 </CardContent>
               </Card>
 
@@ -139,7 +160,7 @@ const FireRatedDoorsPage = () => {
                 <CardContent className="p-6">
                   <CheckCircle className="h-8 w-8 text-primary mb-4" />
                   <h3 className="text-lg font-semibold mb-3 text-foreground">Global Compliance</h3>
-                  <p className="text-muted-foreground">Meets NFPA 80, EN 1634, BS 476, UL 10B/C, and ASTM E119 standards for international quality assurance.</p>
+                  <p className="text-muted-foreground">UL listed fire door meeting NFPA 80 fire door, EN 1634 fire door, and GSO certified fire door standards for international quality assurance.</p>
                 </CardContent>
               </Card>
 
@@ -147,7 +168,7 @@ const FireRatedDoorsPage = () => {
                 <CardContent className="p-6">
                   <Star className="h-8 w-8 text-primary mb-4" />
                   <h3 className="text-lg font-semibold mb-3 text-foreground">Advanced Features</h3>
-                  <p className="text-muted-foreground">Self-closing, self-latching mechanisms with optional vision panels and fire-rated hardware.</p>
+                  <p className="text-muted-foreground">Self-closing fire door mechanisms with optional vision panels, explosion proof door features, and double-leaf fire rated door configurations.</p>
                 </CardContent>
               </Card>
 
@@ -173,7 +194,7 @@ const FireRatedDoorsPage = () => {
                   <Home className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Residential Applications</h3>
-                    <p className="text-muted-foreground">Perfect for apartments, homes, staircases, kitchens, and corridors requiring fire safety compliance.</p>
+                    <p className="text-muted-foreground">Perfect fireproof doors for homes, apartments, staircases, kitchens, and corridors requiring fire resistant doors compliance.</p>
                   </div>
                 </div>
                 
@@ -181,7 +202,7 @@ const FireRatedDoorsPage = () => {
                   <Building className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                   <div>
                     <h3 className="font-semibold text-foreground mb-2">Commercial Spaces</h3>
-                    <p className="text-muted-foreground">Ideal for office buildings, corporate spaces, and fire escape routes in commercial facilities.</p>
+                    <p className="text-muted-foreground">Ideal commercial fire doors for office buildings, corporate spaces, and fire escape routes in commercial facilities.</p>
                   </div>
                 </div>
               </div>
