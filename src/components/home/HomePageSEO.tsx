@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { PageData } from "@/hooks/content/types";
@@ -11,6 +10,7 @@ interface HomePageSEOProps {
   keywords: string;
   heroBackgroundImage?: string;
   data?: PageData;
+  noIndex?: boolean; // ✅ Add this
 }
 
 /**
@@ -22,7 +22,8 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({
   description, 
   keywords, 
   heroBackgroundImage,
-  data 
+  data,
+  noIndex = false // ✅ default to false
 }) => {
   return (
     <>
@@ -33,6 +34,7 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({
         image={heroBackgroundImage}
         data={data}
         type="website"
+        noIndex={noIndex} // ✅ pass to EnhancedSEO
       />
       <LocalBusinessSchema />
     </>
