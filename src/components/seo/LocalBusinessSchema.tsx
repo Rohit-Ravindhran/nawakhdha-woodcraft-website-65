@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
 /**
  * LocalBusiness structured data for Bahrain location
- * Helps with local SEO and Google My Business integration
+ * Helps with local SEO and avoids merchant warnings
  */
 const LocalBusinessSchema = () => {
   const localBusinessSchema = {
@@ -70,24 +69,22 @@ const LocalBusinessSchema = () => {
       },
       "geoRadius": "50000"
     },
-    "makesOffer": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Available Services",
+      "itemListElement": [
+        {
           "@type": "Service",
           "name": "Custom Furniture Manufacturing",
           "description": "Handcrafted wooden furniture including doors, cabinets, wardrobes, and dining sets"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
+        },
+        {
           "@type": "Service",
           "name": "Carpentry Services",
           "description": "Professional carpentry and woodworking services"
         }
-      }
-    ],
+      ]
+    },
     "sameAs": [
       "https://www.facebook.com/alnawakhdha",
       "https://www.instagram.com/alnawakhdha"
