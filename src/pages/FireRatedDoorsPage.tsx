@@ -118,9 +118,9 @@ const FireRatedDoorsPage = () => {
                 Fire-Rated & Fire-Resistant Doors
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Al Nawakhdha Furnitures is a trusted fire door manufacturer in Bahrain of premium wooden fire doors and steel fire doors, 
-                located in Nuwaidrat, Bahrain. Our GSO certified fire doors are crafted to combine safety, compliance, 
-                and elegant design, perfect for fireproof doors for homes and commercial fire doors.
+                Al Nawakhdha Furniture is a trusted fire door manufacturer in Bahrain, specializing in premium wooden fire-rated doors. Based in Nuwaidrat, Bahrain, we craft fire doors that seamlessly blend safety, compliance, and elegant design—ideal for both residential and commercial applications.
+                Our GSO-certified and Bahrain Civil Defense-approved fire doors are engineered to meet the highest fire safety standards. We offer a full range of fire-rated durations including 30, 60, 90, and 120 minutes, ensuring tailored protection for every building type and regulatory requirement.
+                Whether you're looking for fireproof wooden doors for homes or commercial-grade fire doors, Al Nawakhdha delivers craftsmanship you can trust, backed by decades of experience and regional certification.
               </p>
             </div>
           </div>
