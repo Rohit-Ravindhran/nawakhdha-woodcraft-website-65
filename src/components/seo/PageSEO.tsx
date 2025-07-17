@@ -31,6 +31,7 @@ const PageSEO: React.FC<PageSEOProps> = ({
   category
 }) => {
   const siteUrl = "https://anfurnwll.com";
+  const siteName = "Al Nawakhdha Furnitures W.L.L";
   
   // Normalize the canonical URL to always use the custom domain
   const normalizeUrl = (incomingUrl: string | undefined) => {
@@ -49,21 +50,23 @@ const PageSEO: React.FC<PageSEOProps> = ({
 
   return (
     <Helmet>
-      <title>{title}</title>
+      <title>{`${siteName} | ${title}`}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="author" content={siteName} />
+      <meta name="application-name" content={siteName} />
 
       {/* Canonical URL (forced to use correct domain) */}
       <link rel="canonical" href={canonical} />
 
       {/* Open Graph */}
       <meta property="og:type" content={type} />
-      <meta property="og:title" content={title} />
+      <meta property="og:title" content={`${siteName} | ${title}`} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={seoImage} />
       <meta property="og:url" content={fullUrl} />
-      <meta property="og:site_name" content="Al Nawakhdha Furniture W.L.L" />
+      <meta property="og:site_name" content={siteName} />
 
       {/* Article specific */}
       {type === 'article' && publishedTime && (

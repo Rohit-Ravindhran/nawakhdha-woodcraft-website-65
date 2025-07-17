@@ -29,24 +29,25 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
   noIndex = false
 }) => {
   // Use data from props or fallback to defaults
-  const seoTitle = data?.seo_title || title || "Al Nawakhdha Furniture W.L.L - Premium Woodcraft & Furniture";
+  const seoTitle = data?.seo_title || title || "Al Nawakhdha Furnitures W.L.L - Premium Woodcraft & Furniture";
   const seoDescription = data?.seo_description || description || "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, and more crafted with excellence.";
   const seoKeywords = data?.seo_keywords || keywords || "furniture Bahrain, custom furniture, wooden doors, kitchen cabinets, wardrobes, dining tables, carpentry Bahrain, Al Nawakhdha";
-  const seoImage = image || "https://nawakhdha-woodcraft-website-65.lovable.app/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png";
-  const canonicalUrl = data?.seo_canonical_url || url || "https://nawakhdha-woodcraft-website-65.lovable.app";
+  const seoImage = image || "https://anfurnwll.com/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png";
+  const canonicalUrl = data?.seo_canonical_url || url || "https://anfurnwll.com";
 
   // Site name and additional info
-  const siteName = "Al Nawakhdha Furniture W.L.L";
+  const siteName = "Al Nawakhdha Furnitures W.L.L";
   const locale = "en_US";
   const alternateLocale = "ar_BH"; // Arabic for Bahrain
 
   return (
     <Helmet>
       {/* Basic Meta Tags */}
-      <title>{seoTitle}</title>
+      <title>{`${siteName} | ${seoTitle}`}</title>
       <meta name="description" content={seoDescription} />
       <meta name="keywords" content={seoKeywords} />
-      <meta name="author" content="Al Nawakhdha Furniture W.L.L" />
+      <meta name="author" content={siteName} />
+      <meta name="application-name" content={siteName} />
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
       <meta name="language" content="English" />
       <meta name="revisit-after" content="7 days" />

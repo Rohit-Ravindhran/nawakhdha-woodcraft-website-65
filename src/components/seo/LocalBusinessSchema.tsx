@@ -9,14 +9,14 @@ const LocalBusinessSchema = () => {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": "https://nawakhdha-woodcraft-website-65.lovable.app/#business",
-    "name": "Al Nawakhdha Furniture W.L.L",
+    "@id": "https://anfurnwll.com/#business",
+    "name": "Al Nawakhdha Furnitures W.L.L",
     "alternateName": "Al Nawakhdha Woodcraft",
     "description": "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, and more crafted with excellence.",
-    "url": "https://nawakhdha-woodcraft-website-65.lovable.app",
-    "logo": "https://nawakhdha-woodcraft-website-65.lovable.app/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png",
+    "url": "https://anfurnwll.com",
+    "logo": "https://anfurnwll.com/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png",
     "image": [
-      "https://nawakhdha-woodcraft-website-65.lovable.app/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png"
+      "https://anfurnwll.com/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png"
     ],
     "telephone": "+973-65008793",
     "email": "info@alnawakhdha.com",
@@ -94,10 +94,10 @@ const LocalBusinessSchema = () => {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://nawakhdha-woodcraft-website-65.lovable.app/#organization",
-    "name": "Al Nawakhdha Furniture W.L.L",
-    "url": "https://nawakhdha-woodcraft-website-65.lovable.app",
-    "logo": "https://nawakhdha-woodcraft-website-65.lovable.app/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png",
+    "@id": "https://anfurnwll.com/#organization",
+    "name": "Al Nawakhdha Furnitures W.L.L",
+    "url": "https://anfurnwll.com",
+    "logo": "https://anfurnwll.com/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png",
     "foundingDate": "1975",
     "founder": {
       "@type": "Person",
