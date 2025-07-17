@@ -12,18 +12,40 @@ import { safeJsonParse } from "@/utils/jsonHelpers";
 const HomePage = () => {
   const { pageData, services, blogPosts, homeProductsWithItems, isLoading, error } = useHomeContent();
   const location = useLocation();
-  
-  // Check for unwanted query string (like ?elementor_library=default-kit)
-  const hasUnwantedQuery = new URLSearchParams(location.search).has("elementor_library");
+
+  const searchParams = new URLSearchParams(location.search);
+  const hasUnwantedQuery = searchParams.has("elementor_library");
 
   const defaultTitle = "Al Nawakhdha Furniture W.L.L - Premium Woodcraft & Furniture in Bahrain";
-  const defaultDescription = "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, wardrobes, dining tables and more crafted with excellence in Nuwaidrat, Bahrain.";
-  const defaultKeywords = "furniture Bahrain, custom furniture, wooden doors Bahrain, kitchen cabinets, wardrobes, dining tables, carpentry Bahrain, Al Nawakhdha, Nuwaidrat furniture, handcrafted furniture, wooden furniture manufacturer";
+  const defaultDescription =
+    "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, wardrobes, dining tables and more crafted with excellence in Nuwaidrat, Bahrain.";
+  const defaultKeywords =
+    "furniture Bahrain, custom furniture, wooden doors Bahrain, kitchen cabinets, wardrobes, dining tables, carpentry Bahrain, Al Nawakhdha, Nuwaidrat furniture, handcrafted furniture, wooden furniture manufacturer";
 
   const heroData = pageData?.hero ? safeJsonParse(pageData.hero) : null;
   const servicesData = pageData?.services ? safeJsonParse(pageData.services) : { section_title: "Our Services", items: services };
   const productsData = pageData?.products ? safeJsonParse(pageData.products) : { section_title: "Our Products", items: homeProductsWithItems };
   const blogData = pageData?.blog ? safeJsonParse(pageData.blog) : { section_title: "From Our Workshop Blog", items: blogPosts };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("❌ HomePage error:", error);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Page</h1>
+          <p className="text-gray-600">Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -32,26 +54,14 @@ const HomePage = () => {
         description={pageData?.seo_description || defaultDescription}
         keywords={pageData?.seo_keywords || defaultKeywords}
         data={pageData}
-        noIndex={hasUnwantedQuery} // 👈 This enables the <meta name="robots" content="noindex, nofollow" />
+        noIndex={hasUnwantedQuery}
       />
-      
+
       <div className="min-h-screen">
         <HeroSection heroData={heroData} />
-        <ServicesSection 
-          servicesData={servicesData}
-          isLoading={isLoading}
-          error={error}
-        />
-        <ProductsSection 
-          productsData={productsData}
-          isLoading={isLoading}
-          error={error}
-        />
-        <BlogSection 
-          blogData={blogData}
-          isLoading={isLoading}
-          error={error}
-        />
+        <ServicesSection servicesData={servicesData} isLoading={isLoading} error={error} />
+        <ProductsSection productsData={productsData} isLoading={isLoading} error={error} />
+        <BlogSection blogData={blogData} isLoading={isLoading} error={error} />
         <CallToActionSection />
       </div>
     </>
