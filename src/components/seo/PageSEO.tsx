@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
@@ -17,9 +16,6 @@ interface PageSEOProps {
   category?: string;
 }
 
-/**
- * Page-specific SEO component with comprehensive meta tags
- */
 const PageSEO: React.FC<PageSEOProps> = ({
   title,
   description,
@@ -35,20 +31,32 @@ const PageSEO: React.FC<PageSEOProps> = ({
   category
 }) => {
   const siteUrl = "https://anfurnwll.com";
-  const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
-  const seoImage = image || `${siteUrl}/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png`;
   
+  // Normalize the canonical URL to always use the custom domain
+  const normalizeUrl = (incomingUrl: string | undefined) => {
+    if (!incomingUrl) return siteUrl;
+    try {
+      const parsedUrl = new URL(incomingUrl, siteUrl);
+      return `${siteUrl}${parsedUrl.pathname}`;
+    } catch {
+      return `${siteUrl}${incomingUrl.startsWith("/") ? incomingUrl : "/" + incomingUrl}`;
+    }
+  };
+
+  const fullUrl = normalizeUrl(url);
+  const canonical = normalizeUrl(canonicalUrl || url);
+  const seoImage = image || `${siteUrl}/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png`;
+
   return (
     <Helmet>
-      {/* Basic Meta Tags */}
       <title>{title}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={canonicalUrl || fullUrl} />
-      
+
+      {/* Canonical URL (forced to use correct domain) */}
+      <link rel="canonical" href={canonical} />
+
       {/* Open Graph */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={title} />
@@ -56,7 +64,7 @@ const PageSEO: React.FC<PageSEOProps> = ({
       <meta property="og:image" content={seoImage} />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:site_name" content="Al Nawakhdha Furniture W.L.L" />
-      
+
       {/* Article specific */}
       {type === 'article' && publishedTime && (
         <meta property="article:published_time" content={publishedTime} />
@@ -70,13 +78,13 @@ const PageSEO: React.FC<PageSEOProps> = ({
       {type === 'article' && category && (
         <meta property="article:section" content={category} />
       )}
-      
+
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={seoImage} />
-      
+
       {/* Additional SEO */}
       <meta name="geo.region" content="BH" />
       <meta name="geo.placename" content="Bahrain" />
