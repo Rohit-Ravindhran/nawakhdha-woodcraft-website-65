@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useHomeContent } from "@/hooks/content";
 import HeroSection from "@/components/home/HeroSection";
@@ -39,6 +38,9 @@ const HomePage = () => {
   const defaultDescription = "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, wardrobes, dining tables and more crafted with excellence in Nuwaidrat, Bahrain.";
   const defaultKeywords = "furniture Bahrain, custom furniture, wooden doors Bahrain, kitchen cabinets, wardrobes, dining tables, carpentry Bahrain, Al Nawakhdha, Nuwaidrat furniture, handcrafted furniture, wooden furniture manufacturer";
 
+  // Check for unwanted query param
+  const shouldNoIndex = typeof window !== "undefined" && window.location.search.includes("elementor_library=default-kit");
+
   // Parse JSON data from pageData if available
   const heroData = pageData?.hero ? safeJsonParse(pageData.hero) : null;
   const servicesData = pageData?.services ? safeJsonParse(pageData.services) : { section_title: "Our Services", items: services };
@@ -52,6 +54,7 @@ const HomePage = () => {
         description={pageData?.seo_description || defaultDescription}
         keywords={pageData?.seo_keywords || defaultKeywords}
         data={pageData}
+        noIndex={shouldNoIndex}
       />
       
       <div className="min-h-screen">
