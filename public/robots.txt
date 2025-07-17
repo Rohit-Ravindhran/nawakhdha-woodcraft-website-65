@@ -1,8 +1,2 @@
 User-agent: *
-Disallow: /admin
-Disallow: /api/
-Disallow: /private/
-Allow: /
-Crawl-delay: 1
-
-Sitemap: https://anfurnwll.com/sitemap.xml
+Disallow: /
