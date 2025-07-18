@@ -43,10 +43,13 @@ const App = () => (
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
-              <Route path="/fire-rated-doors" element={<FireRatedDoorsPage />} />
+              <Route path="/fire-rated-doors-bahrain" element={<FireRatedDoorsPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/login" element={<AdminLogin />} />
 
+              {/* Redirects from old URLs */}
+              <Route path="/fire-rated-doors" element={<Navigate to="/fire-rated-doors-bahrain" replace />} />
+              
               {/* Redirects from old UUID URLs */}
               <Route path="/product/079e2b15-efe3-4dc5-a4df-4160fbd55198" element={<Navigate to="/product/wardrobes-bahrain" replace />} />
               <Route path="/product/08a91417-2172-415f-9753-9c53ef049e46" element={<Navigate to="/product/middle-eastern-design-doors-bahrain" replace />} />

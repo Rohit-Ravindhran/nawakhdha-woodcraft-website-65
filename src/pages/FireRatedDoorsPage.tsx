@@ -27,7 +27,7 @@ const FireRatedDoorsPage = () => {
       "@type": "Offer",
       "priceCurrency": "BHD",
       "availability": "https://schema.org/InStock",
-      "url": "https://anfurnwll.com/fire-rated-doors"
+      "url": "https://anfurnwll.com/fire-rated-doors-bahrain"
     },
     "manufacturer": {
       "@type": "Organization",
@@ -86,12 +86,12 @@ const FireRatedDoorsPage = () => {
           name="keywords" 
           content="fire rated doors, fire resistant doors, wooden fire doors, steel fire doors, fire rated door Bahrain, 2 hour fire rated door, 90 minute fire door, Class A fire door, Class B fire door, fire door manufacturers in Bahrain, GSO certified fire door, UL listed fire door, EN 1634 fire door, NFPA 80 fire door, fireproof doors for homes, commercial fire doors, self-closing fire door, smoke-seal fire door, explosion proof door, double-leaf fire rated door" 
         />
-        <link rel="canonical" href="https://anfurnwll.com/fire-rated-doors" />
+        <link rel="canonical" href="https://anfurnwll.com/fire-rated-doors-bahrain" />
         
         {/* Open Graph */}
         <meta property="og:title" content="Fire-Rated & Fire-Resistant Wooden Doors | Al Nawakhdha Furnitures Bahrain" />
         <meta property="og:description" content="Discover premium fire-rated safety doors in Bahrain from Al Nawakhdha Furnitures. Our wooden fire doors offer 30–120 min protection, UL/EN/NFPA-compliant assemblies, elegant finishes, and reliable performance for residential and commercial use." />
-        <meta property="og:url" content="https://anfurnwll.com/fire-rated-doors" />
+        <meta property="og:url" content="https://anfurnwll.com/fire-rated-doors-bahrain" />
         <meta property="og:type" content="product" />
         <meta property="og:image" content="https://anfurnwll.com/images/fire-rated-door.jpg" />
         

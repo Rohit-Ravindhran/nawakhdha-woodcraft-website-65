@@ -64,7 +64,7 @@ export function MobileNav() {
           </Collapsible>
 
           <Link 
-            to="/fire-rated-doors" 
+            to="/fire-rated-doors-bahrain" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
