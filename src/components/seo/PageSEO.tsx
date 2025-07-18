@@ -33,6 +33,10 @@ const PageSEO: React.FC<PageSEOProps> = ({
   const siteUrl = "https://anfurnwll.com";
   const siteName = "Al Nawakhdha Furnitures W.L.L";
   
+  // Block indexing if on Lovable subdomain
+  const isLovableDomain = typeof window !== 'undefined' && window.location.hostname.includes('lovable.app');
+  const shouldNoIndex = noIndex || isLovableDomain;
+  
   // Normalize the canonical URL to always use the custom domain
   const normalizeUrl = (incomingUrl: string | undefined) => {
     if (!incomingUrl) return siteUrl;
@@ -53,7 +57,7 @@ const PageSEO: React.FC<PageSEOProps> = ({
       <title>{`${siteName} | ${title}`}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
-      <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="robots" content={shouldNoIndex ? "noindex, nofollow" : "index, follow"} />
       <meta name="author" content={siteName} />
       <meta name="application-name" content={siteName} />
 

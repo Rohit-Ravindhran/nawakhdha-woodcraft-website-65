@@ -28,6 +28,9 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
   data,
   noIndex = false
 }) => {
+  // Block indexing if on Lovable subdomain
+  const isLovableDomain = typeof window !== 'undefined' && window.location.hostname.includes('lovable.app');
+  const shouldNoIndex = noIndex || isLovableDomain;
   // Use data from props or fallback to defaults
   const seoTitle = data?.seo_title || title || "Al Nawakhdha Furnitures W.L.L - Premium Woodcraft & Furniture";
   const seoDescription = data?.seo_description || description || "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, and more crafted with excellence.";
@@ -48,7 +51,7 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
       <meta name="keywords" content={seoKeywords} />
       <meta name="author" content={siteName} />
       <meta name="application-name" content={siteName} />
-      <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="robots" content={shouldNoIndex ? "noindex, nofollow" : "index, follow"} />
       <meta name="language" content="English" />
       <meta name="revisit-after" content="7 days" />
       <meta name="distribution" content="global" />
