@@ -19,4 +19,17 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          // Keep sitemap.xml in root and preserve other static files
+          if (assetInfo.name === 'sitemap.xml') {
+            return 'sitemap.xml';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
+      },
+    },
+  },
 }));

@@ -1,0 +1,23 @@
+# Enable proper MIME type for XML files
+AddType application/xml .xml
+
+# Serve sitemap.xml with correct headers
+<Files "sitemap.xml">
+    Header set Content-Type "application/xml; charset=utf-8"
+    Header set Cache-Control "public, max-age=3600"
+</Files>
+
+# Handle React Router routing
+RewriteEngine On
+RewriteBase /
+
+# Don't rewrite requests for files that exist (like sitemap.xml)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Don't rewrite requests for directories that exist
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Handle all other requests with React Router
+RewriteRule . /index.html [L]
