@@ -6,13 +6,12 @@
   from = "/sitemap.xml"
   to = "/sitemap.xml"
   status = 200
-  force = false
-
+  force = true
 [[redirects]]
   from = "/website-sitemap.xml"
   to = "/website-sitemap.xml"
   status = 200
-  force = false
+  force = true
 
 [[redirects]]
   from = "/robots.txt"
