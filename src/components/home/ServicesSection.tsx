@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
@@ -124,10 +125,12 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
             const imageUrl = (service as Service).image || (service as HomeServiceData).image_url || "https://placehold.co/400x400";
             const imageAlt = (service as Service).image_alt || (service as HomeServiceData).alt_text || `${title} service`;
             
-            return (
+            // Check if this is the interior design service card
+            const isInteriorDesignService = title.toLowerCase().includes('bespoke interior') || title.toLowerCase().includes('interior design');
+            
+            const serviceCard = (
               <div
-                key={index}
-                className="bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1"
+                className={`bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1 ${isInteriorDesignService ? 'cursor-pointer hover:shadow-md' : ''}`}
                 data-testid={`service-card-${index}`}
               >
                 <figure className="mb-4">
@@ -140,6 +143,16 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                 </figure>
                 <h3 className="text-lg font-bold font-playfair mb-2">{title}</h3>
                 <p className="text-muted-foreground text-sm">{description}</p>
+              </div>
+            );
+
+            return isInteriorDesignService ? (
+              <Link key={index} to="/interior-fitouts-bahrain">
+                {serviceCard}
+              </Link>
+            ) : (
+              <div key={index}>
+                {serviceCard}
               </div>
             );
           })}

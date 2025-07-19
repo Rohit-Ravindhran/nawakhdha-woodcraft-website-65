@@ -70,6 +70,13 @@ export async function generateSitemap() {
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  
+  <url>
+    <loc>https://anfurnwll.com/interior-fitouts-bahrain</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 `;
 
     // Add product category pages

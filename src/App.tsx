@@ -17,6 +17,7 @@ import ContactPage from "./pages/ContactPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import FireRatedDoorsPage from "./pages/FireRatedDoorsPage";
+import InteriorFitoutsPage from "./pages/InteriorFitoutsPage";
 import AdminPage from "./pages/AdminPage";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/fire-rated-doors-bahrain" element={<FireRatedDoorsPage />} />
+              <Route path="/interior-fitouts-bahrain" element={<InteriorFitoutsPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/login" element={<AdminLogin />} />
 
