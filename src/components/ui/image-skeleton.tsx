@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ImageSpinner } from '@/components/ui/image-spinner';
 
 interface ImageSkeletonProps {
   className?: string;
@@ -14,14 +14,14 @@ export function ImageSkeleton({
   rounded = false 
 }: ImageSkeletonProps) {
   return (
-    <Skeleton 
-      className={cn(
-        "w-full",
-        aspectRatio,
-        rounded && "rounded-lg",
-        className
-      )} 
-    />
+    <div className={cn(
+      "w-full",
+      aspectRatio,
+      rounded && "rounded-lg",
+      className
+    )}>
+      <ImageSpinner />
+    </div>
   );
 }
 

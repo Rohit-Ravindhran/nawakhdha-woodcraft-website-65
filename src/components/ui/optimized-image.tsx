@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
 import { getOptimizedImageUrl } from '@/utils/imageOptimization';
-import { ImageSkeleton } from '@/components/ui/image-skeleton';
+import { ImageSpinner } from '@/components/ui/image-spinner';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -132,7 +131,7 @@ export function OptimizedImage({
   if (!isInView && !priority) {
     return (
       <div ref={imgRef} className={cn('w-full h-full', className)}>
-        <Skeleton className="w-full h-full" />
+        <ImageSpinner />
       </div>
     );
   }
@@ -140,10 +139,9 @@ export function OptimizedImage({
   return (
     <div className="relative w-full h-full">
       {isLoading && (
-        <Skeleton className={cn(
-          'absolute inset-0 z-10', 
-          className
-        )} />
+        <div className="absolute inset-0 z-10">
+          <ImageSpinner />
+        </div>
       )}
       
       <img
