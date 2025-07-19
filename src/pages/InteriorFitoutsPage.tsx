@@ -9,7 +9,7 @@ const InteriorFitoutsPage: React.FC = () => {
   const jsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
-    "name": "Interior Fitout & Bespoke Manufacturing Service",
+    "name": "Interior Fit outs & Bespoke Manufacturing Service",
     "provider": {
       "@type": "Organization",
       "name": "Al Nawakhdha Furnitures",
@@ -22,9 +22,9 @@ const InteriorFitoutsPage: React.FC = () => {
     },
     "description": "Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.",
     "serviceType": [
-      "Interior Fit-Out",
-      "Commercial Fitout",
-      "Custom Fitouts",
+      "Interior Fit-Outs",
+      "Commercial Fit outs",
+      "Custom Fit outs",
       "Bespoke Joinery",
       "Turnkey Interiors"
     ],
@@ -38,15 +38,15 @@ const InteriorFitoutsPage: React.FC = () => {
     },
     "keywords": [
       "Interior Fit Out Bahrain",
-      "Custom Fitouts Bahrain", 
-      "Commercial Fitout Services",
-      "Residential Fitouts Bahrain",
+      "Custom Fit outs Bahrain", 
+      "Commercial Fit out Services",
+      "Residential Fit outs Bahrain",
       "Bespoke Furniture Bahrain",
       "Joinery Contractor Bahrain",
-      "Retail Fitout Contractor",
-      "Luxury Villa Fitout Bahrain",
-      "MEP Integrated Fitout",
-      "Turnkey Interior Fitouts"
+      "Retail Fit out Contractor",
+      "Luxury Villa Fit out Bahrain",
+      "MEP Integrated Fit out",
+      "Turnkey Interior Fit outs"
     ]
   };
 
@@ -62,11 +62,11 @@ const InteriorFitoutsPage: React.FC = () => {
     { icon: Home, title: "Residential", description: "Villas, apartments & homes" },
     { icon: Briefcase, title: "Commercial", description: "Offices, retail spaces & showrooms" },
     { icon: Hotel, title: "Hospitality", description: "Hotels, cafés, restaurants" },
-    { icon: Building, title: "Healthcare & Public", description: "Healthcare and public-sector fitouts" }
+    { icon: Building, title: "Healthcare & Public", description: "Healthcare and public-sector fit outs" }
   ];
 
   const uniquePoints = [
-    "Local Bahraini craftsmanship aligned with global fitout standards",
+    "Local Bahraini craftsmanship aligned with global fit out standards",
     "Bespoke solutions tailored to client style and function",
     "In-house production facility & joinery workshop",
     "Permit handling and coordination with Civil Defense & municipal authorities",
@@ -74,34 +74,34 @@ const InteriorFitoutsPage: React.FC = () => {
   ];
 
   const tags = [
-    "bespoke fitout", "turnkey fitout", "custom joinery", "carpentry works", 
+    "bespoke fit out", "turnkey fit out", "custom joinery", "carpentry works", 
     "wall paneling", "interior wall cladding", "furniture & furnishing", 
     "plumbing & sanitary works", "MEP works", "civil works", "tailored bespoke furniture", 
-    "retail fitouts", "commercial interiors", "residential interiors"
+    "retail fit outs", "commercial interiors", "residential interiors"
   ];
 
   const keywordLinks = {
     column1: [
       "Interior Fit Out Bahrain",
-      "Custom Fitouts Bahrain", 
-      "Commercial Fitout Services",
-      "Residential Fitouts Bahrain",
+      "Custom Fit outs Bahrain", 
+      "Commercial Fit out Services",
+      "Residential Fit outs Bahrain",
       "Office Fit Out Company",
       "Bespoke Furniture Bahrain",
       "Joinery Contractor Bahrain",
       "Wall Cladding Fit Out",
-      "Parquet Flooring Fitout",
+      "Parquet Flooring Fit out",
       "Glass Partition Installation"
     ],
     column2: [
-      "Luxury Villa Fitout Bahrain",
-      "Retail Fitout Contractor",
-      "Turnkey Interior Fitouts",
-      "Hospitality Fitout Bahrain",
-      "MEP Integrated Fitout",
-      "Project Management Fitout",
-      "Feature Lighting Fitout",
-      "Gypsum Partition Fitout",
+      "Luxury Villa Fit out Bahrain",
+      "Retail Fit out Contractor",
+      "Turnkey Interior Fit outs",
+      "Hospitality Fit out Bahrain",
+      "MEP Integrated Fit out",
+      "Project Management Fit out",
+      "Feature Lighting Fit out",
+      "Gypsum Partition Fit out",
       "Bespoke Joinery Manufacturing",
       "Interior Decoration & Fit Out"
     ]
@@ -110,9 +110,9 @@ const InteriorFitoutsPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Interior Fitout & Bespoke Manufacturing Services in Bahrain | Al Nawakhdha Furnitures</title>
-        <meta name="description" content="Explore our comprehensive fitout services in Bahrain—from bespoke joinery and interior renovation to bespoke commercial fitouts. Al Nawakhdha Furnitures delivers quality craftsmanship in every space." />
-        <meta name="keywords" content="interior fit out Bahrain, custom fitouts Bahrain, commercial fitout Bahrain, bespoke manufacturing Bahrain, residential fitouts Bahrain, office fit out Bahrain, turnkey fit out services, bespoke furniture Bahrain, joinery contractor Bahrain, wall paneling fitout, luxury villa fit out Bahrain, bespoke cabinetry Bahrain, MEP integration Bahrain, gypsum partitions Bahrain, project management fitout Bahrain, hospitality fit out Bahrain, retail fit out Bahrain, parquet flooring Bahrain, glass partition Bahrain, feature lighting fit out" />
+        <title>Interior Fit out & Bespoke Manufacturing Services in Bahrain | Al Nawakhdha Furnitures</title>
+        <meta name="description" content="Explore our comprehensive fit out services in Bahrain—from bespoke joinery and interior renovation to bespoke commercial fit outs. Al Nawakhdha Furnitures delivers quality craftsmanship in every space." />
+        <meta name="keywords" content="interior fit out Bahrain, custom fit outs Bahrain, commercial fit out Bahrain, bespoke manufacturing Bahrain, residential fit outs Bahrain, office fit out Bahrain, turnkey fit out services, bespoke furniture Bahrain, joinery contractor Bahrain, wall paneling fit out, luxury villa fit out Bahrain, bespoke cabinetry Bahrain, MEP integration Bahrain, gypsum partitions Bahrain, project management fit out Bahrain, hospitality fit out Bahrain, retail fit out Bahrain, parquet flooring Bahrain, glass partition Bahrain, feature lighting fit out" />
         <link rel="canonical" href="https://anfurnwll.com/interior-fitouts-bahrain" />
         <script type="application/ld+json">
           {JSON.stringify(jsonLdSchema)}
@@ -124,10 +124,10 @@ const InteriorFitoutsPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair mb-6">
-              Interior & Commercial Fitout Services
+              Interior & Commercial Fit out Services
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Al Nawakhdha Furnitures in Nuwaidrat, Bahrain offers expert interior fit-outs, custom fitouts, and bespoke furniture manufacturing. We blend design, functionality, and quality craftsmanship to deliver turnkey solutions for homes, offices, villas, retail, hospitality, and public sector projects.
+              Al Nawakhdha Furnitures in Nuwaidrat, Bahrain offers expert interior fit-outs, custom fit outs, and bespoke furniture manufacturing. We blend design, functionality, and quality craftsmanship to deliver turnkey solutions for homes, offices, villas, retail, hospitality, and public sector projects.
             </p>
             <Button asChild size="lg" className="group">
               <Link to="/contact">
@@ -138,12 +138,12 @@ const InteriorFitoutsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Choose Our Fitout Services */}
+      {/* Why Choose Our Fit out Services */}
       <section className="section-padding">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold font-playfair text-center mb-12">
-              Why Choose Our Fitout Services?
+              Why Choose Our Fit out Services?
             </h2>
             <div className="space-y-6">
               {features.map((feature, index) => (
@@ -204,7 +204,7 @@ const InteriorFitoutsPage: React.FC = () => {
             Ready to Transform Your Space?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Contact us today for a consultation and discover how our bespoke interior fitout services can bring your vision to life.
+            Contact us today for a consultation and discover how our bespoke interior fit out services can bring your vision to life.
           </p>
           <Button asChild size="lg" variant="secondary" className="group">
             <Link to="/contact">
@@ -218,7 +218,7 @@ const InteriorFitoutsPage: React.FC = () => {
       <section className="section-padding bg-muted/50">
         <div className="container-custom">
           <h2 className="text-3xl md:text-4xl font-bold font-playfair text-center mb-12">
-            Applications & Searches for Fitout Services in Bahrain
+            Applications & Searches for Fit out Services in Bahrain
           </h2>
           
           {/* Keyword Links */}
