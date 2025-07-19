@@ -3,7 +3,7 @@ import React from 'react';
 import { useMaintenanceCategories } from '@/hooks/content/maintenance';
 import { CategoryCard } from '@/components/ui/category-card';
 import SectionTitle from '@/components/ui/section-title';
-import { Skeleton } from '@/components/ui/skeleton';
+import { CategoryCardSkeleton } from '@/components/ui/content-skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import BreadcrumbNavigation from '@/components/ui/breadcrumb-navigation';
@@ -50,11 +50,7 @@ export default function MaintenanceServicesPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="space-y-4">
-                <Skeleton className="h-48 w-full rounded-lg" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-              </div>
+              <CategoryCardSkeleton key={i} />
             ))}
           </div>
         ) : categories && categories.length > 0 ? (

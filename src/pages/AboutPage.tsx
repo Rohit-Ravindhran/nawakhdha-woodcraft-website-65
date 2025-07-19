@@ -6,6 +6,7 @@ import AboutCTA from "@/components/about/AboutCTA";
 import PageSEO from "@/components/seo/PageSEO";
 import BreadcrumbNavigation from "@/components/ui/breadcrumb-navigation";
 import InternalLinks from "@/components/seo/InternalLinks";
+import { PageLoader } from "@/components/ui/page-loader";
 
 const AboutPage = () => {
   const breadcrumbItems = [

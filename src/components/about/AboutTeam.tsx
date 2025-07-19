@@ -51,7 +51,16 @@ const AboutTeam = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {isLoading ? (
-            <div className="col-span-3 text-center py-12">Loading team members...</div>
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white p-6 rounded-lg shadow-sm border border-border text-center space-y-4">
+                <div className="w-32 h-32 rounded-full mx-auto bg-muted animate-pulse" />
+                <div className="space-y-2">
+                  <div className="h-6 w-32 mx-auto bg-muted animate-pulse rounded" />
+                  <div className="h-4 w-24 mx-auto bg-muted animate-pulse rounded" />
+                </div>
+                <div className="h-4 w-full bg-muted animate-pulse rounded" />
+              </div>
+            ))
           ) : error ? (
             <div className="col-span-3 text-center py-12 text-red-600">
               <p>Failed to load team members: {error.message}</p>

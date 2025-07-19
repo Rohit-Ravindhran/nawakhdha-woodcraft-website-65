@@ -9,10 +9,15 @@ import { useContactData } from "@/hooks/contact/useContactData";
 import PageSEO from "@/components/seo/PageSEO";
 import BreadcrumbNavigation from "@/components/ui/breadcrumb-navigation";
 import InternalLinks from "@/components/seo/InternalLinks";
+import { PageLoader } from "@/components/ui/page-loader";
 
 const ContactPage = () => {
   const formRef = useRef<HTMLDivElement>(null);
   const { contactInfo, isLoading } = useContactData();
+  
+  if (isLoading) {
+    return <PageLoader text="Loading contact information..." />;
+  }
   
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth' });

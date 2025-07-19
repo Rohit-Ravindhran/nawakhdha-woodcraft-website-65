@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { PageLoader } from "@/components/ui/page-loader";
 import { useHomeContent } from "@/hooks/content";
 import HeroSection from "@/components/home/HeroSection";
 import ServicesSection from "@/components/home/ServicesSection";
@@ -28,11 +29,7 @@ const HomePage = () => {
   const blogData = pageData?.blog ? safeJsonParse(pageData.blog) : { section_title: "From Our Workshop Blog", items: blogPosts };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <PageLoader size="lg" text="Loading homepage content..." className="min-h-screen" />;
   }
 
   if (error) {

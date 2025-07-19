@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
 import { HomeProductData } from "@/hooks/content/types";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ProductCardSkeleton } from "@/components/ui/content-skeleton";
 import { useHomeProductsWithCategories } from "@/hooks/content/products";
 
 interface Product {
@@ -113,10 +113,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((_, index) => (
-              <div key={`skeleton-${index}`} className="flex flex-col space-y-2">
-                <Skeleton className="h-48 w-full rounded-md" />
-                <Skeleton className="h-5 w-3/4 rounded-md" />
-              </div>
+              <ProductCardSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
         </div>

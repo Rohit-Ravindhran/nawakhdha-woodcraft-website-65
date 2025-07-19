@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { CategoryCard } from "@/components/ui/category-card";
 import { useProducts } from "@/hooks/content";
-import { Loader2 } from "lucide-react";
+import { PageLoader } from "@/components/ui/page-loader";
+import { CategoryCardSkeleton } from "@/components/ui/content-skeleton";
 import PageSEO from "@/components/seo/PageSEO";
 import BreadcrumbNavigation from "@/components/ui/breadcrumb-navigation";
 import InternalLinks from "@/components/seo/InternalLinks";
@@ -44,8 +45,14 @@ const ProductsPage = () => {
           keywords="furniture Bahrain, wooden doors, kitchen cabinets, wardrobes, dining tables, custom furniture, handcrafted furniture, Al Nawakhdha"
           url="/products"
         />
-        <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="section-padding">
+          <div className="container-custom">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <CategoryCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
         </div>
       </>
     );

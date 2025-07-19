@@ -5,7 +5,7 @@ import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-title";
 import { BlogCard } from "@/components/ui/blog-card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { BlogCardSkeleton } from "@/components/ui/content-skeleton";
 
 /**
  * Blog post data structure
@@ -77,12 +77,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map((_, index) => (
-              <div key={`skeleton-${index}`} className="flex flex-col space-y-2">
-                <Skeleton className="h-48 w-full rounded-md" />
-                <Skeleton className="h-5 w-3/4 rounded-md" />
-                <Skeleton className="h-4 w-full rounded-md" />
-                <Skeleton className="h-4 w-2/3 rounded-md" />
-              </div>
+              <BlogCardSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
         </div>
