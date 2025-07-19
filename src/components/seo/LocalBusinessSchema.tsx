@@ -12,7 +12,7 @@ const LocalBusinessSchema = () => {
     "@id": "https://anfurnwll.com/#business",
     "name": "Al Nawakhdha Furnitures W.L.L",
     "alternateName": "Al Nawakhdha Woodcraft",
-    "description": "Bahrain's oldest and most reputed carpentry and furniture manufacturing workshop since 1975. Custom wooden furniture, doors, cabinets, and more crafted with excellence.",
+    "description": "Full-service civil maintenance and bespoke fitout company in Bahrain since 1975, offering plumbing, electrical, gypsum, flooring, cabinetry, wall cladding, safety doors, aluminium works, AC and turnkey interiors.",
     "url": "https://anfurnwll.com",
     "logo": "https://anfurnwll.com/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png",
     "image": [
@@ -69,19 +69,56 @@ const LocalBusinessSchema = () => {
       },
       "geoRadius": "50000"
     },
+    "keywords": [
+      "civil maintenance Bahrain",
+      "plumbing services Bahrain", 
+      "electrical repairs Bahrain",
+      "gypsum works Bahrain",
+      "interior fitouts Bahrain",
+      "parquet flooring Bahrain",
+      "kitchen cabinets Bahrain",
+      "tv cabinets Bahrain",
+      "wall cladding Bahrain",
+      "wooden doors Bahrain",
+      "safety doors Bahrain",
+      "custom wooden furniture",
+      "carpentry services Bahrain",
+      "aluminium works Bahrain",
+      "commercial air conditioning Bahrain"
+    ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": "Available Services",
+      "name": "Civil Maintenance & Furniture Services",
       "itemListElement": [
         {
           "@type": "Service",
-          "name": "Custom Furniture Manufacturing",
-          "description": "Handcrafted wooden furniture including doors, cabinets, wardrobes, and dining sets"
+          "name": "Civil Maintenance Services",
+          "description": "Comprehensive civil maintenance including plumbing, electrical repairs, and building maintenance"
         },
         {
           "@type": "Service",
-          "name": "Carpentry Services",
-          "description": "Professional carpentry and woodworking services"
+          "name": "Interior Fit-outs",
+          "description": "Complete interior fit-out solutions including gypsum works, parquet flooring, and wall cladding"
+        },
+        {
+          "@type": "Service",
+          "name": "Kitchen & TV Cabinets",
+          "description": "Custom kitchen cabinetry and entertainment unit solutions"
+        },
+        {
+          "@type": "Service",
+          "name": "Wooden & Safety Doors",
+          "description": "Custom wooden doors, fire-rated doors, and safety entrance doors"
+        },
+        {
+          "@type": "Service",
+          "name": "Carpentry & Aluminium Works",
+          "description": "Professional carpentry services and aluminium fabrication works"
+        },
+        {
+          "@type": "Service",
+          "name": "Commercial Air Conditioning",
+          "description": "Commercial AC installation, maintenance, and repair services"
         }
       ]
     },
