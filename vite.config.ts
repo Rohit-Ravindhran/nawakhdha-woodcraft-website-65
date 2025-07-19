@@ -23,9 +23,9 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          // Keep website-sitemap.xml in root and preserve other static files
-          if (assetInfo.name === 'website-sitemap.xml') {
-            return 'website-sitemap.xml';
+          // Keep sitemap files in root
+          if (assetInfo.name?.endsWith('.xml')) {
+            return assetInfo.name;
           }
           return 'assets/[name]-[hash][extname]';
         },

@@ -5,4 +5,5 @@ Disallow: /api/
 Disallow: /private/
 Crawl-delay: 1
 
+Sitemap: https://anfurnwll.com/sitemap.xml
 Sitemap: https://anfurnwll.com/website-sitemap.xml

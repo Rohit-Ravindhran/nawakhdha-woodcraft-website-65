@@ -1,7 +1,8 @@
 # Netlify redirects file
-# Serve website-sitemap.xml directly without routing through React
+# Serve static files directly without routing through React
+/sitemap.xml  /sitemap.xml  200
 /website-sitemap.xml  /website-sitemap.xml  200
 /robots.txt   /robots.txt   200
 
-# Handle all other requests with React Router
+# Handle all other requests with React Router (excluding static files)
 /*  /index.html  200
