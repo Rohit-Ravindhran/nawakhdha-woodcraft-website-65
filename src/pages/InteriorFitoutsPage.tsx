@@ -51,59 +51,72 @@ const InteriorFitoutsPage: React.FC = () => {
   };
 
   const features = [
-    "Full design, specification, production, and installation services by in-house craftsmen and designers",
-    "Expertise in joinery, decorative timber, laminate, solid wood parquet flooring, wall cladding, cabinetry, and millwork",
-    "Project management including permits, MEP/HVAC/FIRE FIGHTING integration, scheduling, procurement, and BOQ execution",
-    "High-end materials sourced internationally (Germany, Italy, China) with bespoke finishes",
-    "Reliable service with quality, integrity, and timely delivery"
+    "Full design, specification, production, and installation services by in-house craftsmen and designers as a leading fit out company in Bahrain",
+    "Expertise in custom joinery, decorative timber, laminate, solid wood parquet flooring fitout, wall cladding fit out, kitchen cabinet fitout, TV cabinet manufacturing, and bespoke millwork",
+    "Comprehensive project management including permits, MEP works, plumbing and sanitary works, electrical repair Bahrain, HVAC integration, civil maintenance services Bahrain, scheduling, procurement, and BOQ execution",
+    "High-end materials sourced internationally (Germany, Italy, China) with bespoke finishes for luxury interior design Bahrain projects",
+    "Reliable turnkey fitout service with quality, integrity, and timely delivery for affordable interior design Bahrain to luxury fit-outs"
   ];
 
   const sectors = [
-    { icon: Home, title: "Residential", description: "Villas, apartments & homes" },
-    { icon: Briefcase, title: "Commercial", description: "Offices, retail spaces & showrooms" },
-    { icon: Hotel, title: "Hospitality", description: "Hotels, cafés, restaurants" },
-    { icon: Building, title: "Healthcare & Public", description: "Healthcare and public-sector fit outs" }
+    { icon: Home, title: "Residential Fit Out", description: "Villa interior design Bahrain, apartment interior design Bahrain, and home renovation Bahrain" },
+    { icon: Briefcase, title: "Commercial Fit Out", description: "Office fit out Bahrain, office renovation Bahrain, retail fit out Bahrain & showrooms" },
+    { icon: Hotel, title: "Hospitality Fit Out", description: "Hospitality fit out Bahrain for hotels, cafés, restaurants & leisure venues" },
+    { icon: Building, title: "Healthcare & Public", description: "Modern interior design Bahrain for healthcare facilities and public-sector projects" }
   ];
 
   const uniquePoints = [
-    "Local Bahraini craftsmanship aligned with global fit out standards",
-    "Bespoke solutions tailored to client style and function",
-    "In-house production facility & joinery workshop",
-    "Permit handling and coordination with Civil Defense & municipal authorities",
-    "Turnkey delivery with minimal client oversight"
+    "Local Bahraini craftsmanship aligned with global fit out standards as top fit out companies in Bahrain",
+    "Tailored bespoke furniture and bespoke solutions designed by best interior design company Bahrain standards",
+    "In-house production facility, custom joinery Bahrain workshop & carpentry services Bahrain capabilities",
+    "Permit handling and coordination with Civil Defense & municipal authorities for fire rated doors Bahrain compliance",
+    "Turnkey interior fit out Bahrain delivery with minimal client oversight and complete project management"
   ];
 
   const tags = [
-    "bespoke fit out", "turnkey fit out", "custom joinery", "carpentry works", 
-    "wall paneling", "interior wall cladding", "furniture & furnishing", 
-    "plumbing & sanitary works", "MEP works", "civil works", "tailored bespoke furniture", 
-    "retail fit outs", "commercial interiors", "residential interiors"
+    "interior fit out company bahrain", "fit out contractor bahrain", "fit out works bahrain", "turnkey interior fit out bahrain", 
+    "custom joinery bahrain", "carpentry services bahrain", "bahrain interior design company", "interior designers bahrain",
+    "wall cladding fit out", "gypsum partition fitout", "glass partition installation", "parquet flooring fitout",
+    "bespoke furniture bahrain", "custom made wooden furniture bahrain", "plumbing and sanitary works", "MEP works", 
+    "civil maintenance services bahrain", "electrical repair bahrain", "aluminium works bahrain", "commercial air conditioning bahrain",
+    "kitchen cabinet fitout", "TV cabinet manufacturing", "wooden doors bahrain", "fire rated doors bahrain",
+    "retail fit out bahrain", "office fit out bahrain", "commercial fit out bahrain", "residential fit out bahrain"
   ];
 
   const keywordLinks = {
     column1: [
-      "Interior Fit Out Bahrain",
-      "Custom Fit outs Bahrain", 
-      "Commercial Fit out Services",
-      "Residential Fit outs Bahrain",
-      "Office Fit Out Company",
-      "Bespoke Furniture Bahrain",
-      "Joinery Contractor Bahrain",
-      "Wall Cladding Fit Out",
-      "Parquet Flooring Fit out",
-      "Glass Partition Installation"
+      "Interior Fit Out Company Bahrain",
+      "Fit Out Companies in Bahrain", 
+      "Fit Out Contractor Bahrain",
+      "Commercial Fit Out Bahrain",
+      "Residential Fit Out Bahrain",
+      "Office Fit Out Bahrain",
+      "Luxury Interior Design Bahrain",
+      "Affordable Interior Design Bahrain",
+      "Villa Interior Design Bahrain",
+      "Apartment Interior Design Bahrain",
+      "Modern Interior Design Bahrain",
+      "Best Interior Design Company Bahrain",
+      "Interior Designers Bahrain",
+      "Home Renovation Bahrain",
+      "Office Renovation Bahrain"
     ],
     column2: [
-      "Luxury Villa Fit out Bahrain",
-      "Retail Fit out Contractor",
-      "Turnkey Interior Fit outs",
-      "Hospitality Fit out Bahrain",
-      "MEP Integrated Fit out",
-      "Project Management Fit out",
-      "Feature Lighting Fit out",
-      "Gypsum Partition Fit out",
-      "Bespoke Joinery Manufacturing",
-      "Interior Decoration & Fit Out"
+      "Turnkey Interior Fit Out Bahrain",
+      "Hospitality Fit Out Bahrain",
+      "Retail Fit Out Bahrain",
+      "Bespoke Furniture Bahrain",
+      "Custom Made Wooden Furniture Bahrain",
+      "Custom Joinery Bahrain",
+      "Carpentry Services Bahrain",
+      "Gypsum Partition Fitout",
+      "Wall Cladding Fit Out",
+      "Glass Partition Installation",
+      "Parquet Flooring Fitout",
+      "Kitchen Cabinet Fitout",
+      "TV Cabinet Manufacturing",
+      "Wooden Doors Bahrain",
+      "Fire Rated Doors Bahrain"
     ]
   };
 
@@ -111,8 +124,8 @@ const InteriorFitoutsPage: React.FC = () => {
     <>
       <Helmet>
         <title>Interior Fit out & Bespoke Manufacturing Services in Bahrain | Al Nawakhdha Furnitures</title>
-        <meta name="description" content="Explore our comprehensive fit out services in Bahrain—from bespoke joinery and interior renovation to bespoke commercial fit outs. Al Nawakhdha Furnitures delivers quality craftsmanship in every space." />
-        <meta name="keywords" content="interior fit out Bahrain, custom fit outs Bahrain, commercial fit out Bahrain, bespoke manufacturing Bahrain, residential fit outs Bahrain, office fit out Bahrain, turnkey fit out services, bespoke furniture Bahrain, joinery contractor Bahrain, wall paneling fit out, luxury villa fit out Bahrain, bespoke cabinetry Bahrain, MEP integration Bahrain, gypsum partitions Bahrain, project management fit out Bahrain, hospitality fit out Bahrain, retail fit out Bahrain, parquet flooring Bahrain, glass partition Bahrain, feature lighting fit out" />
+        <meta name="description" content="Leading interior fit out company Bahrain | Al Nawakhdha Furnitures offers comprehensive fit out works Bahrain including luxury interior design Bahrain, office fit out Bahrain, villa interior design Bahrain, retail fit out Bahrain, bespoke furniture Bahrain, custom joinery Bahrain, MEP works, and turnkey interior fit out Bahrain services in Nuwaidrat." />
+        <meta name="keywords" content="interior fit out company bahrain, fit out companies in bahrain, fit out contractor bahrain, interior design bahrain, bahrain interior design company, commercial fit out bahrain, residential fit out bahrain, office fit out bahrain, retail fit out bahrain, hospitality fit out bahrain, turnkey interior fit out bahrain, luxury interior design bahrain, villa interior design bahrain, apartment interior design bahrain, modern interior design bahrain, affordable interior design bahrain, best interior design company bahrain, interior designers bahrain, home renovation bahrain, office renovation bahrain, bespoke furniture bahrain, custom made wooden furniture bahrain, custom joinery bahrain, carpentry services bahrain, gypsum partition fitout, wall cladding fit out, glass partition installation, parquet flooring fitout, kitchen cabinet fitout, tv cabinet manufacturing, wooden doors bahrain, fire rated doors bahrain, MEP works, plumbing and sanitary works, electrical repair bahrain, aluminium works bahrain, commercial air conditioning bahrain, civil maintenance services bahrain, tailored bespoke furniture" />
         <link rel="canonical" href="https://anfurnwll.com/interior-fitouts-bahrain" />
         <script type="application/ld+json">
           {JSON.stringify(jsonLdSchema)}
@@ -124,10 +137,10 @@ const InteriorFitoutsPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair mb-6">
-              Interior & Commercial Fit out Services
+              Interior Fit Out Company Bahrain | Commercial & Residential Fit Out Services
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Al Nawakhdha Furnitures in Nuwaidrat, Bahrain offers expert interior fit-outs, custom fit outs, and bespoke furniture manufacturing. We blend design, functionality, and quality craftsmanship to deliver turnkey solutions for homes, offices, villas, retail, hospitality, and public sector projects.
+              Al Nawakhdha Furnitures is a leading interior fit out company Bahrain based in Nuwaidrat, offering comprehensive fit out works Bahrain including interior design Bahrain, bespoke furniture Bahrain, and turnkey interior fit out Bahrain solutions. As one of the top fit out companies in Bahrain, we specialize in luxury interior design Bahrain, affordable interior design Bahrain, villa interior design Bahrain, apartment interior design Bahrain, office fit out Bahrain, commercial fit out Bahrain, residential fit out Bahrain, hospitality fit out Bahrain, and retail fit out Bahrain projects with complete MEP works, civil maintenance services Bahrain, and custom joinery Bahrain.
             </p>
             <Button asChild size="lg" className="group">
               <Link to="/contact">
@@ -143,7 +156,7 @@ const InteriorFitoutsPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold font-playfair text-center mb-12">
-              Why Choose Our Fit out Services?
+              Why Choose Our Interior Fit Out Services Bahrain?
             </h2>
             <div className="space-y-6">
               {features.map((feature, index) => (
@@ -161,7 +174,7 @@ const InteriorFitoutsPage: React.FC = () => {
       <section className="section-padding bg-secondary/30">
         <div className="container-custom">
           <h2 className="text-3xl md:text-4xl font-bold font-playfair text-center mb-12">
-            Core Applications & Sectors
+            Fit Out Contractor Bahrain - Core Applications & Sectors
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {sectors.map((sector, index) => {
@@ -183,7 +196,7 @@ const InteriorFitoutsPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold font-playfair text-center mb-12">
-              What Sets Us Apart
+              What Sets Us Apart as Bahrain Interior Design Company
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {uniquePoints.map((point, index) => (
@@ -204,7 +217,7 @@ const InteriorFitoutsPage: React.FC = () => {
             Ready to Transform Your Space?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Contact us today for a consultation and discover how our bespoke interior fit out services can bring your vision to life.
+            Contact us today for a consultation and discover how our turnkey interior fit out Bahrain services, custom made wooden furniture Bahrain, and interior decoration Bahrain can bring your vision to life with tailored bespoke furniture and complete project management.
           </p>
           <Button asChild size="lg" variant="secondary" className="group">
             <Link to="/contact">
