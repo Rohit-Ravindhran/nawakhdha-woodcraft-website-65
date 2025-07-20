@@ -107,7 +107,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
       <section className="section-padding bg-white">
         <div className="container-custom">
           <SectionTitle
-            title="Our Products"
+            title="Product Designs"
             subtitle="Loading our product collection..."
             centered
           />
@@ -127,7 +127,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
       <section className="section-padding bg-white">
         <div className="container-custom">
           <SectionTitle
-            title="Our Products"
+            title="Product Designs"
             subtitle="We're having trouble loading our products. Please check back soon."
             centered
           />
@@ -149,7 +149,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
       <section className="section-padding bg-white">
         <div className="container-custom">
           <SectionTitle
-            title={productsData?.section_title || "Our Products"}
+            title={productsData?.section_title || "Product Designs"}
             subtitle="Our product collection will be available soon."
             centered
           />
@@ -165,7 +165,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({
     <section className="section-padding bg-white">
       <div className="container-custom">
         <SectionTitle
-          title={productsData?.section_title || "Our Products"}
+          title={productsData?.section_title || "Product Designs"}
           subtitle="Explore our diverse range of expertly crafted furniture products."
           centered
         />

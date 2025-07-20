@@ -25,7 +25,7 @@ const HomePage = () => {
 
   const heroData = pageData?.hero ? safeJsonParse(pageData.hero) : null;
   const servicesData = pageData?.services ? safeJsonParse(pageData.services) : { section_title: "Our Services", items: services };
-  const productsData = pageData?.products ? safeJsonParse(pageData.products) : { section_title: "Our Products", items: homeProductsWithItems };
+  const productsData = pageData?.products ? safeJsonParse(pageData.products) : { section_title: "Product Designs", items: homeProductsWithItems };
   const blogData = pageData?.blog ? safeJsonParse(pageData.blog) : { section_title: "From Our Workshop Blog", items: blogPosts };
 
   if (isLoading) {

@@ -106,7 +106,7 @@ export default function ProductsSection({ control, isOpen, onToggle, watch, setV
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
       <CollapsibleTrigger className="flex justify-between w-full items-center p-3 font-medium bg-slate-100 rounded-md hover:bg-slate-200">
-        <span>Our Products Section</span>
+        <span>Product Designs Section</span>
         <Button variant="ghost" size="sm" type="button">
           {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
         </Button>

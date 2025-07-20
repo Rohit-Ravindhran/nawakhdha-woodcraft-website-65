@@ -169,7 +169,7 @@ export function getDefaultValues(pageName: string) {
           })
         },
         products: {
-          section_title: "Our Products",
+          section_title: "Product Designs",
           items: Array(4).fill({
             image: "",
             image_alt: "",

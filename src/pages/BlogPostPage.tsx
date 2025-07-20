@@ -55,7 +55,7 @@ const BlogPostPage = () => {
       description: 'Return to our main page'
     },
     {
-      title: 'Our Products',
+      title: 'Product Designs',
       href: '/products',
       description: 'Explore our handcrafted furniture collection'
     },

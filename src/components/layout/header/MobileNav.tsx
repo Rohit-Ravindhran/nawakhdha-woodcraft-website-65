@@ -38,7 +38,7 @@ export function MobileNav() {
           <Collapsible open={isProductsOpen} onOpenChange={setIsProductsOpen}>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" className="w-full justify-between p-0 text-lg font-medium">
-                Our Products
+                Product Designs
                 <ChevronDown className={`h-4 w-4 transition-transform ${isProductsOpen ? 'rotate-180' : ''}`} />
               </Button>
             </CollapsibleTrigger>

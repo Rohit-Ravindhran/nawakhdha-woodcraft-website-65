@@ -40,7 +40,7 @@ const ProductsPage = () => {
     return (
       <>
         <PageSEO
-          title="Our Products - Al Nawakhdha Furniture W.L.L"
+          title="Product Designs - Al Nawakhdha Furniture W.L.L"
           description="Explore our comprehensive collection of handcrafted wooden furniture including doors, cabinets, wardrobes, dining sets and more. Premium furniture made in Bahrain since 1975."
           keywords="furniture Bahrain, wooden doors, kitchen cabinets, wardrobes, dining tables, custom furniture, handcrafted furniture, Al Nawakhdha"
           url="/products"
@@ -62,7 +62,7 @@ const ProductsPage = () => {
     return (
       <>
         <PageSEO
-          title="Our Products - Al Nawakhdha Furniture W.L.L"
+          title="Product Designs - Al Nawakhdha Furniture W.L.L"
           description="Explore our comprehensive collection of handcrafted wooden furniture including doors, cabinets, wardrobes, dining sets and more. Premium furniture made in Bahrain since 1975."
           keywords="furniture Bahrain, wooden doors, kitchen cabinets, wardrobes, dining tables, custom furniture, handcrafted furniture, Al Nawakhdha"
           url="/products"
@@ -79,7 +79,7 @@ const ProductsPage = () => {
   return (
     <>
       <PageSEO
-        title="Our Products - Premium Handcrafted Furniture | Al Nawakhdha Furniture W.L.L"
+        title="Product Designs - Premium Handcrafted Furniture | Al Nawakhdha Furniture W.L.L"
         description="Explore our comprehensive collection of handcrafted wooden furniture including Western & Middle Eastern doors, kitchen cabinets, wardrobes, dining sets and more. Premium furniture made in Bahrain since 1975."
         keywords="furniture Bahrain, wooden doors, kitchen cabinets, wardrobes, dining tables, custom furniture, handcrafted furniture, Al Nawakhdha, Western doors, Middle Eastern doors, modern furniture"
         url="/products"
@@ -90,7 +90,7 @@ const ProductsPage = () => {
           <BreadcrumbNavigation items={breadcrumbItems} className="mb-8" />
           
           <SectionTitle
-            title="Our Products"
+            title="Product Designs"
             subtitle="Explore our comprehensive collection of handcrafted wooden furniture and architectural elements, all created with exceptional craftsmanship and attention to detail."
             centered
           />

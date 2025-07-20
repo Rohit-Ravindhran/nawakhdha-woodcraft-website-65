@@ -30,7 +30,7 @@ const ContactPage = () => {
 
   const relatedLinks = [
     {
-      title: 'Our Products',
+      title: 'Product Designs',
       href: '/products',
       description: 'View our furniture collection for your project'
     },
