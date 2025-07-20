@@ -46,7 +46,7 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
   return (
     <Helmet>
       {/* Basic Meta Tags */}
-      <title>{`${siteName} | ${seoTitle}`}</title>
+      <title>{seoTitle.includes('Al Nawakhdha') ? seoTitle : `Al Nawakhdha Furnitures W.L.L | ${seoTitle}`}</title>
       <meta name="description" content={seoDescription} />
       <meta name="keywords" content={seoKeywords} />
       <meta name="author" content={siteName} />
@@ -65,7 +65,7 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
-      <meta property="og:title" content={seoTitle} />
+      <meta property="og:title" content={seoTitle.includes('Al Nawakhdha') ? seoTitle : `Al Nawakhdha Furnitures W.L.L | ${seoTitle}`} />
       <meta property="og:description" content={seoDescription} />
       <meta property="og:image" content={seoImage} />
       <meta property="og:image:alt" content={data?.seo_image_alt || "Al Nawakhdha Furniture - Premium Woodcraft"} />
@@ -78,7 +78,7 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@alnawakhdha" />
       <meta name="twitter:creator" content="@alnawakhdha" />
-      <meta name="twitter:title" content={seoTitle} />
+      <meta name="twitter:title" content={seoTitle.includes('Al Nawakhdha') ? seoTitle : `Al Nawakhdha Furnitures W.L.L | ${seoTitle}`} />
       <meta name="twitter:description" content={seoDescription} />
       <meta name="twitter:image" content={seoImage} />
       <meta name="twitter:image:alt" content={data?.seo_image_alt || "Al Nawakhdha Furniture - Premium Woodcraft"} />

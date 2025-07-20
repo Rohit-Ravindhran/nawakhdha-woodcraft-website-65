@@ -88,7 +88,7 @@ const PageSEO: React.FC<PageSEOProps> = ({
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
+      <meta name="twitter:title" content={`Al Nawakhdha Furnitures W.L.L | ${title}`} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={seoImage} />
 
