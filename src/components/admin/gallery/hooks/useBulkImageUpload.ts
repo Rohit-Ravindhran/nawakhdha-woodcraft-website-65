@@ -24,7 +24,7 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
   const [imageItems, setImageItems] = useState<ImageUploadItem[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
-  const [nextPosition, setNextPosition] = useState(0);
+  const [nextPosition, setNextPosition] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadImage } = useStorage();
   const queryClient = useQueryClient();
@@ -33,7 +33,7 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
   useEffect(() => {
     const fetchNextPosition = async () => {
       if (!selectedCategory) {
-        setNextPosition(0);
+        setNextPosition(1); // Start from position 1, not 0
         return;
       }
 
@@ -47,15 +47,16 @@ export function useBulkImageUpload(categories: ProductCategoryData[]) {
 
         if (error) {
           console.error('Error fetching positions:', error);
-          setNextPosition(0);
+          setNextPosition(1); // Start from position 1, not 0
           return;
         }
 
-        const lastPosition = data && data.length > 0 ? data[0].position : -1;
-        setNextPosition((lastPosition || -1) + 1);
+        const lastPosition = data && data.length > 0 ? data[0].position : 0;
+        // Always start from position 1 or higher to avoid overriding cover images
+        setNextPosition(Math.max(1, (lastPosition || 0) + 1));
       } catch (error) {
         console.error('Error fetching positions:', error);
-        setNextPosition(0);
+        setNextPosition(1); // Start from position 1, not 0
       }
     };
 
