@@ -9,47 +9,56 @@ export const CONTENT_SECTIONS = {
     'hero-title': {
       selector: 'h1',
       description: 'Main page title',
-      currentContent: 'Interior Fit Out Company Bahrain | Commercial & Residential Fit Out Services'
+      currentContent: 'Interior Fit Out Company Bahrain | Commercial & Residential Fit Out Services',
+      contentType: 'heading'
     },
     'hero-description': {
       selector: 'hero section p',
       description: 'Hero section description',
-      currentContent: 'Al Nawakhdha Furnitures is a leading interior fit out company Bahrain based in Nuwaidrat...'
+      currentContent: 'Al Nawakhdha Furnitures is a leading interior fit out company Bahrain based in Nuwaidrat...',
+      contentType: 'description'
     },
     'meta-description': {
       selector: 'meta[name="description"]',
       description: 'SEO meta description',
-      currentContent: 'Leading interior fit out company Bahrain | Al Nawakhdha Furnitures offers comprehensive fit out works...'
+      currentContent: 'Leading interior fit out company Bahrain | Al Nawakhdha Furnitures offers comprehensive fit out works...',
+      contentType: 'meta-tags'
     },
     'json-ld-description': {
       selector: 'JSON-LD schema description',
       description: 'Structured data description',
-      currentContent: 'Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.'
+      currentContent: 'Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.',
+      contentType: 'json-ld'
     },
     'features-list': {
       selector: 'features array',
       description: 'List of service features',
-      currentContent: 'Array of 5 feature descriptions'
+      currentContent: 'Array of 5 feature descriptions',
+      contentType: 'description'
     },
     'sectors-content': {
       selector: 'sectors array',
       description: 'Service sectors descriptions',
-      currentContent: 'Residential, Commercial, Hospitality, Healthcare sectors'
+      currentContent: 'Residential, Commercial, Hospitality, Healthcare sectors',
+      contentType: 'description'
     },
     'unique-points': {
       selector: 'uniquePoints array',
       description: 'What sets us apart points',
-      currentContent: 'Array of 5 unique selling points'
+      currentContent: 'Array of 5 unique selling points',
+      contentType: 'description'
     },
     'cta-content': {
       selector: 'CTA section',
       description: 'Call-to-action section content',
-      currentContent: 'Ready to Transform Your Space? Contact us today...'
+      currentContent: 'Ready to Transform Your Space? Contact us today...',
+      contentType: 'description'
     },
     'seo-keywords': {
       selector: 'meta[name="keywords"]',
       description: 'SEO keywords',
-      currentContent: 'interior fit out company bahrain, fit out companies in bahrain...'
+      currentContent: 'interior fit out company bahrain, fit out companies in bahrain...',
+      contentType: 'meta-tags'
     }
   },
   'home': {
@@ -166,17 +175,20 @@ export function useGetContentSection(pageSlug: string, sectionIdentifier: string
   };
 }
 
-// Helper function to get all available sections for a page
-export function getPageSections(pageSlug: string) {
+// Helper function to get all available sections for a page, optionally filtered by content type
+export function getPageSections(pageSlug: string, contentType?: string) {
   const typedPageSlug = pageSlug as PageSlug;
   const sections = CONTENT_SECTIONS[typedPageSlug];
   
   if (!sections) return [];
   
-  return Object.entries(sections).map(([key, value]) => ({
-    id: key,
-    description: (value as any).description,
-    selector: (value as any).selector,
-    currentContent: (value as any).currentContent
-  }));
+  return Object.entries(sections)
+    .filter(([key, value]) => !contentType || (value as any).contentType === contentType)
+    .map(([key, value]) => ({
+      id: key,
+      description: (value as any).description,
+      selector: (value as any).selector,
+      currentContent: (value as any).currentContent,
+      contentType: (value as any).contentType
+    }));
 }

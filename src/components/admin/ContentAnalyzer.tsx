@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,11 +22,20 @@ export default function ContentAnalyzer({ onAnalysisComplete }: ContentAnalyzerP
   const [currentContent, setCurrentContent] = useState(`Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.`);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Get available sections for the selected page
-  const availableSections = getPageSections(pageSlug);
+  // Get available sections for the selected page, filtered by content type
+  const availableSections = getPageSections(pageSlug, contentType);
   
   const createRequest = useCreateContentChangeRequest();
   const { toast } = useToast();
+
+  // Reset section selection when content type changes
+  useEffect(() => {
+    if (availableSections.length > 0) {
+      const firstSection = availableSections[0];
+      setSectionId(firstSection.id);
+      setCurrentContent(firstSection.currentContent);
+    }
+  }, [contentType, pageSlug]);
 
   const handleCreateTestRequest = async () => {
     setIsAnalyzing(true);
