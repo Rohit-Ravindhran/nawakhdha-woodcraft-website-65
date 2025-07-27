@@ -140,6 +140,60 @@ export type Database = {
         }
         Relationships: []
       }
+      content_change_requests: {
+        Row: {
+          applied_at: string | null
+          change_reason: string | null
+          content_type: string
+          created_at: string
+          current_content: string
+          id: string
+          page_slug: string
+          page_title: string
+          proposed_content: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          scheduled_publish_at: string | null
+          section_identifier: string
+          seo_keywords_added: string[] | null
+          status: string
+        }
+        Insert: {
+          applied_at?: string | null
+          change_reason?: string | null
+          content_type: string
+          created_at?: string
+          current_content: string
+          id?: string
+          page_slug: string
+          page_title: string
+          proposed_content: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scheduled_publish_at?: string | null
+          section_identifier: string
+          seo_keywords_added?: string[] | null
+          status?: string
+        }
+        Update: {
+          applied_at?: string | null
+          change_reason?: string | null
+          content_type?: string
+          created_at?: string
+          current_content?: string
+          id?: string
+          page_slug?: string
+          page_title?: string
+          proposed_content?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scheduled_publish_at?: string | null
+          section_identifier?: string
+          seo_keywords_added?: string[] | null
+          status?: string
+        }
+        Relationships: []
+      }
       home_blog_cards: {
         Row: {
           alt_text: string | null
@@ -341,6 +395,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      page_content_analysis: {
+        Row: {
+          brand_voice_analysis: Json | null
+          business_context: Json | null
+          created_at: string
+          current_content_snapshot: Json
+          id: string
+          key_services: string[] | null
+          last_analyzed_at: string
+          page_slug: string
+          target_keywords: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          brand_voice_analysis?: Json | null
+          business_context?: Json | null
+          created_at?: string
+          current_content_snapshot: Json
+          id?: string
+          key_services?: string[] | null
+          last_analyzed_at?: string
+          page_slug: string
+          target_keywords?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          brand_voice_analysis?: Json | null
+          business_context?: Json | null
+          created_at?: string
+          current_content_snapshot?: Json
+          id?: string
+          key_services?: string[] | null
+          last_analyzed_at?: string
+          page_slug?: string
+          target_keywords?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       pages: {
         Row: {

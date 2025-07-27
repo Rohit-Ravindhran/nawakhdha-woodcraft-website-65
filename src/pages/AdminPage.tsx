@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -20,6 +20,7 @@ import HomeBlogCardsTab from "@/components/admin/tabs/HomeBlogCardsTab";
 import AboutTeamTab from "@/components/admin/tabs/AboutTeamTab";
 import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
 import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
+import ContentReviewManager from "@/components/admin/ContentReviewManager";
 
 const AdminPage = () => {
   const { session, signOut } = useAuth();
@@ -38,6 +39,12 @@ const AdminPage = () => {
   };
 
   const tabs = [
+    { 
+      id: "content-review", 
+      label: "Content Review", 
+      component: ContentReviewManager,
+      description: "Review and approve AI-generated content updates"
+    },
     { 
       id: "home-services", 
       label: "Home Services", 
