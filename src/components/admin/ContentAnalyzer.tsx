@@ -44,6 +44,8 @@ export default function ContentAnalyzer({ onAnalysisComplete }: ContentAnalyzerP
         proposed_content: enhancedContent,
         change_reason: "Enhanced with trending SEO keywords and improved readability based on current search trends for interior fit-out services in Bahrain",
         seo_keywords_added: newKeywords,
+        can_rollback: true,
+        original_content_before_change: currentContent,
       });
       
       if (onAnalysisComplete) {

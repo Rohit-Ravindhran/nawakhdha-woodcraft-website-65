@@ -15,13 +15,15 @@ import {
   Calendar,
   FileText,
   Code,
-  Tag
+  Tag,
+  RotateCcw
 } from "lucide-react";
 import { 
   useContentChangeRequests, 
   usePendingContentChangeRequests,
   useApproveContentChange,
   useDeclineContentChange,
+  useRollbackContentChange,
   ContentChangeRequest 
 } from "@/hooks/content/useContentChangeRequests";
 import { format } from "date-fns";
@@ -31,9 +33,10 @@ interface ContentReviewItemProps {
   request: ContentChangeRequest;
   onApprove: (id: string, scheduledAt?: string) => void;
   onDecline: (id: string) => void;
+  onRollback: (id: string) => void;
 }
 
-const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprove, onDecline }) => {
+const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprove, onDecline, onRollback }) => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [scheduledDate, setScheduledDate] = useState("");
@@ -80,6 +83,17 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
             {getStatusBadge(request.status)}
           </div>
           <div className="flex gap-2">
+            {request.status === 'approved' && request.can_rollback && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => onRollback(request.id)}
+                className="text-destructive hover:bg-destructive/10"
+              >
+                <RotateCcw className="w-4 h-4 mr-1" />
+                Rollback
+              </Button>
+            )}
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -230,6 +244,7 @@ export default function ContentReviewManager() {
   const { data: pendingRequests, isLoading: isLoadingPending } = usePendingContentChangeRequests();
   const approveRequest = useApproveContentChange();
   const declineRequest = useDeclineContentChange();
+  const rollbackRequest = useRollbackContentChange();
 
   const handleApprove = (id: string, scheduledAt?: string) => {
     approveRequest.mutate({ id, scheduledAt });
@@ -237,6 +252,10 @@ export default function ContentReviewManager() {
 
   const handleDecline = (id: string) => {
     declineRequest.mutate(id);
+  };
+
+  const handleRollback = (id: string) => {
+    rollbackRequest.mutate(id);
   };
 
   const approvedRequests = allRequests?.filter(req => req.status === 'approved') || [];
@@ -306,6 +325,7 @@ export default function ContentReviewManager() {
                 request={request}
                 onApprove={handleApprove}
                 onDecline={handleDecline}
+                onRollback={handleRollback}
               />
             ))
           )}
@@ -318,6 +338,7 @@ export default function ContentReviewManager() {
               request={request}
               onApprove={handleApprove}
               onDecline={handleDecline}
+              onRollback={handleRollback}
             />
           ))}
         </TabsContent>
@@ -329,6 +350,7 @@ export default function ContentReviewManager() {
               request={request}
               onApprove={handleApprove}
               onDecline={handleDecline}
+              onRollback={handleRollback}
             />
           ))}
         </TabsContent>

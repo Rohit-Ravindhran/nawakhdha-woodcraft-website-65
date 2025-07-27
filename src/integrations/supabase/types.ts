@@ -143,16 +143,19 @@ export type Database = {
       content_change_requests: {
         Row: {
           applied_at: string | null
+          can_rollback: boolean | null
           change_reason: string | null
           content_type: string
           created_at: string
           current_content: string
           id: string
+          original_content_before_change: string | null
           page_slug: string
           page_title: string
           proposed_content: string
           reviewed_at: string | null
           reviewed_by: string | null
+          rollback_of_request_id: string | null
           scheduled_publish_at: string | null
           section_identifier: string
           seo_keywords_added: string[] | null
@@ -160,16 +163,19 @@ export type Database = {
         }
         Insert: {
           applied_at?: string | null
+          can_rollback?: boolean | null
           change_reason?: string | null
           content_type: string
           created_at?: string
           current_content: string
           id?: string
+          original_content_before_change?: string | null
           page_slug: string
           page_title: string
           proposed_content: string
           reviewed_at?: string | null
           reviewed_by?: string | null
+          rollback_of_request_id?: string | null
           scheduled_publish_at?: string | null
           section_identifier: string
           seo_keywords_added?: string[] | null
@@ -177,22 +183,33 @@ export type Database = {
         }
         Update: {
           applied_at?: string | null
+          can_rollback?: boolean | null
           change_reason?: string | null
           content_type?: string
           created_at?: string
           current_content?: string
           id?: string
+          original_content_before_change?: string | null
           page_slug?: string
           page_title?: string
           proposed_content?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
+          rollback_of_request_id?: string | null
           scheduled_publish_at?: string | null
           section_identifier?: string
           seo_keywords_added?: string[] | null
           status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "content_change_requests_rollback_of_request_id_fkey"
+            columns: ["rollback_of_request_id"]
+            isOneToOne: false
+            referencedRelation: "content_change_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       home_blog_cards: {
         Row: {

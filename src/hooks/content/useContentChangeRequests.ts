@@ -18,6 +18,9 @@ export interface ContentChangeRequest {
   reviewed_by?: string;
   scheduled_publish_at?: string;
   applied_at?: string;
+  original_content_before_change?: string;
+  can_rollback?: boolean;
+  rollback_of_request_id?: string;
 }
 
 export const useContentChangeRequests = () => {
@@ -150,6 +153,71 @@ export const useCreateContentChangeRequest = () => {
       toast({
         title: "Error",
         description: "Failed to create content change request: " + error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useRollbackContentChange = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (originalRequestId: string) => {
+      // First get the original request to create rollback
+      const { data: originalRequest, error: fetchError } = await supabase
+        .from('content_change_requests')
+        .select('*')
+        .eq('id', originalRequestId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Create rollback request
+      const rollbackRequest = {
+        page_slug: originalRequest.page_slug,
+        page_title: originalRequest.page_title,
+        content_type: originalRequest.content_type,
+        section_identifier: originalRequest.section_identifier,
+        current_content: originalRequest.proposed_content, // Current is now the proposed from original
+        proposed_content: originalRequest.original_content_before_change || originalRequest.current_content, // Rollback to original
+        change_reason: `Rollback of change made on ${new Date(originalRequest.applied_at || originalRequest.reviewed_at).toLocaleDateString()}`,
+        status: 'approved', // Auto-approve rollbacks
+        reviewed_at: new Date().toISOString(),
+        applied_at: new Date().toISOString(),
+        rollback_of_request_id: originalRequestId,
+        can_rollback: true,
+        original_content_before_change: originalRequest.proposed_content
+      };
+
+      const { data, error } = await supabase
+        .from('content_change_requests')
+        .insert([rollbackRequest])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Mark original request as rolled back (can't rollback anymore)
+      await supabase
+        .from('content_change_requests')
+        .update({ can_rollback: false })
+        .eq('id', originalRequestId);
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['content-change-requests'] });
+      toast({
+        title: "Content Rolled Back",
+        description: "The content has been successfully rolled back to its previous state.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Rollback Failed",
+        description: "Failed to rollback content change: " + error.message,
         variant: "destructive",
       });
     },
