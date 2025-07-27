@@ -32,7 +32,7 @@ import ContentAnalyzer from "./ContentAnalyzer";
 
 interface ContentReviewItemProps {
   request: ContentChangeRequest;
-  onApprove: (id: string, scheduledAt?: string, applyImmediately?: boolean) => void;
+  onApprove: (id: string, scheduledAt?: string, applyImmediately?: boolean, editedContent?: string) => void;
   onDecline: (id: string) => void;
   onRollback: (id: string) => void;
 }
@@ -41,6 +41,7 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [scheduledDate, setScheduledDate] = useState("");
+  const [editedContent, setEditedContent] = useState(request.proposed_content);
   
   const { section, exists, description, currentContent, selector } = useGetContentSection(
     request.page_slug, 
@@ -74,7 +75,7 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
   };
 
   const handleScheduledApprove = () => {
-    onApprove(request.id, scheduledDate || undefined);
+    onApprove(request.id, scheduledDate || undefined, false, editedContent);
     setIsScheduleOpen(false);
     setScheduledDate("");
   };
@@ -184,11 +185,12 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
                       />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-success">Proposed Content</Label>
+                      <Label className="text-sm font-medium text-success">Proposed Content (Editable)</Label>
                       <Textarea 
-                        value={request.proposed_content} 
-                        readOnly 
+                        value={editedContent} 
+                        onChange={(e) => setEditedContent(e.target.value)}
                         className="mt-1 min-h-[200px] bg-success/5 border-success/20"
+                        placeholder="Edit the proposed content before approving..."
                       />
                     </div>
                   </div>
@@ -239,7 +241,7 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
                     </Dialog>
                     
                      <Button 
-                       onClick={() => onApprove(request.id, undefined, true)}
+                       onClick={() => onApprove(request.id, undefined, true, editedContent)}
                        disabled={!exists}
                        className="bg-green-600 hover:bg-green-700"
                      >
@@ -249,7 +251,7 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
                      
                      <Button 
                        variant="outline" 
-                       onClick={() => onApprove(request.id)}
+                       onClick={() => onApprove(request.id, undefined, false, editedContent)}
                      >
                        <CheckCircle className="w-4 h-4 mr-1" />
                        Approve Only
@@ -309,8 +311,8 @@ export default function ContentReviewManager() {
   const declineRequest = useDeclineContentChange();
   const rollbackRequest = useRollbackContentChange();
 
-  const handleApprove = (id: string, scheduledAt?: string, applyImmediately?: boolean) => {
-    approveRequest.mutate({ id, scheduledAt, applyImmediately });
+  const handleApprove = (id: string, scheduledAt?: string, applyImmediately?: boolean, editedContent?: string) => {
+    approveRequest.mutate({ id, scheduledAt, applyImmediately, editedContent });
   };
 
   const handleDecline = (id: string) => {

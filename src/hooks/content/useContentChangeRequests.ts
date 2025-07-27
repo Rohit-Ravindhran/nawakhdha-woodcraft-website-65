@@ -64,12 +64,26 @@ export const useApproveContentChange = () => {
     mutationFn: async ({ 
       id, 
       scheduledAt, 
-      applyImmediately = false 
+      applyImmediately = false,
+      editedContent 
     }: { 
       id: string; 
       scheduledAt?: string; 
       applyImmediately?: boolean; 
+      editedContent?: string;
     }) => {
+      // If editedContent is provided, update the proposed_content first
+      if (editedContent) {
+        const { error: updateError } = await supabase
+          .from('content_change_requests')
+          .update({
+            proposed_content: editedContent,
+          })
+          .eq('id', id);
+
+        if (updateError) throw updateError;
+      }
+
       if (applyImmediately) {
         // Apply the content change immediately
         await applyContentChange.mutateAsync(id);
