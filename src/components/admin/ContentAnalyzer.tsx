@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Loader2, FileText, Code, Tag } from "lucide-react";
 import { useCreateContentChangeRequest } from "@/hooks/content/useContentChangeRequests";
+import { getPageSections } from '@/hooks/content/useContentApplication';
 import { useToast } from "@/hooks/use-toast";
 
 interface ContentAnalyzerProps {
@@ -17,9 +18,12 @@ export default function ContentAnalyzer({ onAnalysisComplete }: ContentAnalyzerP
   const [pageSlug, setPageSlug] = useState("interior-fitouts-bahrain");
   const [pageTitle, setPageTitle] = useState("Interior Fit-outs Bahrain");
   const [contentType, setContentType] = useState("description");
-  const [sectionId, setSectionId] = useState("hero-description");
+  const [sectionId, setSectionId] = useState("json-ld-description");
   const [currentContent, setCurrentContent] = useState(`Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.`);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Get available sections for the selected page
+  const availableSections = getPageSections(pageSlug);
   
   const createRequest = useCreateContentChangeRequest();
   const { toast } = useToast();
@@ -108,12 +112,24 @@ export default function ContentAnalyzer({ onAnalysisComplete }: ContentAnalyzerP
           </div>
           <div>
             <Label htmlFor="section-id">Section Identifier</Label>
-            <Input
+            <select
               id="section-id"
               value={sectionId}
-              onChange={(e) => setSectionId(e.target.value)}
-              placeholder="hero-description"
-            />
+              onChange={(e) => {
+                setSectionId(e.target.value);
+                const section = availableSections.find(s => s.id === e.target.value);
+                if (section) {
+                  setCurrentContent(section.currentContent);
+                }
+              }}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {availableSections.map((section) => (
+                <option key={section.id} value={section.id}>
+                  {section.id} - {section.description}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

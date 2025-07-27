@@ -26,12 +26,13 @@ import {
   useRollbackContentChange,
   ContentChangeRequest 
 } from "@/hooks/content/useContentChangeRequests";
+import { useGetContentSection, getPageSections } from '@/hooks/content/useContentApplication';
 import { format } from "date-fns";
 import ContentAnalyzer from "./ContentAnalyzer";
 
 interface ContentReviewItemProps {
   request: ContentChangeRequest;
-  onApprove: (id: string, scheduledAt?: string) => void;
+  onApprove: (id: string, scheduledAt?: string, applyImmediately?: boolean) => void;
   onDecline: (id: string) => void;
   onRollback: (id: string) => void;
 }
@@ -40,6 +41,11 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [scheduledDate, setScheduledDate] = useState("");
+  
+  const { section, exists, description, currentContent, selector } = useGetContentSection(
+    request.page_slug, 
+    request.section_identifier
+  );
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -112,26 +118,61 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
                   </DialogDescription>
                 </DialogHeader>
                 
-                <div className="space-y-4">
-                  {request.change_reason && (
-                    <div>
-                      <Label className="text-sm font-medium">Reason for Change</Label>
-                      <p className="text-sm text-muted-foreground mt-1">{request.change_reason}</p>
-                    </div>
-                  )}
-                  
-                  {request.seo_keywords_added && request.seo_keywords_added.length > 0 && (
-                    <div>
-                      <Label className="text-sm font-medium">SEO Keywords Added</Label>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {request.seo_keywords_added.map((keyword, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                 <div className="space-y-4">
+                   <div className="grid grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+                     <div>
+                       <Label className="text-sm font-medium">Section Information</Label>
+                       <div className="space-y-2 mt-2">
+                         <div className="flex items-center gap-2">
+                           <Badge variant="outline">{request.section_identifier}</Badge>
+                           {exists && (
+                             <Badge variant="secondary" className="text-xs">
+                               {description}
+                             </Badge>
+                           )}
+                         </div>
+                         {selector && (
+                           <div>
+                             <span className="text-xs text-muted-foreground">Location:</span>
+                             <code className="text-xs bg-background px-2 py-1 rounded ml-2">{selector}</code>
+                           </div>
+                         )}
+                         {!exists && (
+                           <div className="text-xs text-yellow-600 bg-yellow-50 p-2 rounded border border-yellow-200">
+                             ⚠️ Section not found in current page structure
+                           </div>
+                         )}
+                       </div>
+                     </div>
+                     <div>
+                       <Label className="text-sm font-medium">Page Details</Label>
+                       <div className="space-y-1 mt-2 text-sm">
+                         <div><span className="text-muted-foreground">Page:</span> {request.page_slug}</div>
+                         <div><span className="text-muted-foreground">Type:</span> {request.content_type}</div>
+                         <div><span className="text-muted-foreground">Created:</span> {format(new Date(request.created_at), 'MMM dd, HH:mm')}</div>
+                       </div>
+                     </div>
+                   </div>
+
+                   {request.change_reason && (
+                     <div>
+                       <Label className="text-sm font-medium">Reason for Change</Label>
+                       <p className="text-sm text-muted-foreground mt-1">{request.change_reason}</p>
+                     </div>
+                   )}
+                   
+                   {request.seo_keywords_added && request.seo_keywords_added.length > 0 && (
+                     <div>
+                       <Label className="text-sm font-medium">SEO Keywords Added</Label>
+                       <div className="flex flex-wrap gap-1 mt-1">
+                         {request.seo_keywords_added.map((keyword, index) => (
+                           <Badge key={index} variant="secondary" className="text-xs">
+                             {keyword}
+                           </Badge>
+                         ))}
+                       </div>
+                     </div>
+                   )}
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -197,10 +238,22 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
                       </DialogContent>
                     </Dialog>
                     
-                    <Button onClick={() => onApprove(request.id)}>
-                      <CheckCircle className="w-4 h-4 mr-1" />
-                      Approve Now
-                    </Button>
+                     <Button 
+                       onClick={() => onApprove(request.id, undefined, true)}
+                       disabled={!exists}
+                       className="bg-green-600 hover:bg-green-700"
+                     >
+                       <CheckCircle className="w-4 h-4 mr-1" />
+                       Apply Now
+                     </Button>
+                     
+                     <Button 
+                       variant="outline" 
+                       onClick={() => onApprove(request.id)}
+                     >
+                       <CheckCircle className="w-4 h-4 mr-1" />
+                       Approve Only
+                     </Button>
                   </DialogFooter>
                 )}
               </DialogContent>
@@ -209,6 +262,16 @@ const ContentReviewItem: React.FC<ContentReviewItemProps> = ({ request, onApprov
         </div>
         <CardDescription className="flex items-center gap-4 text-sm">
           <span>Section: {request.section_identifier}</span>
+          {exists && (
+            <Badge variant="secondary" className="text-xs">
+              {description}
+            </Badge>
+          )}
+          {!exists && (
+            <Badge variant="destructive" className="text-xs">
+              Section not found
+            </Badge>
+          )}
           <span>Type: {request.content_type}</span>
           <span>Created: {format(new Date(request.created_at), 'MMM dd, yyyy HH:mm')}</span>
         </CardDescription>
@@ -246,8 +309,8 @@ export default function ContentReviewManager() {
   const declineRequest = useDeclineContentChange();
   const rollbackRequest = useRollbackContentChange();
 
-  const handleApprove = (id: string, scheduledAt?: string) => {
-    approveRequest.mutate({ id, scheduledAt });
+  const handleApprove = (id: string, scheduledAt?: string, applyImmediately?: boolean) => {
+    approveRequest.mutate({ id, scheduledAt, applyImmediately });
   };
 
   const handleDecline = (id: string) => {

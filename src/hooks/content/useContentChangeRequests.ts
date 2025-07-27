@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useApplyContentChange } from './useContentApplication';
 
 export interface ContentChangeRequest {
   id: string;
@@ -57,29 +58,53 @@ export const usePendingContentChangeRequests = () => {
 export const useApproveContentChange = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const applyContentChange = useApplyContentChange();
 
   return useMutation({
-    mutationFn: async ({ id, scheduledAt }: { id: string; scheduledAt?: string }) => {
-      const { data, error } = await supabase
-        .from('content_change_requests')
-        .update({
-          status: 'approved',
-          reviewed_at: new Date().toISOString(),
-          scheduled_publish_at: scheduledAt,
-        })
-        .eq('id', id)
-        .select()
-        .single();
+    mutationFn: async ({ 
+      id, 
+      scheduledAt, 
+      applyImmediately = false 
+    }: { 
+      id: string; 
+      scheduledAt?: string; 
+      applyImmediately?: boolean; 
+    }) => {
+      if (applyImmediately) {
+        // Apply the content change immediately
+        await applyContentChange.mutateAsync(id);
+        return { id, applied: true };
+      } else {
+        // Just approve without applying
+        const { data, error } = await supabase
+          .from('content_change_requests')
+          .update({
+            status: 'approved',
+            reviewed_at: new Date().toISOString(),
+            scheduled_publish_at: scheduledAt,
+          })
+          .eq('id', id)
+          .select()
+          .single();
 
-      if (error) throw error;
-      return data;
+        if (error) throw error;
+        return { id, applied: false, data };
+      }
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['content-change-requests'] });
-      toast({
-        title: "Content Change Approved",
-        description: "The content change has been approved successfully.",
-      });
+      
+      if (result.applied) {
+        toast({
+          title: "Content Applied",
+          description: "The content change has been approved and applied to the live site.",
+        });
+      } else {
+        toast({
+          title: "Content Change Approved",
+          description: "The content change has been approved successfully.",
+        });
+      }
     },
     onError: (error) => {
       toast({
