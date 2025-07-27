@@ -413,6 +413,36 @@ export type Database = {
           },
         ]
       }
+      page_content: {
+        Row: {
+          content_type: string
+          content_value: string
+          created_at: string
+          id: string
+          page_slug: string
+          section_identifier: string
+          updated_at: string
+        }
+        Insert: {
+          content_type: string
+          content_value: string
+          created_at?: string
+          id?: string
+          page_slug: string
+          section_identifier: string
+          updated_at?: string
+        }
+        Update: {
+          content_type?: string
+          content_value?: string
+          created_at?: string
+          id?: string
+          page_slug?: string
+          section_identifier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_content_analysis: {
         Row: {
           brand_voice_analysis: Json | null

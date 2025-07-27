@@ -4,8 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Building, Home, Hotel, Briefcase } from 'lucide-react';
+import { usePageContentSection } from '@/hooks/content/usePageContent';
 
 const InteriorFitoutsPage: React.FC = () => {
+  // Get dynamic content from database
+  const { data: heroTitle } = usePageContentSection('interior-fitouts-bahrain', 'hero-title');
+  const { data: heroDescription } = usePageContentSection('interior-fitouts-bahrain', 'hero-description');
+  const { data: metaDescription } = usePageContentSection('interior-fitouts-bahrain', 'meta-description');
+  const { data: jsonLdDescription } = usePageContentSection('interior-fitouts-bahrain', 'json-ld-description');
+  const { data: seoKeywords } = usePageContentSection('interior-fitouts-bahrain', 'seo-keywords');
+
   const jsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -20,7 +28,7 @@ const InteriorFitoutsPage: React.FC = () => {
         "addressCountry": "BH"
       }
     },
-    "description": "Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.",
+    "description": jsonLdDescription?.content_value || "Full-service interior fit-outs and bespoke furniture manufacturing in Bahrain: design, joinery, installation, project management and MEP integration for residential, commercial and hospitality sectors.",
     "serviceType": [
       "Interior Fit-Outs",
       "Commercial Fit outs",
@@ -160,8 +168,8 @@ const InteriorFitoutsPage: React.FC = () => {
     <>
       <Helmet>
         <title>Interior Fit out & Bespoke Manufacturing Services in Bahrain | Al Nawakhdha Furnitures</title>
-        <meta name="description" content="Leading interior fit out company Bahrain | Al Nawakhdha Furnitures offers comprehensive fit out works Bahrain including luxury interior design Bahrain, office fit out Bahrain, villa interior design Bahrain, retail fit out Bahrain, bespoke furniture Bahrain, custom joinery Bahrain, MEP works, and turnkey interior fit out Bahrain services in Nuwaidrat." />
-        <meta name="keywords" content="interior fit out company bahrain, fit out companies in bahrain, fit out contractor bahrain, interior design bahrain, bahrain interior design company, commercial fit out bahrain, residential fit out bahrain, office fit out bahrain, retail fit out bahrain, hospitality fit out bahrain, turnkey interior fit out bahrain, luxury interior design bahrain, villa interior design bahrain, apartment interior design bahrain, modern interior design bahrain, affordable interior design bahrain, best interior design company bahrain, interior designers bahrain, home renovation bahrain, office renovation bahrain, bespoke furniture bahrain, custom made wooden furniture bahrain, custom joinery bahrain, carpentry services bahrain, gypsum partition fitout, wall cladding fit out, glass partition installation, parquet flooring fitout, kitchen cabinet fitout, tv cabinet manufacturing, wooden doors bahrain, fire rated doors bahrain, MEP works, plumbing and sanitary works, electrical repair bahrain, aluminium works bahrain, commercial air conditioning bahrain, civil maintenance services bahrain, tailored bespoke furniture" />
+        <meta name="description" content={metaDescription?.content_value || "Leading interior fit out company Bahrain | Al Nawakhdha Furnitures offers comprehensive fit out works Bahrain including luxury interior design Bahrain, office fit out Bahrain, villa interior design Bahrain, retail fit out Bahrain, bespoke furniture Bahrain, custom joinery Bahrain, MEP works, and turnkey interior fit out Bahrain services in Nuwaidrat."} />
+        <meta name="keywords" content={seoKeywords?.content_value || "interior fit out company bahrain, fit out companies in bahrain, fit out contractor bahrain, interior design bahrain, bahrain interior design company, commercial fit out bahrain, residential fit out bahrain, office fit out bahrain, retail fit out bahrain, hospitality fit out bahrain, turnkey interior fit out bahrain, luxury interior design bahrain, villa interior design bahrain, apartment interior design bahrain, modern interior design bahrain, affordable interior design bahrain, best interior design company bahrain, interior designers bahrain, home renovation bahrain, office renovation bahrain, bespoke furniture bahrain, custom made wooden furniture bahrain, custom joinery bahrain, carpentry services bahrain, gypsum partition fitout, wall cladding fit out, glass partition installation, parquet flooring fitout, kitchen cabinet fitout, tv cabinet manufacturing, wooden doors bahrain, fire rated doors bahrain, MEP works, plumbing and sanitary works, electrical repair bahrain, aluminium works bahrain, commercial air conditioning bahrain, civil maintenance services bahrain, tailored bespoke furniture"} />
         <link rel="canonical" href="https://anfurnwll.com/interior-fitouts-bahrain" />
         <script type="application/ld+json">
           {JSON.stringify(jsonLdSchema)}
@@ -173,10 +181,10 @@ const InteriorFitoutsPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair mb-6">
-              Interior Fit Out Company Bahrain | Commercial & Residential Fit Out Services
+              {heroTitle?.content_value || "Interior Fit Out Company Bahrain | Commercial & Residential Fit Out Services"}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Al Nawakhdha Furnitures is a leading interior fit out company Bahrain based in Nuwaidrat, offering comprehensive fit out works Bahrain including interior design Bahrain, bespoke furniture Bahrain, and turnkey interior fit out Bahrain solutions. As one of the top fit out companies in Bahrain, we specialize in luxury interior design Bahrain, affordable interior design Bahrain, villa interior design Bahrain, apartment interior design Bahrain, office fit out Bahrain, commercial fit out Bahrain, residential fit out Bahrain, hospitality fit out Bahrain, and retail fit out Bahrain projects with complete MEP works, civil maintenance services Bahrain, and custom joinery Bahrain.
+              {heroDescription?.content_value || "Al Nawakhdha Furnitures is a leading interior fit out company Bahrain based in Nuwaidrat, offering comprehensive fit out works Bahrain including interior design Bahrain, bespoke furniture Bahrain, and turnkey interior fit out Bahrain solutions. As one of the top fit out companies in Bahrain, we specialize in luxury interior design Bahrain, affordable interior design Bahrain, villa interior design Bahrain, apartment interior design Bahrain, office fit out Bahrain, commercial fit out Bahrain, residential fit out Bahrain, hospitality fit out Bahrain, and retail fit out Bahrain projects with complete MEP works, civil maintenance services Bahrain, and custom joinery Bahrain."}
             </p>
             <Button asChild size="lg" className="group">
               <Link to="/contact">

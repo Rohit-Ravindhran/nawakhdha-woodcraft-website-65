@@ -132,15 +132,27 @@ export function useApplyContentChange() {
 
       if (updateError) throw updateError;
 
-      // Here we would update the actual page content
-      // For now, we'll simulate this by updating our content mapping
-      // In a real implementation, this would update the database records
-      // that feed the page content or trigger a page regeneration
+      // Apply the actual content change to the page_content table
+      const { error: contentUpdateError } = await supabase
+        .from('page_content')
+        .upsert({
+          page_slug: request.page_slug,
+          section_identifier: request.section_identifier,
+          content_type: request.content_type,
+          content_value: request.proposed_content,
+          updated_at: new Date().toISOString()
+        }, { 
+          onConflict: 'page_slug,section_identifier' 
+        });
+
+      if (contentUpdateError) throw contentUpdateError;
       
       return { request, originalContent, newContent: request.proposed_content };
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['content-change-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['page-content'] });
+      queryClient.invalidateQueries({ queryKey: ['page-content-section'] });
       toast.success(`Content applied successfully! Section "${data.request.section_identifier}" has been updated.`);
     },
     onError: (error: Error) => {
