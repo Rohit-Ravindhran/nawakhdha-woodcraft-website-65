@@ -84,6 +84,46 @@ const SEO_CONTENT_MAP = {
       ['Kitchen Storage Solutions Bahrain', 'Cabinets with Glass Doors Bahrain', 'Pantry Cabinets Bahrain', 'Laminated Kitchen Cabinets', 'Custom Made Kitchen Furniture']
     ],
     tags: ['kitchen cabinets', 'modular kitchens', 'Corian kitchen countertops', 'modern kitchen units', 'custom kitchen furniture', 'storage cabinets']
+  },
+  'modern-design-doors': {
+    title: 'Applications & Searches for Modern Design Doors in Bahrain',
+    keywords: [
+      ['Modern Wooden Doors Bahrain', 'Minimalist Interior Doors Bahrain', 'Contemporary Door Designs Bahrain', 'Custom Flush Doors Bahrain', 'Modern Stile & Rail Doors'],
+      ['Designer Wooden Doors Bahrain', 'Luxury Interior Doors Bahrain', 'Custom Carved Doors Bahrain', 'Solid Core Modern Doors', 'Custom Entrance Doors Bahrain']
+    ],
+    tags: ['modern wooden doors', 'flush doors', 'designer interior doors', 'contemporary doors', 'stile and rail doors', 'luxury wooden doors']
+  },
+  'parquet-flooring': {
+    title: 'Applications & Searches for Parquet Flooring in Bahrain',
+    keywords: [
+      ['Parquet Wood Flooring Bahrain', 'Engineered Parquet Flooring Bahrain', 'Herringbone Parquet Patterns', 'Custom Wooden Flooring Bahrain', 'Laminate Parquet Floors Bahrain'],
+      ['Luxury Parquet Flooring Bahrain', 'Solid Wood Parquet Tiles', 'Classic Parquet Designs Bahrain', 'Chevron Parquet Flooring Bahrain', 'Hardwood Parquet Bahrain']
+    ],
+    tags: ['parquet flooring', 'wooden flooring', 'herringbone parquet', 'engineered flooring', 'laminate parquet', 'solid wood parquet']
+  },
+  'patio-furniture': {
+    title: 'Applications & Searches for Patio Furniture in Bahrain',
+    keywords: [
+      ['Custom Patio Furniture Bahrain', 'Outdoor Wooden Furniture Bahrain', 'Weatherproof Patio Sets Bahrain', 'Luxury Garden Furniture Bahrain', 'Wooden Outdoor Sofas Bahrain'],
+      ['Teak Patio Chairs Bahrain', 'Outdoor Dining Furniture Bahrain', 'Custom Built Pergolas Bahrain', 'Patio Swing Sets Bahrain', 'Outdoor Loungers Bahrain']
+    ],
+    tags: ['patio furniture', 'garden furniture', 'outdoor wooden sofas', 'teak patio chairs', 'weatherproof patio sets', 'pergolas bahrain']
+  },
+  'teapoy': {
+    title: 'Applications & Searches for Wooden Teapoys in Bahrain',
+    keywords: [
+      ['Custom Wooden Teapoys Bahrain', 'Living Room Teapoy Tables Bahrain', 'Modern Center Tables Bahrain', 'Traditional Wooden Teapoys Bahrain', 'Teapoy Coffee Tables Bahrain'],
+      ['Glass Top Teapoys Bahrain', 'Designer Wooden Teapoys Bahrain', 'Compact Wooden Tables Bahrain', 'Luxury Living Room Teapoys', 'Carved Wooden Teapoys Bahrain']
+    ],
+    tags: ['wooden teapoys', 'center tables', 'living room teapoys', 'modern teapoy designs', 'glass top teapoys', 'hand-carved teapoys']
+  },
+  'wall-partitions': {
+    title: 'Applications & Searches for Wall Partitions in Bahrain',
+    keywords: [
+      ['Custom Wall Partitions Bahrain', 'Wooden Room Dividers Bahrain', 'Decorative Partition Panels Bahrain', 'Office Space Partitioning Bahrain', 'Gypsum Wall Partitions Bahrain'],
+      ['Sliding Room Dividers Bahrain', 'Glass Partition Walls Bahrain', 'Laser Cut Partition Panels', 'Open Space Dividers Bahrain', 'Foldable Wall Partitions Bahrain']
+    ],
+    tags: ['wall partitions', 'wooden room dividers', 'office partitions', 'gypsum partitions', 'decorative panels', 'glass partition walls']
   }
 };
 
