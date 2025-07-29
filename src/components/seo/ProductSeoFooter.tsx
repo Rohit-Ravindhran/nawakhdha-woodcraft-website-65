@@ -124,6 +124,46 @@ const SEO_CONTENT_MAP = {
       ['Sliding Room Dividers Bahrain', 'Glass Partition Walls Bahrain', 'Laser Cut Partition Panels', 'Open Space Dividers Bahrain', 'Foldable Wall Partitions Bahrain']
     ],
     tags: ['wall partitions', 'wooden room dividers', 'office partitions', 'gypsum partitions', 'decorative panels', 'glass partition walls']
+  },
+  'bedroom-furniture': {
+    title: 'Applications & Searches for Bedroom Furniture in Bahrain',
+    keywords: [
+      ['Custom Bedroom Furniture Bahrain', 'Wooden Bed Frames Bahrain', 'Luxury Bedroom Sets Bahrain', 'Modern Bedside Tables Bahrain', 'Custom Wardrobes for Bedrooms'],
+      ['Wooden Dressers Bahrain', 'Bedroom Storage Units Bahrain', 'Modular Bedroom Furniture Bahrain', 'Classic Bedroom Furniture Designs', 'Custom Made Bedroom Furniture Bahrain']
+    ],
+    tags: ['bedroom furniture', 'wooden bed frames', 'custom wardrobes', 'luxury bedroom sets', 'bedside tables', 'modular bedroom furniture']
+  },
+  'dining-table-with-chairs': {
+    title: 'Applications & Searches for Dining Table with Chairs in Bahrain',
+    keywords: [
+      ['Custom Dining Table Sets Bahrain', 'Solid Wood Dining Tables Bahrain', 'Modern Dining Room Furniture', 'Luxury Dining Tables Bahrain', 'Dining Tables with Upholstered Chairs Bahrain'],
+      ['Round Dining Tables Bahrain', 'Rectangular Dining Sets Bahrain', 'Extendable Dining Tables Bahrain', 'Handcrafted Dining Furniture Bahrain', 'Contemporary Dining Room Chairs']
+    ],
+    tags: ['dining table sets', 'solid wood dining tables', 'dining chairs', 'luxury dining furniture', 'handcrafted dining tables', 'modern dining sets']
+  },
+  'dressing-table': {
+    title: 'Applications & Searches for Dressing Tables in Bahrain',
+    keywords: [
+      ['Custom Dressing Tables Bahrain', 'Wooden Vanity Units Bahrain', 'Mirror Dressing Tables Bahrain', 'Modern Dressing Table Designs', 'Dressing Tables with Storage Bahrain'],
+      ['Luxury Vanity Tables Bahrain', 'Wall Mounted Dressing Mirrors', 'Compact Dressing Tables Bahrain', 'Traditional Dressing Units Bahrain', 'Dressing Tables with Drawers Bahrain']
+    ],
+    tags: ['dressing tables', 'wooden vanity units', 'mirror dressing tables', 'dressing units with storage', 'luxury vanity tables', 'modern dressing tables']
+  },
+  'middle-eastern-doors': {
+    title: 'Applications & Searches for Middle Eastern Doors in Bahrain',
+    keywords: [
+      ['Middle Eastern Wooden Doors Bahrain', 'Traditional Arabic Doors Bahrain', 'Handcrafted Mashrabiya Doors Bahrain', 'Custom Islamic Design Doors Bahrain', 'Classic Arched Wooden Doors'],
+      ['Moroccan Style Foldable Doors Bahrain', 'Intricate Carved Doors Bahrain', 'Ornamental Solid Wood Doors', 'Luxury Heritage Sliding Doors Bahrain', 'Custom Made Middle Eastern Entry Doors']
+    ],
+    tags: ['middle eastern doors', 'arabic wooden doors', 'foldable doors', 'islamic design doors', 'sliding wooden doors', 'moroccan style doors']
+  },
+  'office-furniture': {
+    title: 'Applications & Searches for Office Furniture in Bahrain',
+    keywords: [
+      ['Custom Office Furniture Bahrain', 'Executive Office Desks Bahrain', 'Modular Office Workstations', 'Office Storage Cabinets Bahrain', 'Reception Desks Bahrain'],
+      ['Conference Tables Bahrain', 'Office Cubicle Bahrain', 'Wooden Office Partitions Bahrain', 'Custom Made Office Interiors', 'Office Furniture Fitouts Bahrain']
+    ],
+    tags: ['office furniture', 'executive office desks', 'modular workstations', 'office cubicle', 'conference tables', 'office fitouts']
   }
 };
 
