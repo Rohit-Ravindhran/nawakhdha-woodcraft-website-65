@@ -163,7 +163,7 @@ const ProductDetailPage: React.FC = () => {
         categoryName={categoryName}
         featuredImage={featuredImage}
         galleryImages={galleryImages}
-        productSlug={finalData.slug}
+        productSlug={slug || finalData.slug}
         seoKeywords={seoKeywords}
       />
       
@@ -203,7 +203,7 @@ const ProductDetailPage: React.FC = () => {
           />
           
           {/* SEO Footer - Hidden but crawlable */}
-          <ProductSeoFooter productSlug={finalData.slug} />
+          <ProductSeoFooter productSlug={slug || finalData.slug} />
           
           {/* Development SEO Verification */}
           <SEOVerification
@@ -213,7 +213,7 @@ const ProductDetailPage: React.FC = () => {
             seoDescription={seoDescription}
             seoKeywords={seoKeywords}
             featuredImage={featuredImage}
-            productSlug={finalData.slug}
+            productSlug={slug || finalData.slug}
           />
         </div>
       </div>
