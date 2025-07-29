@@ -47,6 +47,14 @@
   * {
     @apply border-border;
   }
+
+  body {
+    @apply bg-background text-foreground font-lato;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
 }
 
 /* SEO Footer - Hidden from UI but crawlable */
@@ -57,15 +65,6 @@
   width: 1px;
   height: 1px;
   overflow: hidden;
-}
-
-  body {
-    @apply bg-background text-foreground font-lato;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair;
-  }
 }
 
 @layer components {
