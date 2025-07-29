@@ -54,8 +54,6 @@ export function ProductMainContent({
       
       {/* Product Description */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4">{productName}</h2>
-        
         <div className="prose max-w-none">
           {description ? (
             <div dangerouslySetInnerHTML={{ __html: description }} />

@@ -10,6 +10,8 @@ import { ProductLoading } from '@/components/products/ProductLoading';
 import { ProductNotFound } from '@/components/products/ProductNotFound';
 import { Separator } from '@/components/ui/separator';
 import PageSEO from '@/components/seo/PageSEO';
+import { ProductSchema } from '@/components/seo/ProductSchema';
+import { SEOVerification } from '@/components/seo/SEOVerification';
 import BreadcrumbNavigation from '@/components/ui/breadcrumb-navigation';
 import InternalLinks from '@/components/seo/InternalLinks';
 import { ProductSeoFooter } from '@/components/seo/ProductSeoFooter';
@@ -155,6 +157,16 @@ const ProductDetailPage: React.FC = () => {
         type="product"
       />
       
+      <ProductSchema
+        productName={productName}
+        description={description}
+        categoryName={categoryName}
+        featuredImage={featuredImage}
+        galleryImages={galleryImages}
+        productSlug={finalData.slug}
+        seoKeywords={seoKeywords}
+      />
+      
       <div className="py-6">
         <div className="container-custom">
           <BreadcrumbNavigation items={breadcrumbItems} className="mb-6" />
@@ -192,6 +204,17 @@ const ProductDetailPage: React.FC = () => {
           
           {/* SEO Footer - Hidden but crawlable */}
           <ProductSeoFooter productSlug={finalData.slug} />
+          
+          {/* Development SEO Verification */}
+          <SEOVerification
+            productName={productName}
+            description={description}
+            seoTitle={seoTitle}
+            seoDescription={seoDescription}
+            seoKeywords={seoKeywords}
+            featuredImage={featuredImage}
+            productSlug={finalData.slug}
+          />
         </div>
       </div>
     </>
