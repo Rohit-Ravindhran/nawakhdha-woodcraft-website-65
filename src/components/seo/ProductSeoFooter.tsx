@@ -44,6 +44,46 @@ const SEO_CONTENT_MAP = {
       ['Veneer Wall Finishes Bahrain', 'Customized Wall Coverings Bahrain', 'Textured Wall Panels Bahrain', '3D Wooden Wall Cladding Bahrain', 'Exterior Wooden Cladding Bahrain']
     ],
     tags: ['wall cladding', 'wooden wall panels', 'decorative wall coverings', 'acoustic panels', 'interior wall finishes']
+  },
+  'wardrobes': {
+    title: 'Applications & Searches for Wardrobes in Bahrain',
+    keywords: [
+      ['Custom Wardrobes Bahrain', 'Built-in Wardrobe Solutions Bahrain', 'Sliding Door Wardrobes Bahrain', 'Modular Wardrobe Systems Bahrain', 'Luxury Wooden Wardrobes Bahrain'],
+      ['Walk-in Wardrobe Units Bahrain', 'Space-saving Wardrobe Designs', 'Mirror-finished Wardrobes Bahrain', 'Customized Bedroom Wardrobes', 'Fitted Wardrobe Furniture Bahrain']
+    ],
+    tags: ['custom wardrobes', 'built-in wardrobes', 'modular wardrobe systems', 'luxury wardrobes', 'sliding door wardrobes', 'fitted wardrobes']
+  },
+  'western-doors': {
+    title: 'Applications & Searches for Western Design Doors in Bahrain',
+    keywords: [
+      ['Western Style Wooden Doors Bahrain', 'Rustic Wooden Doors Bahrain', 'Custom Crafted Western Doors', 'Hand-Carved Doors Bahrain', 'Luxury Wooden Doors Bahrain'],
+      ['Solid Wood Western Doors', 'Interior Western Design Doors Bahrain', 'Exterior Western Doors Bahrain', 'Farmhouse Style Doors Bahrain', 'Custom Entry Doors Bahrain']
+    ],
+    tags: ['western design doors', 'rustic wooden doors', 'handcrafted doors', 'solid wood doors', 'luxury wooden doors', 'farmhouse doors']
+  },
+  'showcases': {
+    title: 'Applications & Searches for Showcases & Mealsafes in Bahrain',
+    keywords: [
+      ['Wooden Mealsafe Cabinets Bahrain', 'Kitchen Showcases Bahrain', 'Custom Display Cabinets Bahrain', 'Glass Door Kitchen Cabinets Bahrain', 'Traditional Bahraini Mealsafe'],
+      ['Wooden Showcase Furniture Bahrain', 'Dining Room Showcases Bahrain', 'Wall Mounted Display Units', 'Custom Built Mealsafe Furniture', 'Modern Kitchen Showcases Bahrain']
+    ],
+    tags: ['mealsafe', 'kitchen showcases', 'display cabinets', 'wooden showcases', 'traditional mealsafe', 'glass door cabinets']
+  },
+  'book-shelves': {
+    title: 'Applications & Searches for Book Shelves in Bahrain',
+    keywords: [
+      ['Custom Book Shelves Bahrain', 'Wooden Wall-Mounted Bookshelves', 'Bookshelves with Cabinets Bahrain', 'Open Shelf Library Units Bahrain', 'Home Office Bookshelves Bahrain'],
+      ['Modular Bookshelf Designs', 'Bookshelves with Glass Doors Bahrain', 'Floor-to-Ceiling Bookcases', 'Rustic Wooden Book Racks', 'Luxury Bookshelves Bahrain']
+    ],
+    tags: ['custom bookshelves', 'wooden bookcases', 'wall-mounted shelves', 'library units', 'home office shelves', 'luxury bookshelves']
+  },
+  'kitchen-cabinets': {
+    title: 'Applications & Searches for Kitchen Cabinets in Bahrain',
+    keywords: [
+      ['Custom Kitchen Cabinets Bahrain', 'Modular Kitchen Units Bahrain', 'Wooden Kitchen Cupboards', 'Modern Kitchen Cabinet Designs Bahrain', 'Corian Kitchen Countertops Bahrain'],
+      ['Kitchen Storage Solutions Bahrain', 'Cabinets with Glass Doors Bahrain', 'Pantry Cabinets Bahrain', 'Laminated Kitchen Cabinets', 'Custom Made Kitchen Furniture']
+    ],
+    tags: ['kitchen cabinets', 'modular kitchens', 'Corian kitchen countertops', 'modern kitchen units', 'custom kitchen furniture', 'storage cabinets']
   }
 };
 
