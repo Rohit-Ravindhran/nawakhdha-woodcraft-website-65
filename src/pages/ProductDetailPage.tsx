@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import PageSEO from '@/components/seo/PageSEO';
 import BreadcrumbNavigation from '@/components/ui/breadcrumb-navigation';
 import InternalLinks from '@/components/seo/InternalLinks';
+import { ProductSeoFooter } from '@/components/seo/ProductSeoFooter';
 
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -188,6 +189,9 @@ const ProductDetailPage: React.FC = () => {
             links={relatedLinks}
             variant="grid"
           />
+          
+          {/* SEO Footer - Hidden but crawlable */}
+          <ProductSeoFooter productSlug={finalData.slug} />
         </div>
       </div>
     </>

@@ -47,6 +47,17 @@
   * {
     @apply border-border;
   }
+}
+
+/* SEO Footer - Hidden from UI but crawlable */
+.seo-footer-hidden {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 
   body {
     @apply bg-background text-foreground font-lato;
