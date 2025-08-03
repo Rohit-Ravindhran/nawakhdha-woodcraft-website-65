@@ -59,18 +59,15 @@ export function ProductSchema({
     },
     'image': productImages,
     'keywords': processedKeywords,
-    'offers': {
-      '@type': 'Offer',
-      'availability': 'https://schema.org/InStock',
-      'priceCurrency': 'BHD',
-      'seller': {
-        '@type': 'Organization',
-        'name': 'Al Nawakhdha Furnitures W.L.L',
-        '@id': 'https://anfurnwll.com/#organization'
-      },
-      'areaServed': {
-        '@type': 'Country',
-        'name': 'Bahrain'
+    'potentialAction': {
+      '@type': 'ReserveAction',
+      'target': {
+        '@type': 'EntryPoint',
+        'urlTemplate': 'https://anfurnwll.com/contact',
+        'actionPlatform': [
+          'https://schema.org/DesktopWebPlatform',
+          'https://schema.org/MobileWebPlatform'
+        ]
       }
     },
     'isRelatedTo': {
