@@ -14,7 +14,6 @@ import MaintenanceServicesPage from "./pages/MaintenanceServicesPage";
 import MaintenanceServiceDetailPage from "./pages/MaintenanceServiceDetailPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
-import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import FireRatedDoorsPage from "./pages/FireRatedDoorsPage";
 import InteriorFitoutsPage from "./pages/InteriorFitoutsPage";
@@ -42,7 +41,6 @@ const App = () => (
               <Route path="/building-maintenance-services/:slug" element={<MaintenanceServiceDetailPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/fire-rated-doors-bahrain" element={<FireRatedDoorsPage />} />
               <Route path="/interior-fitouts-bahrain" element={<InteriorFitoutsPage />} />
