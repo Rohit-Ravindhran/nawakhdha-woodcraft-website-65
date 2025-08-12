@@ -51,6 +51,90 @@ const CustomWoodenPackagingPage: React.FC = () => {
     ],
   };
 
+  const businessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Al Nawakhdha Furnitures",
+    url: "https://anfurnwll.com/custom-wooden-packaging-bahrain-saudi-arabia",
+    telephone: "+973-33133750",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Nuwaidrat",
+      addressLocality: "Nuwaidrat",
+      addressRegion: "Bahrain",
+      postalCode: "644",
+      addressCountry: "BH"
+    },
+    areaServed: [
+      { "@type": "City", name: "Nuwaidrat" },
+      { "@type": "Country", name: "Bahrain" },
+      { "@type": "City", name: "Riyadh" },
+      { "@type": "City", name: "Dammam" },
+      { "@type": "City", name: "Jeddah" },
+      { "@type": "Country", name: "Saudi Arabia" }
+    ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Custom Wooden Packaging Products",
+      itemListElement: [
+        { "@type": "Product", name: "Wooden Crates and Boxes", category: "Custom Wooden Packaging" },
+        { "@type": "Product", name: "Export-Ready Heat-Treated Packaging", category: "Export Packaging" },
+        { "@type": "Product", name: "Dunnage and Wedges", category: "Cargo Protection" },
+        { "@type": "Product", name: "Modular Pallet Collars and Packaging Systems", category: "Modular Packaging" },
+        { "@type": "Product", name: "Heavy-Duty Industrial Packaging", category: "Industrial Packaging" },
+        { "@type": "Product", name: "Lightweight Packaging Solutions", category: "Fragile Goods Packaging" },
+        { "@type": "Product", name: "Custom Sizes and Designs", category: "Custom Packaging" }
+      ]
+    },
+    keywords: [
+      "custom wooden packaging Bahrain",
+      "wooden crates Bahrain",
+      "heat treated packaging Bahrain",
+      "ISPM 15 packaging solutions",
+      "export wooden packaging Saudi Arabia",
+      "industrial wooden packaging Bahrain",
+      "cargo protection packaging Bahrain",
+      "dunnage solutions Bahrain",
+      "pallet collars Bahrain",
+      "modular packaging Bahrain",
+      "التغليف الخشبي المخصص البحرين",
+      "صناديق خشبية البحرين",
+      "التعبئة والتغليف الخشبي السعودية",
+      "التغليف الصناعي الخشبي",
+      "حلول التغليف المعيارية",
+      "دناج للحماية البحرين",
+      "بالتات خشبية البحرين"
+    ],
+    serviceType: [
+      "custom wooden packaging",
+      "wooden crates",
+      "heat treated packaging",
+      "ISPM 15 certified packaging",
+      "export wooden packaging",
+      "industrial wooden packaging",
+      "cargo protection packaging",
+      "dunnage and wedges",
+      "modular pallet collars",
+      "custom-sized packaging"
+    ],
+    department: [
+      { "@type": "Organization", name: "Automotive Packaging Solutions", description: "Custom wooden packaging designed to protect automotive parts including engines, tires, and heavy components." },
+      { "@type": "Organization", name: "Pharmaceutical and Healthcare Packaging", description: "Sterile and secure wooden packaging solutions for pharmaceutical and healthcare products." },
+      { "@type": "Organization", name: "Electronics and Spare Parts Packaging", description: "Anti-static and cushioned packaging designed for fragile electronics and spare parts." },
+      { "@type": "Organization", name: "Petrochemical and Chemical Industry Packaging", description: "Heavy-duty, export-compliant wooden packaging for hazardous materials and chemicals." },
+      { "@type": "Organization", name: "Agriculture and Food Packaging", description: "Weather-resistant wooden crates and boxes designed for agricultural products and food transport." },
+      { "@type": "Organization", name: "Construction and Heavy Machinery Packaging", description: "Durable wooden packaging solutions for heavy machinery, construction materials, and steel." },
+      { "@type": "Organization", name: "Retail and E-commerce Packaging", description: "Custom wooden packaging solutions for retail and e-commerce product handling and display." }
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      telephone: "+973-33133750",
+      url: "https://anfurnwll.com/contact-us",
+      email: "info@anfurnwll.com"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <PageSEO
@@ -191,6 +275,7 @@ const CustomWoodenPackagingPage: React.FC = () => {
 
       <footer aria-hidden="true" className="sr-only">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }} />
       </footer>
     </div>
   );

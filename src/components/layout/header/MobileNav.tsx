@@ -84,9 +84,9 @@ export function MobileNav() {
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
-            Custom Packaging
+            Wooden Packaging
           </Link>
-          
+
           <Link 
             to="/about" 
             className="text-lg font-medium transition-colors hover:text-primary"
@@ -94,7 +94,7 @@ export function MobileNav() {
           >
             About
           </Link>
-          
+
           <Link 
             to="/contact" 
             className="text-lg font-medium transition-colors hover:text-primary"
