@@ -206,4 +206,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  <!-- Service Pages -->
+  <url>
+    <loc>https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia</loc>
+    <lastmod>2025-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://anfurnwll.com/custom-wooden-packaging-bahrain-saudi-arabia</loc>
+    <lastmod>2025-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
