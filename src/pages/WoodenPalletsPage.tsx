@@ -2,7 +2,8 @@ import React from "react";
 import PageSEO from "@/components/seo/PageSEO";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 const WoodenPalletsPage: React.FC = () => {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -249,6 +250,16 @@ const WoodenPalletsPage: React.FC = () => {
 
             <div className="grid md:grid-cols-2 gap-8">
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/5276a646-73c5-4beb-bf44-eafb1b0fb3e6.png"
+                      alt="Standard wooden pallets in Bahrain and Saudi Arabia - Al Nawakhdha"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Standard Wooden Pallets</h3>
                 <p className="text-muted-foreground">
                   Our standard softwood and hardwood pallets are versatile, affordable, and ideal for everyday storage and distribution. Widely used in warehouses, factories, and shipping yards, they’re a staple for businesses across Bahrain and Saudi Arabia.
@@ -256,6 +267,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/b3d1e4bf-afa1-4b1e-b827-8d4be25e6669.png"
+                      alt="Euro pallets (EPAL) - compliant wooden pallets in Bahrain and Saudi Arabia"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Euro Pallets</h3>
                 <p className="text-muted-foreground">
                   We supply Euro pallets compliant with EUR/EPAL standards, crafted in hardwood for durability or softwood for lighter loads. Perfect for companies exporting goods to Europe, they ensure compatibility with international supply chain systems.
@@ -263,6 +284,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/734dcfa6-6239-4173-bde7-dd11969f042c.png"
+                      alt="2-way and 4-way wooden pallets with forklift entry - Al Nawakhdha"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">2-Way and 4-Way Wooden Pallets</h3>
                 <p className="text-muted-foreground">
                   Available in both 2-way and 4-way entry designs, these pallets allow flexible handling by forklifts and pallet jacks. Built from hardwood for strength or softwood for lighter use, they suit diverse industries from manufacturing to e-commerce.
@@ -270,6 +301,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/312efafb-6315-4c35-a642-aceeba98b77a.png"
+                      alt="Heat-treated ISPM 15 export pallets with HT stamp - Bahrain & Saudi Arabia"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Heat-Treated ISPM 15 Export Pallets</h3>
                 <p className="text-muted-foreground">
                   Our ISPM 15 heat-treated pallets meet strict export regulations, preventing pest contamination and ensuring safe shipment worldwide. We offer both hardwood for heavy loads and softwood for cost-effective shipping solutions.
@@ -277,6 +318,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/287dba76-e321-4804-965d-e018e95a8687.png"
+                      alt="Heavy-duty wooden pallets for industrial loads - Al Nawakhdha"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Heavy-Duty Wooden Pallets</h3>
                 <p className="text-muted-foreground">
                   Constructed primarily from hardwood, these pallets handle bulky and heavy machinery, construction materials, and industrial equipment. Ideal for sectors like oil &amp; gas and foundry operations.
@@ -284,6 +335,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/364d8607-1f73-4bb7-a70d-d39e5d1ca461.png"
+                      alt="Recycled and eco-friendly wooden pallets - sustainable pallets Bahrain"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Recycled &amp; Eco-Friendly Pallets</h3>
                 <p className="text-muted-foreground">
                   Sustainability matters. Our recycled softwood and hardwood pallets reduce environmental impact while providing reliable performance. Suitable for businesses in retail, agriculture, and manufacturing seeking eco-conscious solutions.
@@ -291,6 +352,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/2badd8f5-5140-4159-96c1-f42f155f4650.png"
+                      alt="Pallet collars and pallet boxes - wooden packaging accessories"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Pallet Collars and Pallet Boxes</h3>
                 <p className="text-muted-foreground">
                   We manufacture adjustable pallet collars and pallet boxes in both softwood and hardwood, providing flexible containment for varied cargo sizes.
@@ -298,6 +369,16 @@ const WoodenPalletsPage: React.FC = () => {
               </article>
 
               <article>
+                <div className="mb-4 rounded-lg overflow-hidden border border-border bg-card">
+                  <AspectRatio ratio={16 / 9}>
+                    <OptimizedImage
+                      src="/lovable-uploads/8a50d863-0f3e-41b6-83c2-ee9b1bcba8e5.png"
+                      alt="Custom-sized wooden pallets manufactured to specification"
+                      imageType="product"
+                      className="w-full h-full"
+                    />
+                  </AspectRatio>
+                </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Custom-Sized Wooden Pallets</h3>
                 <p className="text-muted-foreground">
                   Whatever your industry, we can create custom wooden pallets to match your exact specifications. From small retail display pallets to oversized industrial platforms, our team delivers precision-built solutions.
