@@ -121,9 +121,14 @@ export const useApproveContentChange = () => {
       }
     },
     onError: (error) => {
+      // Enhanced logging to help diagnose "internal error" issues
+      console.error('Approve content change failed', { error });
+      const anyErr: any = error;
+      const message = anyErr?.message || anyErr?.error_description || 'Failed to approve content change';
+      const details = anyErr?.details || anyErr?.hint;
       toast({
         title: "Error",
-        description: "Failed to approve content change: " + error.message,
+        description: details ? `${message} - ${details}` : message,
         variant: "destructive",
       });
     },

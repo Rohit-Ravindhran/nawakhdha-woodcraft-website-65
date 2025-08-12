@@ -156,6 +156,7 @@ export function useApplyContentChange() {
       toast.success(`Content applied successfully! Section "${data.request.section_identifier}" has been updated.`);
     },
     onError: (error: Error) => {
+      console.error('Apply content change failed', { error });
       toast.error(`Failed to apply content change: ${error.message}`);
     }
   });
