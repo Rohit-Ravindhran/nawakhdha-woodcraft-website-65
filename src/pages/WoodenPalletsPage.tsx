@@ -42,6 +42,176 @@ const WoodenPalletsPage: React.FC = () => {
     ],
   };
 
+  const businessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Al Nawakhdha Furnitures",
+    "url": "https://anfurnwll.com/wooden-pallets-bahrain",
+    "telephone": "+973-33133750",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Nuwaidrat",
+      "addressLocality": "Nuwaidrat",
+      "addressRegion": "Bahrain",
+      "postalCode": "644",
+      "addressCountry": "BH"
+    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Nuwaidrat"
+      },
+      {
+        "@type": "Country",
+        "name": "Bahrain"
+      },
+      {
+        "@type": "City",
+        "name": "Riyadh"
+      },
+      {
+        "@type": "City",
+        "name": "Dammam"
+      },
+      {
+        "@type": "City",
+        "name": "Jeddah"
+      },
+      {
+        "@type": "Country",
+        "name": "Saudi Arabia"
+      }
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Wooden Pallets and Packaging Products",
+      "itemListElement": [
+        {
+          "@type": "Product",
+          "name": "Standard Wooden Pallets",
+          "category": "Wooden Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "Euro Pallets",
+          "category": "Wooden Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "2-Way Wooden Pallets",
+          "category": "Wooden Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "4-Way Wooden Pallets",
+          "category": "Wooden Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "Heat-Treated ISPM 15 Export Pallets",
+          "category": "Export Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "Heavy-Duty Wooden Pallets",
+          "category": "Industrial Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "Recycled & Eco-Friendly Pallets",
+          "category": "Sustainable Pallets"
+        },
+        {
+          "@type": "Product",
+          "name": "Pallet Collars and Pallet Boxes",
+          "category": "Packaging Accessories"
+        },
+        {
+          "@type": "Product",
+          "name": "Custom-Sized Wooden Pallets",
+          "category": "Custom Pallets"
+        }
+      ]
+    },
+    "keywords": [
+      "wooden pallets Bahrain",
+      "wooden pallet suppliers Bahrain",
+      "custom wooden pallets Bahrain",
+      "heat treated pallets Bahrain",
+      "ISPM 15 pallets",
+      "wooden pallets Saudi Arabia",
+      "wooden pallet suppliers Saudi Arabia",
+      "Euro pallets Bahrain",
+      "pallet collars Bahrain",
+      "heavy duty pallets Saudi Arabia",
+      "recycled pallets Bahrain",
+      "export pallets Bahrain",
+      "المنصات الخشبية البحرين",
+      "شراء منصات خشبية البحرين",
+      "مورد منصات خشبية البحرين",
+      "بالتات خشبية السعودية",
+      "منصات خشبية السعودية",
+      "صناديق خشبية للتغليف البحرين",
+      "بالتة خشب البحرين"
+    ],
+    "serviceType": [
+      "wooden pallets",
+      "custom wooden pallets",
+      "heat treated pallets",
+      "ISPM 15 certified pallets",
+      "export wooden pallets",
+      "industrial wooden pallets",
+      "recycled wooden pallets",
+      "pallet collars",
+      "wooden pallet boxes",
+      "custom-sized pallets"
+    ],
+    "department": [
+      {
+        "@type": "Organization",
+        "name": "Automotive Pallets",
+        "description": "Custom pallets for automotive parts including engines, tires, and heavy components."
+      },
+      {
+        "@type": "Organization",
+        "name": "Retail & E-commerce Pallets",
+        "description": "Display pallets and shelf-ready packaging solutions for retail and e-commerce logistics."
+      },
+      {
+        "@type": "Organization",
+        "name": "Pharmaceuticals & Healthcare Pallets",
+        "description": "Sterile and secure pallets designed for pharmaceutical and healthcare product transport."
+      },
+      {
+        "@type": "Organization",
+        "name": "Agricultural Pallets",
+        "description": "Weather-resistant pallets for grains, fruits, and vegetables."
+      },
+      {
+        "@type": "Organization",
+        "name": "Petrochemical & Oil & Gas Pallets",
+        "description": "Heavy-duty pallets designed for hazardous materials and petrochemical industry needs."
+      },
+      {
+        "@type": "Organization",
+        "name": "Construction & Heavy Machinery Pallets",
+        "description": "Robust pallets for bulky construction materials and heavy machinery."
+      },
+      {
+        "@type": "Organization",
+        "name": "Electronics & Spare Parts Pallets",
+        "description": "Anti-static pallets and protective packaging for delicate electronics and spare parts."
+      }
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "telephone": "+973-XXXXXXXX",
+      "url": "https://anfurnwll.com/contact-us",
+      "email": "info@anfurnwll.com"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <PageSEO
@@ -208,6 +378,13 @@ const WoodenPalletsPage: React.FC = () => {
           </div>
         </section>
       </main>
+
+      <footer aria-hidden="true" className="sr-only">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+        />
+      </footer>
     </div>
   );
 };
