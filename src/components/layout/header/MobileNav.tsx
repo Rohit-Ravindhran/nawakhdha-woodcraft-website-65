@@ -70,6 +70,14 @@ export function MobileNav() {
           >
             Fire Rated Doors
           </Link>
+
+          <Link 
+            to="/wooden-pallets-bahrain-saudi-arabia" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            Wooden Pallets
+          </Link>
           
           <Link 
             to="/about" 
