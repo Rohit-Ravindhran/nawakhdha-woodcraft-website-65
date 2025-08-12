@@ -131,7 +131,7 @@ const CustomWoodenPackagingPage: React.FC = () => {
       contactType: "customer service",
       telephone: "+973-33133750",
       url: "https://anfurnwll.com/contact-us",
-      email: "info@anfurnwll.com"
+      email: "nawakhdha2058@gmail.com"
     }
   };
 

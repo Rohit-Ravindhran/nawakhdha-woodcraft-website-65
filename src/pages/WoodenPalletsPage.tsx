@@ -46,7 +46,7 @@ const WoodenPalletsPage: React.FC = () => {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Al Nawakhdha Furnitures",
-    "url": "https://anfurnwll.com/wooden-pallets-bahrain",
+    "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia",
     "telephone": "+973-33133750",
     "address": {
       "@type": "PostalAddress",
@@ -206,9 +206,9 @@ const WoodenPalletsPage: React.FC = () => {
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer service",
-      "telephone": "+973-XXXXXXXX",
+      "telephone": "+973-33133750",
       "url": "https://anfurnwll.com/contact-us",
-      "email": "info@anfurnwll.com"
+      "email": "nawakhdha2058@gmail.com"
     }
   };
 

@@ -133,10 +133,44 @@ export default function PagesTab() {
     }
   };
 
+  // Ensure Custom Wooden Packaging page exists
+  const ensureCustomWoodenPackagingPage = async () => {
+    try {
+      const { data: existingPage } = await supabase
+        .from('pages')
+        .select('*')
+        .eq('page_name', 'custom-wooden-packaging-bahrain-saudi-arabia')
+        .maybeSingle();
+
+      if (!existingPage) {
+        const { error } = await supabase
+          .from('pages')
+          .insert({
+            page_name: 'custom-wooden-packaging-bahrain-saudi-arabia',
+            hero: JSON.stringify({
+              title: 'Custom Wooden Packaging in Bahrain & Saudi Arabia',
+              subtitle: 'Crates, boxes, dunnage, pallet collars — ISPM 15 heat-treated and export-compliant',
+              description: 'Bespoke wooden packaging engineered for protection and logistics efficiency across Bahrain and Saudi Arabia.'
+            }),
+            seo_title: 'Custom Wooden Packaging in Bahrain & Saudi Arabia',
+            seo_description: 'Custom wooden crates, boxes, dunnage, pallet collars. ISPM 15 heat-treated. Serving Bahrain and Saudi Arabia.',
+            seo_keywords: 'custom wooden packaging Bahrain, wooden crates Bahrain, wooden boxes Bahrain, ISPM 15 packaging Saudi Arabia, dunnage Bahrain, pallet collars Bahrain, industrial packaging, fragile goods packaging'
+          });
+
+        if (error) throw error;
+        queryClient.invalidateQueries({ queryKey: ['pages'] });
+        toast.success('Wooden Packaging page created successfully');
+      }
+    } catch (error: any) {
+      toast.error(`Error creating page: ${error.message}`);
+    }
+  };
+
   // Ensure the required pages exist when component mounts
   useState(() => {
     ensureBuildingMaintenanceServicesPage();
     ensureWoodenPalletsPage();
+    ensureCustomWoodenPackagingPage();
   });
   
   const handleEdit = (page: PageData) => {

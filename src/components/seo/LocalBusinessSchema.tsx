@@ -19,7 +19,7 @@ const LocalBusinessSchema = () => {
       "https://anfurnwll.com/lovable-uploads/505c241d-6d09-45d9-9f4b-57fda7a48447.png"
     ],
     "telephone": "+973-65008793",
-    "email": "info@alnawakhdha.com",
+    "email": "nawakhdha2058@gmail.com",
     "foundingDate": "1975",
     "address": {
       "@type": "PostalAddress",
