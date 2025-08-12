@@ -230,7 +230,7 @@ const WoodenPalletsPage: React.FC = () => {
       <section className="section-padding bg-gradient-to-br from-primary/5 to-accent/5">
         <div className="container-custom">
           <header className="max-w-5xl mx-auto text-center">
-            <h1 className="heading-xl mb-6 text-foreground">Wooden Pallets in Bahrain and Saudi Arabia</h1>
+            <h1 className="heading-xl mb-6 font-extrabold text-primary">Wooden Pallets in Bahrain and Saudi Arabia</h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
               At Al Nawakhdha Furnitures and Wood Works, headquartered in Nuwaidrat, Bahrain, we specialize in crafting and supplying high-quality wooden pallets to businesses across Bahrain and the Saudi Arabian market, including Riyadh, Dammam, and Jeddah. Our range includes softwood pallets for lightweight, cost-effective applications and hardwood pallets for heavy-duty, long-lasting performance. From custom-sized pallets to ISPM 15 heat-treated export pallets, we deliver solutions tailored to your industry’s exact requirements. Whether you need pallets for automotive, agriculture, retail, or oil &amp; gas, we ensure your goods are stored, handled, and transported safely and efficiently — locally and internationally.
             </p>

@@ -100,9 +100,43 @@ export default function PagesTab() {
     }
   };
 
-  // Ensure the building maintenance services page exists when component mounts
+  // Ensure Wooden Pallets page exists
+  const ensureWoodenPalletsPage = async () => {
+    try {
+      const { data: existingPage } = await supabase
+        .from('pages')
+        .select('*')
+        .eq('page_name', 'wooden-pallets-bahrain-saudi-arabia')
+        .maybeSingle();
+
+      if (!existingPage) {
+        const { error } = await supabase
+          .from('pages')
+          .insert({
+            page_name: 'wooden-pallets-bahrain-saudi-arabia',
+            hero: JSON.stringify({
+              title: 'Wooden Pallets in Bahrain & Saudi Arabia',
+              subtitle: 'Softwood and hardwood pallets, Euro pallets, ISPM 15 export-ready, and custom sizes',
+              description: 'Manufactured in Bahrain, serving Bahrain and Saudi Arabia with fast delivery and custom-built solutions.'
+            }),
+            seo_title: 'Wooden Pallets in Bahrain & Saudi Arabia',
+            seo_description: 'Softwood and hardwood wooden pallets, Euro and ISPM 15 export pallets, custom sizes—manufactured in Bahrain, serving Bahrain and Saudi Arabia.',
+            seo_keywords: 'wooden pallets Bahrain, wooden pallets Saudi Arabia, softwood pallets, hardwood pallets, Euro pallets, ISPM 15 pallets, custom pallets'
+          });
+
+        if (error) throw error;
+        queryClient.invalidateQueries({ queryKey: ['pages'] });
+        toast.success('Wooden Pallets page created successfully');
+      }
+    } catch (error: any) {
+      toast.error(`Error creating page: ${error.message}`);
+    }
+  };
+
+  // Ensure the required pages exist when component mounts
   useState(() => {
     ensureBuildingMaintenanceServicesPage();
+    ensureWoodenPalletsPage();
   });
   
   const handleEdit = (page: PageData) => {
