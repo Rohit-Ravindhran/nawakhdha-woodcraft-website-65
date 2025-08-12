@@ -78,6 +78,14 @@ export function MobileNav() {
           >
             Wooden Pallets
           </Link>
+
+          <Link 
+            to="/custom-wooden-packaging-bahrain-saudi-arabia" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            Custom Packaging
+          </Link>
           
           <Link 
             to="/about" 
