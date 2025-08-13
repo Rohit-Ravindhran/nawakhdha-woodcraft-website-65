@@ -5,213 +5,198 @@ import { Link } from "react-router-dom";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 const WoodenPalletsPage: React.FC = () => {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: "Wooden Pallets",
-    brand: {
-      "@type": "Organization",
-      name: "Al Nawakhdha Furnitures and Wood Works",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Nuwaidrat",
-        addressRegion: "Southern Governorate",
-        addressCountry: "BH",
+  const updatedJsonLd = `
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Al Nawakhdha Furnitures",
+  "image": "https://anfurnwll.com/logo.png",
+  "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia",
+  "logo": "https://anfurnwll.com/logo.png",
+  "telephone": "+973-XXXXXXXX",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Nuwaidrat",
+    "addressLocality": "Nuwaidrat",
+    "addressRegion": "Bahrain",
+    "postalCode": "644",
+    "addressCountry": "BH"
+  },
+  "areaServed": [
+    { "@type": "City", "name": "Nuwaidrat" },
+    { "@type": "City", "name": "Manama" },
+    { "@type": "Country", "name": "Bahrain" },
+    { "@type": "City", "name": "Riyadh" },
+    { "@type": "City", "name": "Dammam" },
+    { "@type": "City", "name": "Jeddah" },
+    { "@type": "Country", "name": "Saudi Arabia" }
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Wooden Pallets and Packaging Products",
+    "itemListElement": [
+      {
+        "@type": "Product",
+        "name": "Standard Wooden Pallets",
+        "category": "Wooden Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/5276a646-73c5-4beb-bf44-eafb1b0fb3e6.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
       },
-    },
-    description:
-      "Manufacturer and supplier of softwood and hardwood wooden pallets, including Euro pallets, ISPM 15 heat-treated export pallets, heavy-duty and custom sizes for Bahrain and Saudi Arabia.",
-    areaServed: [
-      { "@type": "Country", name: "Bahrain" },
-      { "@type": "Country", name: "Saudi Arabia" },
-    ],
-    offers: {
-      "@type": "Offer",
-      availability: "https://schema.org/InStock",
-      url: "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia",
-    },
-    keywords: [
-      "wooden pallets Bahrain",
-      "wooden pallets Saudi Arabia",
-      "softwood pallets",
-      "hardwood pallets",
-      "ISPM 15 heat treated pallets",
-      "Euro pallets EPAL",
-      "custom wooden pallets",
-      "pallet collars",
-      "pallet boxes",
-    ],
-  };
-
-  const businessJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Al Nawakhdha Furnitures",
-    "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia",
+      {
+        "@type": "Product",
+        "name": "Euro Pallets",
+        "category": "Wooden Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/b3d1e4bf-afa1-4b1e-b827-8d4be25e6669.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "2-Way Wooden Pallets",
+        "category": "Wooden Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/734dcfa6-6239-4173-bde7-dd11969f042c.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "4-Way Wooden Pallets",
+        "category": "Wooden Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/734dcfa6-6239-4173-bde7-dd11969f042c.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "Heat-Treated ISPM 15 Export Pallets",
+        "category": "Export Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/312efafb-6315-4c35-a642-aceeba98b77a.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "Heavy-Duty Wooden Pallets",
+        "category": "Industrial Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/287dba76-e321-4804-965d-e018e95a8687.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "Recycled & Eco-Friendly Pallets",
+        "category": "Sustainable Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/364d8607-1f73-4bb7-a70d-d39e5d1ca461.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "Pallet Collars and Pallet Boxes",
+        "category": "Packaging Accessories",
+        "image": "https://anfurnwll.com/lovable-uploads/2badd8f5-5140-4159-96c1-f42f155f4650.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      },
+      {
+        "@type": "Product",
+        "name": "Custom-Sized Wooden Pallets",
+        "category": "Custom Pallets",
+        "image": "https://anfurnwll.com/lovable-uploads/8a50d863-0f3e-41b6-83c2-ee9b1bcba8e5.png",
+        "brand": { "@type": "Brand", "name": "Al Nawakhdha Furnitures and Wood Works" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/PreOrder",
+          "url": "https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia"
+        },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1" }
+      }
+    ]
+  },
+  "keywords": [
+    "wooden pallets Bahrain",
+    "wooden pallet suppliers Bahrain",
+    "custom wooden pallets Bahrain",
+    "heat treated pallets Bahrain",
+    "ISPM 15 pallets",
+    "wooden pallets Saudi Arabia",
+    "wooden pallet suppliers Saudi Arabia",
+    "Euro pallets Bahrain",
+    "pallet collars Bahrain",
+    "heavy duty pallets Saudi Arabia",
+    "recycled pallets Bahrain",
+    "export pallets Bahrain",
+    "المنصات الخشبية البحرين",
+    "شراء منصات خشبية البحرين",
+    "مورد منصات خشبية البحرين",
+    "بالتات خشبية السعودية",
+    "منصات خشبية السعودية",
+    "صناديق خشبية للتغليف البحرين",
+    "بالتة خشب البحرين"
+  ],
+  "serviceType": [
+    "wooden pallets",
+    "custom wooden pallets",
+    "heat treated pallets",
+    "ISPM 15 certified pallets",
+    "export wooden pallets",
+    "industrial wooden pallets",
+    "recycled wooden pallets",
+    "pallet collars",
+    "wooden pallet boxes",
+    "custom-sized pallets"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
     "telephone": "+973-33133750",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Nuwaidrat",
-      "addressLocality": "Nuwaidrat",
-      "addressRegion": "Bahrain",
-      "postalCode": "644",
-      "addressCountry": "BH"
-    },
-    "areaServed": [
-      {
-        "@type": "City",
-        "name": "Nuwaidrat"
-      },
-      {
-        "@type": "Country",
-        "name": "Bahrain"
-      },
-      {
-        "@type": "City",
-        "name": "Riyadh"
-      },
-      {
-        "@type": "City",
-        "name": "Dammam"
-      },
-      {
-        "@type": "City",
-        "name": "Jeddah"
-      },
-      {
-        "@type": "Country",
-        "name": "Saudi Arabia"
-      }
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Wooden Pallets and Packaging Products",
-      "itemListElement": [
-        {
-          "@type": "Product",
-          "name": "Standard Wooden Pallets",
-          "category": "Wooden Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "Euro Pallets",
-          "category": "Wooden Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "2-Way Wooden Pallets",
-          "category": "Wooden Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "4-Way Wooden Pallets",
-          "category": "Wooden Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "Heat-Treated ISPM 15 Export Pallets",
-          "category": "Export Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "Heavy-Duty Wooden Pallets",
-          "category": "Industrial Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "Recycled & Eco-Friendly Pallets",
-          "category": "Sustainable Pallets"
-        },
-        {
-          "@type": "Product",
-          "name": "Pallet Collars and Pallet Boxes",
-          "category": "Packaging Accessories"
-        },
-        {
-          "@type": "Product",
-          "name": "Custom-Sized Wooden Pallets",
-          "category": "Custom Pallets"
-        }
-      ]
-    },
-    "keywords": [
-      "wooden pallets Bahrain",
-      "wooden pallet suppliers Bahrain",
-      "custom wooden pallets Bahrain",
-      "heat treated pallets Bahrain",
-      "ISPM 15 pallets",
-      "wooden pallets Saudi Arabia",
-      "wooden pallet suppliers Saudi Arabia",
-      "Euro pallets Bahrain",
-      "pallet collars Bahrain",
-      "heavy duty pallets Saudi Arabia",
-      "recycled pallets Bahrain",
-      "export pallets Bahrain",
-      "المنصات الخشبية البحرين",
-      "شراء منصات خشبية البحرين",
-      "مورد منصات خشبية البحرين",
-      "بالتات خشبية السعودية",
-      "منصات خشبية السعودية",
-      "صناديق خشبية للتغليف البحرين",
-      "بالتة خشب البحرين"
-    ],
-    "serviceType": [
-      "wooden pallets",
-      "custom wooden pallets",
-      "heat treated pallets",
-      "ISPM 15 certified pallets",
-      "export wooden pallets",
-      "industrial wooden pallets",
-      "recycled wooden pallets",
-      "pallet collars",
-      "wooden pallet boxes",
-      "custom-sized pallets"
-    ],
-    "department": [
-      {
-        "@type": "Organization",
-        "name": "Automotive Pallets",
-        "description": "Custom pallets for automotive parts including engines, tires, and heavy components."
-      },
-      {
-        "@type": "Organization",
-        "name": "Retail & E-commerce Pallets",
-        "description": "Display pallets and shelf-ready packaging solutions for retail and e-commerce logistics."
-      },
-      {
-        "@type": "Organization",
-        "name": "Pharmaceuticals & Healthcare Pallets",
-        "description": "Sterile and secure pallets designed for pharmaceutical and healthcare product transport."
-      },
-      {
-        "@type": "Organization",
-        "name": "Agricultural Pallets",
-        "description": "Weather-resistant pallets for grains, fruits, and vegetables."
-      },
-      {
-        "@type": "Organization",
-        "name": "Petrochemical & Oil & Gas Pallets",
-        "description": "Heavy-duty pallets designed for hazardous materials and petrochemical industry needs."
-      },
-      {
-        "@type": "Organization",
-        "name": "Construction & Heavy Machinery Pallets",
-        "description": "Robust pallets for bulky construction materials and heavy machinery."
-      },
-      {
-        "@type": "Organization",
-        "name": "Electronics & Spare Parts Pallets",
-        "description": "Anti-static pallets and protective packaging for delicate electronics and spare parts."
-      }
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "telephone": "+973-33133750",
-      "url": "https://anfurnwll.com/contact-us",
-      "email": "nawakhdha2058@gmail.com"
-    }
-  };
+    "url": "https://anfurnwll.com/contact-us",
+    "email": "nawakhdha2058@gmail.com"
+  }
+}`;
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -225,7 +210,10 @@ const WoodenPalletsPage: React.FC = () => {
       />
 
       {/* JSON-LD */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: updatedJsonLd }}
+      />
 
       {/* Hero / Intro */}
       <section className="section-padding bg-gradient-to-br from-primary/5 to-accent/5">
@@ -460,12 +448,6 @@ const WoodenPalletsPage: React.FC = () => {
         </section>
       </main>
 
-      <footer aria-hidden="true" className="sr-only">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
-        />
-      </footer>
     </div>
   );
 };
