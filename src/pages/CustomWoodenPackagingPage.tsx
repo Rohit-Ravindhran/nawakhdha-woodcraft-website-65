@@ -2,6 +2,8 @@ import React from "react";
 import PageSEO from "@/components/seo/PageSEO";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const CustomWoodenPackagingPage: React.FC = () => {
   const serviceJsonLd = {
@@ -168,39 +170,131 @@ const CustomWoodenPackagingPage: React.FC = () => {
             <h2 className="heading-lg text-foreground mb-6">Our Custom Wooden Packaging Products</h2>
             <div className="grid md:grid-cols-2 gap-8">
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/309feffb-b61d-4c4e-8284-d729c40dace9.png"
+                      alt="Custom wooden crates and boxes for export packaging in Bahrain and Saudi Arabia"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Wooden Crates and Boxes</h3>
                 <p className="text-muted-foreground">Our robust <strong>wooden crates and boxes</strong> are expertly crafted using premium hardwood and softwood, tailored to protect your products during storage and transportation. Suitable for a wide range of industries, these crates provide superior resistance to impacts, moisture, and environmental stresses, ensuring your goods arrive in perfect condition across Bahrain and Saudi Arabia.</p>
               </article>
 
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/03a74976-ced4-4d46-80ce-825a49a13be2.png"
+                      alt="Heat-treated ISPM 15 wooden packaging for export in Bahrain and Saudi Arabia"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Export-Ready Heat-Treated Packaging</h3>
                 <p className="text-muted-foreground">We offer <strong>heat-treated wooden packaging</strong> solutions that strictly comply with ISPM 15 standards, which are essential for international shipping. Our export crates and boxes prevent pest infestations and meet customs requirements, making us a trusted partner for businesses looking to ship products worldwide securely.</p>
               </article>
 
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/66f0b738-39a7-4f71-a02d-4099b2f00e02.png"
+                      alt="Wooden dunnage and wedges for cargo protection"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Dunnage and Wedges for Cargo Protection</h3>
                 <p className="text-muted-foreground">Custom-designed <strong>dunnage and wedges</strong> stabilize and secure cargo within containers and trucks, minimizing movement and preventing damage during transit. These wooden accessories are critical for industries transporting heavy machinery, automotive parts, and hazardous materials in Bahrain and Saudi Arabia.</p>
               </article>
 
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/56758222-09da-4d23-98f2-94f33a52b1dc.png"
+                      alt="Modular pallet collars wooden packaging system"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Modular Pallet Collars and Packaging Systems</h3>
                 <p className="text-muted-foreground">Our innovative <strong>modular pallet collars</strong> offer flexible packaging options that adapt to varying load sizes. These collars are lightweight yet durable, enabling easier handling, stacking, and protection of goods while optimizing storage space for retail, agriculture, and manufacturing sectors.</p>
               </article>
 
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/43db5df8-2d75-483d-8f2e-add4a70b4495.png"
+                      alt="Heavy-duty industrial wooden packaging crate for Bahrain and Saudi Arabia"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Heavy-Duty Industrial Packaging</h3>
                 <p className="text-muted-foreground">Constructed with high-quality hardwood, our <strong>heavy-duty industrial packaging</strong> solutions withstand harsh conditions and heavy loads. Ideal for petrochemical, construction, and manufacturing industries, these packages provide long-lasting protection during storage and rough transport environments.</p>
               </article>
 
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/46757b79-0328-4056-8a45-a45dbd033f79.png"
+                      alt="Lightweight wooden packaging box for fragile goods"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Lightweight Packaging Solutions for Fragile Goods</h3>
                 <p className="text-muted-foreground">For sensitive products such as electronics, pharmaceuticals, and delicate components, we provide <strong>lightweight wooden packaging</strong> designed to absorb shocks and prevent damage. Our designs combine protective cushioning with custom dimensions to safeguard fragile items during handling and shipment.</p>
               </article>
 
               <article>
+                <figure className="mb-4">
+                  <AspectRatio ratio={4/3}>
+                    <OptimizedImage
+                      src="/lovable-uploads/c6abf5bf-c948-4236-9715-fa28e118af6e.png"
+                      alt="Custom-sized wooden packaging crate designed to specification"
+                      width={800}
+                      height={600}
+                      className="rounded-lg border border-border"
+                      imageType="product"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                    />
+                  </AspectRatio>
+                </figure>
                 <h3 className="text-xl font-semibold text-foreground mb-3">Custom Sizes and Designs as Per Requirement</h3>
                 <p className="text-muted-foreground">At Al Nawakhdha Furnitures and Wood Works, we understand that every product is unique. That’s why we offer fully <strong>customized packaging solutions</strong>, from dimensions and wood type selection to finishing touches, ensuring your wooden packaging precisely matches your logistics and product protection needs.</p>
               </article>
+
             </div>
           </div>
         </section>
