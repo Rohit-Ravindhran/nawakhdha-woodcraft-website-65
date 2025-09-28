@@ -3,6 +3,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import { Link } from "react-router-dom";
 import { products } from "./ProductsData";
 import { cn } from "@/lib/utils";
+import { PalletsPackagingDropdown } from "./PalletsPackagingDropdown";
 import React from "react";
 
 export function DesktopNav() {
@@ -43,25 +44,7 @@ export function DesktopNav() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link 
-              to="/wooden-pallets-bahrain-saudi-arabia" 
-              className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
-            >
-              Wooden Pallets
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link 
-              to="/custom-wooden-packaging-bahrain-saudi-arabia" 
-              className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
-            >
-              Wooden Packaging
-            </Link>
-          </NavigationMenuLink>
+          <PalletsPackagingDropdown />
         </NavigationMenuItem>
 
         <NavigationMenuItem>

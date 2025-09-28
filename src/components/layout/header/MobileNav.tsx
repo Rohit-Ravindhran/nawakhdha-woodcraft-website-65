@@ -11,10 +11,12 @@ import { products } from "./ProductsData";
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isPalletsOpen, setIsPalletsOpen] = useState(false);
 
   const handleLinkClick = () => {
     setIsOpen(false);
     setIsProductsOpen(false);
+    setIsPalletsOpen(false);
   };
 
   return (
@@ -71,21 +73,32 @@ export function MobileNav() {
             Fire Rated Doors
           </Link>
 
-          <Link 
-            to="/wooden-pallets-bahrain-saudi-arabia" 
-            className="text-lg font-medium transition-colors hover:text-primary"
-            onClick={handleLinkClick}
-          >
-            Wooden Pallets
-          </Link>
-
-          <Link 
-            to="/custom-wooden-packaging-bahrain-saudi-arabia" 
-            className="text-lg font-medium transition-colors hover:text-primary"
-            onClick={handleLinkClick}
-          >
-            Wooden Packaging
-          </Link>
+          <Collapsible open={isPalletsOpen} onOpenChange={setIsPalletsOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 text-lg font-medium" data-nav="pallets-packaging">
+                Pallets and Packaging
+                <ChevronDown className={`h-4 w-4 transition-transform ${isPalletsOpen ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-2 mt-2 ml-4">
+              <Link 
+                to="/wooden-pallets-bahrain-saudi-arabia" 
+                className="block py-2 text-sm transition-colors hover:text-primary min-h-[44px] flex items-center"
+                onClick={handleLinkClick}
+                data-nav-item="pallets"
+              >
+                Wooden Pallets
+              </Link>
+              <Link 
+                to="/custom-wooden-packaging-bahrain-saudi-arabia" 
+                className="block py-2 text-sm transition-colors hover:text-primary min-h-[44px] flex items-center"
+                onClick={handleLinkClick}
+                data-nav-item="packaging"
+              >
+                Wooden Packaging
+              </Link>
+            </CollapsibleContent>
+          </Collapsible>
 
           <Link 
             to="/about" 
