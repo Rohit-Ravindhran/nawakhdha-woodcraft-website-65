@@ -101,6 +101,15 @@ export function MobileNav() {
           </Collapsible>
 
           <Link 
+            to="/interior-fitouts-bahrain" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+            data-nav="fit-outs"
+          >
+            Fit Outs
+          </Link>
+
+          <Link 
             to="/about" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
