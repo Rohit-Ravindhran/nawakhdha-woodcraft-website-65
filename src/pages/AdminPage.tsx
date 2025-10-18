@@ -20,6 +20,7 @@ import HomeBlogCardsTab from "@/components/admin/tabs/HomeBlogCardsTab";
 import AboutTeamTab from "@/components/admin/tabs/AboutTeamTab";
 import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
 import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
+import MyProjectsTab from "@/components/admin/tabs/MyProjectsTab";
 import ContentReviewManager from "@/components/admin/ContentReviewManager";
 
 const AdminPage = () => {
@@ -110,6 +111,12 @@ const AdminPage = () => {
       label: "Blogs", 
       component: BlogsTab,
       description: "Manage blog posts"
+    },
+    { 
+      id: "my-projects", 
+      label: "My Projects", 
+      component: MyProjectsTab,
+      description: "Manage videos and images for My Projects page"
     },
     { 
       id: "pages", 

@@ -37,33 +37,13 @@ export function MobileNav() {
             Home
           </Link>
           
-          <Collapsible open={isProductsOpen} onOpenChange={setIsProductsOpen}>
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full justify-between p-0 text-lg font-medium">
-                Product Designs
-                <ChevronDown className={`h-4 w-4 transition-transform ${isProductsOpen ? 'rotate-180' : ''}`} />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-2 mt-2 ml-4">
-              <Link 
-                to="/products" 
-                className="block py-2 text-sm transition-colors hover:text-primary"
-                onClick={handleLinkClick}
-              >
-                All Products
-              </Link>
-              {products.map((product) => (
-                <Link 
-                  key={product.name}
-                  to={product.path} 
-                  className="block py-2 text-sm transition-colors hover:text-primary"
-                  onClick={handleLinkClick}
-                >
-                  {product.name}
-                </Link>
-              ))}
-            </CollapsibleContent>
-          </Collapsible>
+          <Link 
+            to="/my-projects" 
+            className="text-lg font-medium transition-colors hover:text-primary"
+            onClick={handleLinkClick}
+          >
+            My Projects
+          </Link>
 
           <Link 
             to="/fire-rated-doors-bahrain" 
