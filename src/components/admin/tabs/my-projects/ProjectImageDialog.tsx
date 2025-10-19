@@ -165,20 +165,6 @@ const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
 
             <FormField
               control={form.control}
-              name="image_url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image URL *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://..." {...field} readOnly />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="caption"
               render={({ field }) => (
                 <FormItem>
