@@ -43,7 +43,7 @@ const ProjectImagesManager: React.FC = () => {
         <div>
           <h3 className="text-lg font-semibold">Project Images</h3>
           <p className="text-sm text-muted-foreground">
-            Manage images displayed on the My Projects page
+            Manage images displayed on the Our Projects page
           </p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>

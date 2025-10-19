@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { useProjectsVideos, useProjectsImages } from '@/hooks/content/useProject
 import { ImageLightbox } from '@/components/ui/image-lightbox';
 import { useImageLightbox } from '@/hooks/use-image-lightbox';
 import QuoteCTA from '@/components/contact/QuoteCTA';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const MyProjectsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,13 +37,68 @@ const MyProjectsPage: React.FC = () => {
     navigate('/contact');
   };
 
+  // Generate JSON-LD schema
+  const generateSchema = () => {
+    const itemListElements = images.map((image, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://www.anfurnwll.com/our-projects#project-${image.id}`,
+      "name": image.caption || `Project ${index + 1}`,
+      "image": image.image_url,
+      "description": image.meta_description || image.caption || 'Custom furniture and interior project in Bahrain'
+    }));
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Our Projects - Al Nawakhdha Furnitures Bahrain",
+      "description": "Completed furniture and interior projects by Al Nawakhdha Furnitures in Bahrain.",
+      "url": "https://www.anfurnwll.com/our-projects",
+      "numberOfItems": images.length + videos.length,
+      "itemListElement": itemListElements,
+      "publisher": {
+        "@type": "LocalBusiness",
+        "name": "Al Nawakhdha Furnitures",
+        "image": "https://www.anfurnwll.com/lovable-uploads/0185c8cc-c1e1-408e-b3fd-c7124284ad8e.png",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Building 425, Road 12, Block 712, Salmabad",
+          "addressLocality": "Manama",
+          "addressRegion": "Capital Governorate",
+          "postalCode": "973",
+          "addressCountry": "BH"
+        },
+        "telephone": "+973 3399 4456",
+        "url": "https://www.anfurnwll.com"
+      }
+    };
+  };
+
   return (
     <>
       <Helmet>
-        <title>Our Completed Projects in Bahrain | Custom Furniture & Interior Fit-Outs</title>
-        <meta name="description" content="Explore our portfolio of 675+ completed furniture, fit-out, and interior projects across Bahrain. 30+ years of expert craftsmanship and custom woodwork." />
-        <meta name="keywords" content="completed projects Bahrain, furniture projects, interior fitouts, custom woodwork, Bahrain carpentry" />
-        <link rel="canonical" href="https://anfurnwll.com/my-projects" />
+        <title>Furniture & Interior Projects in Bahrain | Al Nawakhdha Furnitures</title>
+        <meta name="description" content="Explore completed furniture, fit-out, and interior design projects by Al Nawakhdha Furnitures in Bahrain. View real videos and images of our craftsmanship, quality, and custom designs." />
+        <meta name="keywords" content="furniture projects Bahrain, interior fit-outs Bahrain, Al Nawakhdha Furnitures, custom furniture Bahrain, interior works Bahrain" />
+        <link rel="canonical" href="https://www.anfurnwll.com/our-projects" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Furniture & Interior Projects in Bahrain | Al Nawakhdha Furnitures" />
+        <meta property="og:description" content="Explore completed furniture, fit-out, and interior design projects by Al Nawakhdha Furnitures in Bahrain." />
+        <meta property="og:image" content="https://www.anfurnwll.com/lovable-uploads/0185c8cc-c1e1-408e-b3fd-c7124284ad8e.png" />
+        <meta property="og:url" content="https://www.anfurnwll.com/our-projects" />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Furniture & Interior Projects in Bahrain | Al Nawakhdha Furnitures" />
+        <meta name="twitter:description" content="Explore completed furniture, fit-out, and interior design projects by Al Nawakhdha Furnitures in Bahrain." />
+        <meta name="twitter:image" content="https://www.anfurnwll.com/lovable-uploads/0185c8cc-c1e1-408e-b3fd-c7124284ad8e.png" />
+
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(generateSchema())}
+        </script>
       </Helmet>
 
       {/* Hero Banner */}
@@ -62,6 +117,15 @@ const MyProjectsPage: React.FC = () => {
               Explore our craftsmanship through completed furniture, fit-out, and interior projects across Bahrain.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Introduction Section */}
+      <section className="section-padding bg-background">
+        <div className="container-custom max-w-4xl text-center">
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+            Al Nawakhdha Furnitures proudly showcases over 675+ completed projects across Bahrain, including <Link to="/products/interior-fitouts" className="text-primary hover:underline">custom furniture</Link>, <Link to="/products/interior-fitouts" className="text-primary hover:underline">interior fit-outs</Link>, <Link to="/products/fire-rated-doors" className="text-primary hover:underline">wooden doors</Link>, office interiors, and home renovations. Our work spans key areas such as Manama, Riffa, Muharraq, Juffair, and Isa Town, serving residential, commercial, and industrial clients. With 30+ years of expertise in woodworking and joinery, we deliver tailored designs, premium materials, and timely execution. Browse through our portfolio of real project videos and images to witness the quality and craftsmanship that sets us apart in Bahrain's furniture and interior industry.
+          </p>
         </div>
       </section>
 
@@ -117,6 +181,7 @@ const MyProjectsPage: React.FC = () => {
                             className="w-full h-full"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
+                            title={video.alt_text || video.caption || 'Project video'}
                           />
                         ) : (
                           <video 
@@ -148,6 +213,7 @@ const MyProjectsPage: React.FC = () => {
                   {images.map((image) => (
                     <div
                       key={image.id}
+                      id={`project-${image.id}`}
                       className="relative aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-xl transition-shadow group"
                       onClick={() => openLightbox({
                         src: image.image_url,
@@ -157,8 +223,9 @@ const MyProjectsPage: React.FC = () => {
                     >
                       <img
                         src={image.image_url}
-                        alt={image.alt_text || image.caption || 'Project image'}
+                        alt={image.alt_text || image.caption || 'Custom furniture and interior project in Bahrain by Al Nawakhdha Furnitures'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
                       />
                       {image.caption && (
                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity">

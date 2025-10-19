@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -20,9 +20,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useCreateProjectVideo, useUpdateProjectVideo, type ProjectVideo } from '@/hooks/content/useProjects';
+import { useImageUpload } from '@/hooks/storage/useImageUpload';
+import { Upload, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const videoSchema = z.object({
-  video_url: z.string().url('Must be a valid URL'),
+  video_url: z.string().min(1, 'Video URL is required'),
   caption: z.string().optional(),
   alt_text: z.string().optional(),
   meta_title: z.string().optional(),
@@ -48,6 +51,9 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
 }) => {
   const createVideo = useCreateProjectVideo();
   const updateVideo = useUpdateProjectVideo();
+  const { uploadImage: uploadVideo, uploading } = useImageUpload();
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
   const form = useForm<VideoFormData>({
     resolver: zodResolver(videoSchema),
@@ -73,6 +79,7 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
         meta_keywords: video.meta_keywords || '',
         position: video.position,
       });
+      setVideoPreview(video.video_url);
     } else {
       form.reset({
         video_url: '',
@@ -83,8 +90,51 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
         meta_keywords: '',
         position: nextPosition,
       });
+      setVideoPreview(null);
     }
   }, [video, nextPosition, form]);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Please upload a valid video file (MP4, MOV, or WebM)');
+      return;
+    }
+
+    // Validate file size (max 100MB)
+    const maxSize = 100 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error('Video file size must be less than 100MB');
+      return;
+    }
+
+    try {
+      setUploadProgress(10);
+      
+      // Upload to Supabase storage
+      const videoUrl = await uploadVideo(file, 'projects-videos', '', { 
+        optimize: false,
+        imageType: 'other'
+      });
+      
+      setUploadProgress(100);
+
+      if (videoUrl) {
+        form.setValue('video_url', videoUrl);
+        setVideoPreview(videoUrl);
+        toast.success('Video uploaded successfully');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload video');
+    } finally {
+      setUploadProgress(0);
+    }
+  };
 
   const onSubmit = async (data: VideoFormData) => {
     try {
@@ -123,9 +173,64 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
               name="video_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Video URL *</FormLabel>
+                  <FormLabel>Video URL or Upload *</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://youtube.com/watch?v=..." {...field} />
+                    <div className="space-y-3">
+                      <Input 
+                        placeholder="https://youtube.com/watch?v=... or upload from PC" 
+                        {...field} 
+                        disabled={uploading}
+                      />
+                      
+                      <div className="flex items-center gap-3">
+                        <label className="cursor-pointer">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            disabled={uploading}
+                            asChild
+                          >
+                            <span>
+                              {uploading ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Uploading...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  Upload from PC
+                                </>
+                              )}
+                            </span>
+                          </Button>
+                          <input
+                            type="file"
+                            accept="video/mp4,video/quicktime,video/webm"
+                            onChange={handleFileUpload}
+                            className="hidden"
+                            disabled={uploading}
+                          />
+                        </label>
+                        
+                        {uploadProgress > 0 && uploadProgress < 100 && (
+                          <span className="text-sm text-muted-foreground">
+                            {uploadProgress}%
+                          </span>
+                        )}
+                      </div>
+
+                      {videoPreview && (
+                        <div className="mt-3">
+                          <p className="text-sm text-muted-foreground mb-2">Preview:</p>
+                          <video 
+                            src={videoPreview} 
+                            controls 
+                            className="w-full max-h-48 rounded-md"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -38,11 +38,11 @@ export function MobileNav() {
           </Link>
           
           <Link 
-            to="/my-projects" 
+            to="/our-projects" 
             className="text-lg font-medium transition-colors hover:text-primary"
             onClick={handleLinkClick}
           >
-            My Projects
+            Our Projects
           </Link>
 
           <Link 

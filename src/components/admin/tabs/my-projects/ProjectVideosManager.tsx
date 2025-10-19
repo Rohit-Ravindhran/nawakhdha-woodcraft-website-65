@@ -43,7 +43,7 @@ const ProjectVideosManager: React.FC = () => {
         <div>
           <h3 className="text-lg font-semibold">Project Videos</h3>
           <p className="text-sm text-muted-foreground">
-            Manage videos displayed on the My Projects page
+            Manage videos displayed on the Our Projects page
           </p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>

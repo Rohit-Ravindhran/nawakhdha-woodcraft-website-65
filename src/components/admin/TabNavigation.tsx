@@ -14,7 +14,7 @@ const TabNavigation = ({ activeTab }: TabNavigationProps) => {
       <TabsTrigger value="about">About</TabsTrigger>
       <TabsTrigger value="contact">Contact Us</TabsTrigger>
       <TabsTrigger value="blog">Blogs</TabsTrigger>
-      <TabsTrigger value="my-projects">My Projects</TabsTrigger>
+      <TabsTrigger value="my-projects">Our Projects</TabsTrigger>
       <TabsTrigger value="gallery">Gallery</TabsTrigger>
       <TabsTrigger value="settings">Settings</TabsTrigger>
     </TabsList>

@@ -9,9 +9,9 @@ const MyProjectsTab: React.FC = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>My Projects Management</CardTitle>
+          <CardTitle>Our Projects Management</CardTitle>
           <CardDescription>
-            Manage videos and images displayed on the My Projects page
+            Manage videos and images displayed on the Our Projects page
           </CardDescription>
         </CardHeader>
         <CardContent>
