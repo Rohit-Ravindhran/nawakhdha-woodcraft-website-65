@@ -59,9 +59,12 @@ export function useImageUpload() {
         
         console.log(`Optimizing ${imageType} image to target size: ${targetSize}KB`);
         
+        // Use the larger dimension to preserve aspect ratio for both portrait and landscape
+        const maxDimension = Math.max(maxWidth, maxHeight);
+        
         const compressedBlob = await compressImage(
           file,
-          Math.min(maxWidth, maxHeight),
+          maxDimension,
           imageType === 'icon' ? 0.9 : 0.8,
           targetSize
         );

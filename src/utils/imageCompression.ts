@@ -26,12 +26,19 @@ export const compressImage = async (
         let height = img.height;
         
         // Calculate new dimensions to maintain aspect ratio
-        if (width > height && width > maxWidthOrHeight) {
-          height = Math.floor(height * (maxWidthOrHeight / width));
-          width = maxWidthOrHeight;
-        } else if (height > maxWidthOrHeight) {
-          width = Math.floor(width * (maxWidthOrHeight / height));
-          height = maxWidthOrHeight;
+        // Respect both width and height for portrait and landscape
+        if (width > maxWidthOrHeight || height > maxWidthOrHeight) {
+          const aspectRatio = width / height;
+          
+          if (width > height) {
+            // Landscape: constrain width
+            width = maxWidthOrHeight;
+            height = Math.floor(width / aspectRatio);
+          } else {
+            // Portrait: constrain height
+            height = maxWidthOrHeight;
+            width = Math.floor(height * aspectRatio);
+          }
         }
         
         // Create a canvas and draw the resized image
