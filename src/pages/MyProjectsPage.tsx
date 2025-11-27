@@ -174,11 +174,11 @@ const MyProjectsPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {videos.map((video) => (
                     <div key={video.id} className="space-y-3">
-                      <div className="aspect-video rounded-lg overflow-hidden shadow-md">
+                      <div className="rounded-lg overflow-hidden shadow-md bg-muted" style={{ minHeight: '300px' }}>
                         {video.video_url.includes('youtube.com') || video.video_url.includes('youtu.be') ? (
                           <iframe
                             src={video.video_url.replace('watch?v=', 'embed/')}
-                            className="w-full h-full"
+                            className="w-full aspect-video"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                             title={video.alt_text || video.caption || 'Project video'}
@@ -187,7 +187,7 @@ const MyProjectsPage: React.FC = () => {
                           <video 
                             src={video.video_url} 
                             controls 
-                            className="w-full h-full object-cover"
+                            className="w-full h-auto object-contain max-h-[600px]"
                             aria-label={video.alt_text || video.caption || 'Project video'}
                           />
                         )}
@@ -214,7 +214,8 @@ const MyProjectsPage: React.FC = () => {
                     <div
                       key={image.id}
                       id={`project-${image.id}`}
-                      className="relative aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-xl transition-shadow group"
+                      className="relative rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-xl transition-shadow group bg-muted"
+                      style={{ minHeight: '200px' }}
                       onClick={() => openLightbox({
                         src: image.image_url,
                         alt: image.alt_text || image.caption || 'Project image',
@@ -224,7 +225,7 @@ const MyProjectsPage: React.FC = () => {
                       <img
                         src={image.image_url}
                         alt={image.alt_text || image.caption || 'Custom furniture and interior project in Bahrain by Al Nawakhdha Furnitures'}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                       {image.caption && (

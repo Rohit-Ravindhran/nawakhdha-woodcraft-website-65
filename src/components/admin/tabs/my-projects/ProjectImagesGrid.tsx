@@ -27,11 +27,11 @@ const ProjectImagesGrid: React.FC<ProjectImagesGridProps> = ({
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {images.map((image) => (
         <Card key={image.id} className="overflow-hidden group">
-          <div className="relative aspect-square">
+          <div className="relative w-full" style={{ minHeight: '200px' }}>
             <img
               src={image.image_url}
               alt={image.alt_text || image.caption || 'Project image'}
-              className="w-full h-full object-cover"
+              className="w-full h-auto object-contain"
             />
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Button

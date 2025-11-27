@@ -50,7 +50,7 @@ const ProjectVideosTable: React.FC<ProjectVideosTableProps> = ({
                   ) : (
                     <video 
                       src={video.video_url} 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-muted"
                     />
                   )}
                 </div>
