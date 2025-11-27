@@ -144,16 +144,23 @@ const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <FormLabel>Upload Image *</FormLabel>
+              <FormLabel className="text-base font-semibold">Upload Image *</FormLabel>
               <Input
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
                 disabled={uploading}
+                className="cursor-pointer"
               />
-              {uploading && <p className="text-sm text-muted-foreground">Uploading...</p>}
+              {uploading && <p className="text-sm text-primary">Uploading image...</p>}
+              {!uploadedUrl && !uploading && !image && (
+                <p className="text-sm text-muted-foreground">
+                  Please upload an image first to enable the Create button
+                </p>
+              )}
               {uploadedUrl && (
                 <div className="mt-2">
+                  <p className="text-sm text-green-600 mb-2">✓ Image uploaded successfully</p>
                   <img 
                     src={uploadedUrl} 
                     alt="Preview" 
@@ -255,7 +262,11 @@ const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={uploading || !uploadedUrl}>
+              <Button 
+                type="submit" 
+                disabled={uploading || !uploadedUrl || !form.formState.isValid}
+                title={!uploadedUrl ? 'Please upload an image first' : ''}
+              >
                 {image ? 'Update' : 'Create'}
               </Button>
             </div>
