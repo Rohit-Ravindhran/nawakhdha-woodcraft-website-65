@@ -58,6 +58,13 @@ export async function generateSitemap() {
   </url>
   
   <url>
+    <loc>https://anfurnwll.com/our-projects</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>https://anfurnwll.com/blog</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
