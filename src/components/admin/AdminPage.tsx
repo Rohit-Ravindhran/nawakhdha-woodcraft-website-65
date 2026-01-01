@@ -11,7 +11,7 @@ import HomeProductsTab from "./tabs/HomeProductsTab";
 import HomeServicesTab from "./tabs/HomeServicesTab";
 import BlogsTab from "./tabs/BlogsTab";
 import PagesTab from "./tabs/PagesTab";
-import SitemapTab from "./tabs/SitemapTab";
+import SettingsTab from "./tabs/SettingsTab";
 
 const AdminPage = () => {
   const { session, signOut } = useAuth();
@@ -61,10 +61,10 @@ const AdminPage = () => {
       description: "Manage static pages content"
     },
     { 
-      id: "sitemap", 
-      label: "Sitemap", 
-      component: SitemapTab,
-      description: "Generate and manage sitemap.xml"
+      id: "settings", 
+      label: "Settings", 
+      component: SettingsTab,
+      description: "Sitemap generation and system settings"
     },
   ];
 
