@@ -13,7 +13,7 @@ import HomeProductsTab from "@/components/admin/tabs/HomeProductsTab";
 import HomeServicesTab from "@/components/admin/tabs/HomeServicesTab";
 import BlogsTab from "@/components/admin/tabs/BlogsTab";
 import PagesTab from "@/components/admin/tabs/PagesTab";
-import SitemapTab from "@/components/admin/tabs/SitemapTab";
+import SettingsTab from "@/components/admin/tabs/SettingsTab";
 import MaintenanceCategoriesTab from "@/components/admin/tabs/MaintenanceCategoriesTab";
 import MaintenanceDetailsTab from "@/components/admin/tabs/MaintenanceDetailsTab";
 import HomeBlogCardsTab from "@/components/admin/tabs/HomeBlogCardsTab";
@@ -125,10 +125,10 @@ const AdminPage = () => {
       description: "Manage static pages content"
     },
     { 
-      id: "sitemap", 
-      label: "Sitemap", 
-      component: SitemapTab,
-      description: "Generate and manage sitemap.xml"
+      id: "settings", 
+      label: "Settings", 
+      component: SettingsTab,
+      description: "Sitemap generation and system settings"
     },
   ];
 
