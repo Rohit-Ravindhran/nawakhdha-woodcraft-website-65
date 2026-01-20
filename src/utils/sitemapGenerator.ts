@@ -1,6 +1,13 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
+/**
+ * Generates a consolidated sitemap.xml with all valid, indexable URLs.
+ * All URLs are:
+ * - Self-canonical (no redirects)
+ * - Return HTTP 200
+ * - Not noindex
+ * - Listed ONLY ONCE
+ */
 export async function generateSitemap() {
   try {
     // Fetch actual product categories with slugs
@@ -64,13 +71,7 @@ export async function generateSitemap() {
     <priority>0.8</priority>
   </url>
   
-  <url>
-    <loc>https://anfurnwll.com/blog</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
+  <!-- Service Pages -->
   <url>
     <loc>https://anfurnwll.com/fire-rated-doors-bahrain</loc>
     <lastmod>${currentDate}</lastmod>
@@ -80,6 +81,20 @@ export async function generateSitemap() {
   
   <url>
     <loc>https://anfurnwll.com/interior-fitouts-bahrain</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://anfurnwll.com/wooden-pallets-bahrain-saudi-arabia</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://anfurnwll.com/custom-wooden-packaging-bahrain-saudi-arabia</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

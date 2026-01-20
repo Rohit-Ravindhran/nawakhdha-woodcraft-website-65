@@ -3,7 +3,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
+Disallow: /login
 Crawl-delay: 1
 
 Sitemap: https://anfurnwll.com/sitemap.xml
-Sitemap: https://anfurnwll.com/website-sitemap.xml
