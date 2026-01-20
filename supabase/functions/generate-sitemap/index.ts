@@ -36,7 +36,8 @@ Deno.serve(async (req) => {
     // Fetch product categories
     const { data: categories, error: categoriesError } = await supabase
       .from("product_categories")
-      .select("category_slug, updated_at");
+      .select("category_slug")
+      .not("category_slug", "is", null);
 
     if (categoriesError) {
       console.error("Error fetching categories:", categoriesError);
@@ -130,13 +131,10 @@ Deno.serve(async (req) => {
   <!-- Product Category Pages -->`;
       for (const category of categories) {
         if (category.category_slug) {
-          const lastmod = category.updated_at 
-            ? new Date(category.updated_at).toISOString().split("T")[0]
-            : currentDate;
           sitemap += `
   <url>
     <loc>${baseUrl}/product/${category.category_slug}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <lastmod>${currentDate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>`;
