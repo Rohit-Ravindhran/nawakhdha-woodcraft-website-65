@@ -23,17 +23,40 @@ const AluminiumWorksPage = () => {
   const schemaMarkup = {
     "@context": "https://schema.org",
     "@type": "Service",
+    "@id": "https://anfurnwll.com/aluminium-work-bahrain#service",
     name: "Aluminium Works in Bahrain",
-    serviceType: "Aluminium Fabrication & Installation",
-    provider: {
-      "@type": "Organization",
-      name: "Al Nawakhdha Furnitures",
-      url: "https://anfurnwll.com",
-    },
-    areaServed: { "@type": "Country", name: "Bahrain" },
     description:
-      "Professional aluminium works in Bahrain including aluminium doors, windows, partitions, shopfronts, curtain walls, cladding and custom glass solutions.",
-    url: "https://anfurnwll.com/aluminium-work-bahrain",
+      "Custom aluminium fabrication and installation services in Bahrain including aluminium doors, windows, glass partitions, and shopfronts tailored to client requirements.",
+    serviceType: "Aluminium Fabrication and Installation",
+    provider: {
+      "@type": "LocalBusiness",
+      "@id": "https://anfurnwll.com/#business",
+      name: "Al Nawakhdha Furnitures W.L.L",
+      url: "https://anfurnwll.com",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Nuwaidrat",
+        addressRegion: "Al Asimah",
+        addressCountry: "Bahrain",
+      },
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "Bahrain",
+    },
+    keywords: [
+      "aluminium works Bahrain",
+      "custom aluminium Bahrain",
+      "aluminium fabrication Bahrain",
+      "aluminium doors Bahrain",
+      "aluminium windows Bahrain",
+      "glass partition Bahrain",
+      "aluminium contractor Bahrain",
+      "aluminium company Bahrain",
+      "اعمال الالمنيوم البحرين",
+      "ابواب المنيوم البحرين",
+      "نوافذ المنيوم البحرين",
+    ],
   };
 
   const services = [
@@ -204,6 +227,11 @@ const AluminiumWorksPage = () => {
             </Button>
           </div>
         </section>
+
+        {/* Hidden SEO Footer */}
+        <footer className="seo-footer-hidden">
+          <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
+        </footer>
       </div>
     </>
   );
