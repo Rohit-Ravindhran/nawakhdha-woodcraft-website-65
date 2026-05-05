@@ -227,6 +227,11 @@ const AluminiumWorksPage = () => {
             </Button>
           </div>
         </section>
+
+        {/* Hidden SEO Footer */}
+        <footer className="seo-footer-hidden">
+          <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
+        </footer>
       </div>
     </>
   );
