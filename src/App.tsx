@@ -18,6 +18,7 @@ import BlogPostPage from "./pages/BlogPostPage";
 import FireRatedDoorsPage from "./pages/FireRatedDoorsPage";
 import InteriorFitoutsPage from "./pages/InteriorFitoutsPage";
 import AluminiumWorksPage from "./pages/AluminiumWorksPage";
+import GypsumWorksPage from "./pages/GypsumWorksPage";
 import WoodenPalletsPage from "./pages/WoodenPalletsPage";
 import CustomWoodenPackagingPage from "./pages/CustomWoodenPackagingPage";
 import MyProjectsPage from "./pages/MyProjectsPage";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/custom-wooden-packaging-bahrain-saudi-arabia" element={<CustomWoodenPackagingPage />} />
               <Route path="/interior-fitouts-bahrain" element={<InteriorFitoutsPage />} />
               <Route path="/aluminium-work-bahrain" element={<AluminiumWorksPage />} />
+              <Route path="/gypsum-work-bahrain" element={<GypsumWorksPage />} />
               <Route path="/our-projects" element={<MyProjectsPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/login" element={<AdminLogin />} />

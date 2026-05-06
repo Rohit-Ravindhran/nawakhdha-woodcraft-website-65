@@ -128,8 +128,9 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
             // Check if this is the interior design service card
             const isInteriorDesignService = title.toLowerCase().includes('bespoke interior') || title.toLowerCase().includes('interior design');
             const isAluminiumService = title.toLowerCase().includes('aluminium') || title.toLowerCase().includes('air conditioning');
-            
-            const isLinkedService = isInteriorDesignService || isAluminiumService;
+            const isGypsumService = title.toLowerCase().includes('gypsum') || title.toLowerCase().includes('partition works');
+
+            const isLinkedService = isInteriorDesignService || isAluminiumService || isGypsumService;
             const serviceCard = (
               <div
                 className={`bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1 ${isLinkedService ? 'cursor-pointer hover:shadow-md' : ''}`}
@@ -150,6 +151,8 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
 
             const linkTo = isAluminiumService
               ? "/aluminium-work-bahrain"
+              : isGypsumService
+              ? "/gypsum-work-bahrain"
               : isInteriorDesignService
               ? "/interior-fitouts-bahrain"
               : null;
