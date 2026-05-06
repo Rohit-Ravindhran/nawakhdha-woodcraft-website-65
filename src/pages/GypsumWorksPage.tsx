@@ -26,8 +26,8 @@ const GypsumWorksPage = () => {
     "@id": "https://anfurnwll.com/gypsum-work-bahrain#service",
     name: "Gypsum Works in Bahrain",
     description:
-      "Professional gypsum works in Bahrain including false ceilings, gypsum partitions, decorative ceiling designs, and custom wall designs tailored to client requirements.",
-    serviceType: "Gypsum Ceiling and Partition Works",
+      "Custom gypsum works in Bahrain including false ceilings, gypsum partitions, decorative ceiling designs, and wall features tailored to residential and commercial projects.",
+    serviceType: "Gypsum Ceiling and Partition Services",
     provider: {
       "@type": "LocalBusiness",
       "@id": "https://anfurnwll.com/#business",
@@ -56,6 +56,7 @@ const GypsumWorksPage = () => {
       "اعمال الجبس البحرين",
       "سقف جبس البحرين",
       "جبس بورد البحرين",
+      "ديكور جبس البحرين",
     ],
   };
 
