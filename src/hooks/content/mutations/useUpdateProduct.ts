@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ProductData } from '../types';
+import { pickProductCategoryColumns } from '../columnFilters';
 
 /**
  * Hook for updating existing product categories
@@ -22,7 +23,7 @@ export function useUpdateProduct() {
         // Update existing product
         const { error } = await supabase
           .from('product_categories')
-          .update(productFields)
+          .update(pickProductCategoryColumns(productFields as Record<string, unknown>))
           .eq('id', id);
             
         if (error) {

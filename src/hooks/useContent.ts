@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import {
+  pickBlogColumns,
+  pickPageColumns,
+  pickProductCategoryColumns,
+} from './content/columnFilters';
 
 export interface PageData {
   id?: string;
@@ -44,12 +49,13 @@ export function useUpdatePage() {
   return useMutation({
     mutationFn: async (pageData: PageData) => {
       const { id, ...pageFields } = pageData;
+      const pageRow = pickPageColumns(pageFields as Record<string, unknown>);
       
       if (id) {
         // Update existing page
         const { error } = await supabase
           .from('pages')
-          .update(pageFields)
+          .update(pageRow)
           .eq('id', id);
           
         if (error) throw error;
@@ -58,7 +64,7 @@ export function useUpdatePage() {
         // Insert new page
         const { data, error } = await supabase
           .from('pages')
-          .insert(pageFields)
+          .insert(pageRow)
           .select()
           .single();
           
@@ -141,12 +147,13 @@ export function useUpdateProductCategory() {
   return useMutation({
     mutationFn: async (productData: ProductData) => {
       const { id, ...productFields } = productData;
+      const productRow = pickProductCategoryColumns(productFields as Record<string, unknown>);
       
       if (id) {
         // Update existing product
         const { error } = await supabase
           .from('product_categories')
-          .update(productFields)
+          .update(productRow)
           .eq('id', id);
           
         if (error) throw error;
@@ -155,7 +162,7 @@ export function useUpdateProductCategory() {
         // Insert new product
         const { data, error } = await supabase
           .from('product_categories')
-          .insert(productFields)
+          .insert(productRow)
           .select()
           .single();
           
@@ -252,12 +259,13 @@ export function useUpdateBlog() {
   return useMutation({
     mutationFn: async (blogData: BlogData) => {
       const { id, ...blogFields } = blogData;
+      const blogRow = pickBlogColumns(blogFields as Record<string, unknown>);
       
       if (id) {
         // Update existing blog
         const { error } = await supabase
           .from('blogs')
-          .update(blogFields)
+          .update(blogRow)
           .eq('id', id);
           
         if (error) throw error;
@@ -266,7 +274,7 @@ export function useUpdateBlog() {
         // Insert new blog
         const { data, error } = await supabase
           .from('blogs')
-          .insert(blogFields)
+          .insert(blogRow)
           .select()
           .single();
           
