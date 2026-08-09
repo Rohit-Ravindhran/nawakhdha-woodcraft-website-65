@@ -137,6 +137,26 @@ const AluminiumWorksPage = () => {
               <p className="text-lg text-muted-foreground leading-relaxed mt-4">
                 From aluminium doors and windows to glass partitions and office enclosures, we ensure premium finishes and reliable installation across Bahrain.
               </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
+                Our aluminium fabrication in Bahrain is often delivered as part of larger{" "}
+                <Link to="/interior-fitouts-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  interior fit-out projects in Bahrain
+                </Link>
+                , alongside certified{" "}
+                <Link to="/fire-rated-doors-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  fire rated doors
+                </Link>
+                , custom{" "}
+                <Link to="/product/kitchen-cabinets-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  kitchen cabinets
+                </Link>{" "}
+                and bespoke{" "}
+                <Link to="/product/wardrobes-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  wardrobes
+                </Link>{" "}
+                built in our own workshop.
+              </p>
+
             </div>
           </div>
         </section>

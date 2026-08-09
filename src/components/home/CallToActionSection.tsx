@@ -22,10 +22,26 @@ const CallToActionSection: React.FC = () => {
           <h2 className="heading-lg text-white mb-4">
             Bring Your Vision to Life
           </h2>
-          <p className="text-white/80 mb-8 text-lg">
+          <p className="text-white/80 mb-4 text-lg">
             Ready to start your custom furniture project? Our expert team is
             ready to help transform your ideas into beautiful reality.
           </p>
+          <p className="text-white/80 mb-8">
+            Beyond joinery, we deliver{" "}
+            <Link to="/interior-fitouts-bahrain" className="underline underline-offset-4 hover:text-white">
+              complete interior fit-out services in Bahrain
+            </Link>
+            , fabricate{" "}
+            <Link to="/aluminium-work-bahrain" className="underline underline-offset-4 hover:text-white">
+              aluminium doors and windows
+            </Link>{" "}
+            and finish every space with{" "}
+            <Link to="/gypsum-work-bahrain" className="underline underline-offset-4 hover:text-white">
+              false ceiling and gypsum partition work
+            </Link>
+            .
+          </p>
+
           <Button asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
             <Link to="/contact">Request a Custom Quote</Link>
           </Button>

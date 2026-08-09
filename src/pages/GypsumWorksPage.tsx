@@ -137,6 +137,26 @@ const GypsumWorksPage = () => {
               <p className="text-lg text-muted-foreground leading-relaxed mt-4">
                 From false ceilings to decorative gypsum wall designs, our team ensures smooth finishing, precise detailing, and high-quality workmanship.
               </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
+                As a ceiling contractor in Bahrain we handle gypsum partition work within{" "}
+                <Link to="/interior-fitouts-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  complete interior fit-outs
+                </Link>
+                , coordinated with our{" "}
+                <Link to="/aluminium-work-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  aluminium and glass works
+                </Link>
+                , feature{" "}
+                <Link to="/product/tv-cabinets-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  TV cabinet designs
+                </Link>{" "}
+                and decorative{" "}
+                <Link to="/product/wall-cladding-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                  wall cladding
+                </Link>
+                .
+              </p>
+
             </div>
           </div>
         </section>
