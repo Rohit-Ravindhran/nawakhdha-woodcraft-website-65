@@ -186,6 +186,18 @@ const InteriorFitoutsPage: React.FC = () => {
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
               {heroDescription?.content_value || "Al Nawakhdha Furnitures is a leading interior fit out company Bahrain based in Nuwaidrat, offering comprehensive fit out works Bahrain including interior design Bahrain, bespoke furniture Bahrain, and turnkey interior fit out Bahrain solutions. As one of the top fit out companies in Bahrain, we specialize in luxury interior design Bahrain, affordable interior design Bahrain, villa interior design Bahrain, apartment interior design Bahrain, office fit out Bahrain, commercial fit out Bahrain, residential fit out Bahrain, hospitality fit out Bahrain, and retail fit out Bahrain projects with complete MEP works, civil maintenance services Bahrain, and custom joinery Bahrain."}
             </p>
+            <p className="text-base md:text-lg text-muted-foreground mb-8 leading-relaxed">
+              Every fit-out is delivered in-house, including{" "}
+              <Link to="/aluminium-work-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                aluminium works in Bahrain
+              </Link>{" "}
+              such as glass partitions and shopfronts, plus{" "}
+              <Link to="/gypsum-work-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                false ceiling and gypsum partition works
+              </Link>{" "}
+              for a fully finished space.
+            </p>
+
             <Button asChild size="lg" className="group">
               <Link to="/contact">
                 Get a Quote <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
