@@ -61,7 +61,7 @@ export function ProductMainContent({
             <p className="text-gray-600 italic">No description available for this product. Please check the Product Details section in the admin panel to add a description.</p>
           )}
         </div>
-        
+
         <div className="mt-8 pt-8 border-t border-gray-200">
           <h3 className="text-lg font-medium mb-2">Product Details</h3>
           <ul className="space-y-2">
@@ -69,6 +69,26 @@ export function ProductMainContent({
             <li><strong>Product Name:</strong> {productName}</li>
           </ul>
         </div>
+
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <h3 className="text-lg font-medium mb-2">Complete Your Interior</h3>
+          <p className="text-muted-foreground">
+            We can supply this alongside our{" "}
+            <Link to="/aluminium-work-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+              aluminium doors, windows and glass partitions in Bahrain
+            </Link>{" "}
+            and our{" "}
+            <Link to="/gypsum-work-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+              false ceiling and gypsum partition work
+            </Link>
+            , or as part of a full{" "}
+            <Link to="/interior-fitouts-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+              interior fit-out
+            </Link>
+            .
+          </p>
+        </div>
+
       </div>
     </div>
   );
