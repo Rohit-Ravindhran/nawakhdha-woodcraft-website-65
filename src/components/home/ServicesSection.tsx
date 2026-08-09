@@ -70,7 +70,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
           <div className="flex flex-col justify-center items-center py-10 text-red-500">
             <AlertCircle className="h-10 w-10 mb-2" />
             <p className="text-center">Unable to load services data</p>
-            {process.env.NODE_ENV !== 'production' && (
+            {import.meta.env.DEV && (
               <p className="text-sm text-muted-foreground mt-2">{String(error)}</p>
             )}
           </div>
