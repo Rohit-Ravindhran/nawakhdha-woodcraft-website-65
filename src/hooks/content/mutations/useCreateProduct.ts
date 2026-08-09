@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ProductData } from '../types';
+import { pickProductCategoryColumns } from '../columnFilters';
 
 /**
  * Hook for creating new product categories
@@ -16,7 +17,7 @@ export function useCreateProduct() {
         // Insert new product
         const { data, error } = await supabase
           .from('product_categories')
-          .insert(productData)
+          .insert(pickProductCategoryColumns(productData as Record<string, unknown>))
           .select()
           .single();
             

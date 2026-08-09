@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { BlogData } from './types';
+import { pickBlogColumns } from './columnFilters';
 
 // Blogs
 export function useBlogs() {
@@ -44,12 +45,13 @@ export function useUpdateBlog() {
   return useMutation({
     mutationFn: async (blogData: BlogData) => {
       const { id, ...blogFields } = blogData;
+      const row = pickBlogColumns(blogFields as Record<string, unknown>);
       
       if (id) {
         // Update existing blog
         const { error } = await supabase
           .from('blogs')
-          .update(blogFields)
+          .update(row)
           .eq('id', id);
           
         if (error) throw error;
@@ -58,7 +60,7 @@ export function useUpdateBlog() {
         // Insert new blog
         const { data, error } = await supabase
           .from('blogs')
-          .insert(blogFields)
+          .insert(row)
           .select()
           .single();
           
