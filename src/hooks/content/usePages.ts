@@ -3,6 +3,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PageData } from './types';
+// Columns that actually exist on the `pages` table
+const PAGE_COLUMNS = ['page_name', 'hero', 'seo_title', 'seo_description', 'seo_keywords'] as const;
+
+type PageRow = Partial<Record<(typeof PAGE_COLUMNS)[number], string | null>>;
+
+const pickPageColumns = (data: Record<string, unknown>): PageRow => {
+  const row: PageRow = {};
+  for (const key of PAGE_COLUMNS) {
+    if (data[key] !== undefined) row[key] = data[key] as string | null;
+  }
+  return row;
+};
+
 
 // Pages
 export function usePage(pageName: string) {
