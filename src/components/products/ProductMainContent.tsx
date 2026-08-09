@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { GalleryImage } from '@/hooks/content/types';
