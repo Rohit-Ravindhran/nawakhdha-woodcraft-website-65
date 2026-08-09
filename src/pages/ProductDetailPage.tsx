@@ -126,11 +126,27 @@ const ProductDetailPage: React.FC = () => {
       description: 'Get a custom quote for your furniture needs'
     },
     {
+      title: 'Interior Fit Out Bahrain',
+      href: '/interior-fitouts-bahrain',
+      description: 'Turnkey interior fit out services for homes, offices and retail'
+    },
+    {
+      title: 'Aluminium Works Bahrain',
+      href: '/aluminium-work-bahrain',
+      description: 'Aluminium doors, windows and glass partitions fabricated to order'
+    },
+    {
+      title: 'Gypsum & False Ceiling Bahrain',
+      href: '/gypsum-work-bahrain',
+      description: 'False ceilings, gypsum partitions and decorative wall designs'
+    },
+    {
       title: 'About Us',
       href: '/about',
       description: 'Learn about our craftsmanship and heritage since 1975'
     }
   ];
+
   
   console.log('ProductDetailPage: Final data for rendering:', {
     categoryName,
