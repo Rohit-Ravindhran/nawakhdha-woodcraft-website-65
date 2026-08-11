@@ -81,6 +81,9 @@ const App = () => (
               <Route path="/product/c558e225-2fb7-4766-8442-8c105d5a2d10" element={<Navigate to="/product/book-shelves-bahrain" replace />} />
               <Route path="/product/c8bf588b-b263-4802-9888-f309cc14530f" element={<Navigate to="/product/kitchen-cabinets-bahrain" replace />} />
               <Route path="/product/cda7157c-db12-4e58-bbe2-a5b317a27f11" element={<Navigate to="/product/bedroom-furniture-bahrain" replace />} />
+
+              {/* Catch-all 404 */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
         </TooltipProvider>
