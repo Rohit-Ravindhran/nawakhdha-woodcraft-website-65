@@ -177,11 +177,11 @@ const Footer = () => {
             © {currentYear} Al Nawakhdha Furniture W.L.L. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <Link to="/privacy" className="hover:text-primary transition-colors">
-              Privacy Policy
+            <Link to="/about" className="hover:text-primary transition-colors">
+              About Us
             </Link>
-            <Link to="/terms" className="hover:text-primary transition-colors">
-              Terms of Service
+            <Link to="/contact" className="hover:text-primary transition-colors">
+              Contact Us
             </Link>
           </div>
         </div>
