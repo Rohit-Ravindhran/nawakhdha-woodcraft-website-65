@@ -93,36 +93,36 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4 font-playfair">Popular Products</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a
-                  href="https://nawakhdha-woodcraft-website-65.lovable.app/product/68ae2de3-747c-4bea-afd9-b3e7fa122276"
+                <Link
+                  to="/product/modern-design-doors-bahrain"
                   className="hover:text-primary transition-colors"
                 >
                   Modern Wooden Doors
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://nawakhdha-woodcraft-website-65.lovable.app/product/c8bf588b-b263-4802-9888-f309cc14530f"
+                <Link
+                  to="/product/kitchen-cabinets-bahrain"
                   className="hover:text-primary transition-colors"
                 >
                   Kitchen Cabinets
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://nawakhdha-woodcraft-website-65.lovable.app/product/cda7157c-db12-4e58-bbe2-a5b317a27f11"
+                <Link
+                  to="/product/bedroom-furniture-bahrain"
                   className="hover:text-primary transition-colors"
                 >
                   Bedroom Furniture
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://nawakhdha-woodcraft-website-65.lovable.app/product/6c9754dc-781c-4161-a075-62157d85c6a5"
+                <Link
+                  to="/product/dining-tables-chairs-bahrain"
                   className="hover:text-primary transition-colors"
                 >
                   Dining Tables & Chairs
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
