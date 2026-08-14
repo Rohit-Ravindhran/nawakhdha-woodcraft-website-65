@@ -9,11 +9,21 @@ import ProjectVideoDialog from './ProjectVideoDialog';
 import ProjectVideosTable from './ProjectVideosTable';
 import type { ProjectVideo } from '@/hooks/content/useProjects';
 
-const ProjectVideosManager: React.FC = () => {
+interface ProjectVideosManagerProps {
+  pageSlug?: string;
+  bucket?: string;
+  pageLabel?: string;
+}
+
+const ProjectVideosManager: React.FC<ProjectVideosManagerProps> = ({
+  pageSlug = 'our-projects',
+  bucket = 'projects-videos',
+  pageLabel = 'Our Projects',
+}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<ProjectVideo | null>(null);
   
-  const { data: videos = [], isLoading } = useProjectsVideos();
+  const { data: videos = [], isLoading } = useProjectsVideos(pageSlug);
   const deleteVideo = useDeleteProjectVideo();
 
   const handleEdit = (video: ProjectVideo) => {
@@ -41,9 +51,9 @@ const ProjectVideosManager: React.FC = () => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-semibold">Project Videos</h3>
+          <h3 className="text-lg font-semibold">Videos</h3>
           <p className="text-sm text-muted-foreground">
-            Manage videos displayed on the Our Projects page
+            Manage videos displayed on the {pageLabel} page
           </p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>
@@ -67,6 +77,8 @@ const ProjectVideosManager: React.FC = () => {
         onOpenChange={handleCloseDialog}
         video={editingVideo}
         nextPosition={nextPosition}
+        pageSlug={pageSlug}
+        bucket={bucket}
       />
     </div>
   );

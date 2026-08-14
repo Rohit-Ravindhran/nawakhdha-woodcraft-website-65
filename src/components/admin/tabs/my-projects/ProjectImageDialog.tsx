@@ -39,6 +39,8 @@ interface ProjectImageDialogProps {
   onOpenChange: (open: boolean) => void;
   image: ProjectImage | null;
   nextPosition: number;
+  pageSlug?: string;
+  bucket?: string;
 }
 
 const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
@@ -46,6 +48,8 @@ const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
   onOpenChange,
   image,
   nextPosition,
+  pageSlug = 'our-projects',
+  bucket = 'projects-images',
 }) => {
   const [uploadedUrl, setUploadedUrl] = useState<string>('');
   const createImage = useCreateProjectImage();
@@ -95,7 +99,7 @@ const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
     if (!file) return;
 
     try {
-      const url = await uploadImage(file, 'projects-images', '', { optimize: true, imageType: 'product' });
+      const url = await uploadImage(file, bucket, '', { optimize: true, imageType: 'product' });
       if (url) {
         setUploadedUrl(url);
         form.setValue('image_url', url);
@@ -120,6 +124,7 @@ const ProjectImageDialog: React.FC<ProjectImageDialogProps> = ({
         meta_description: data.meta_description || undefined,
         meta_keywords: data.meta_keywords || undefined,
         position: data.position,
+        page_slug: pageSlug,
       };
 
       if (image) {

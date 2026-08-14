@@ -9,11 +9,21 @@ import ProjectImageDialog from './ProjectImageDialog';
 import ProjectImagesGrid from './ProjectImagesGrid';
 import type { ProjectImage } from '@/hooks/content/useProjects';
 
-const ProjectImagesManager: React.FC = () => {
+interface ProjectImagesManagerProps {
+  pageSlug?: string;
+  bucket?: string;
+  pageLabel?: string;
+}
+
+const ProjectImagesManager: React.FC<ProjectImagesManagerProps> = ({
+  pageSlug = 'our-projects',
+  bucket = 'projects-images',
+  pageLabel = 'Our Projects',
+}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingImage, setEditingImage] = useState<ProjectImage | null>(null);
   
-  const { data: images = [], isLoading } = useProjectsImages();
+  const { data: images = [], isLoading } = useProjectsImages(pageSlug);
   const deleteImage = useDeleteProjectImage();
 
   const handleEdit = (image: ProjectImage) => {
@@ -41,9 +51,9 @@ const ProjectImagesManager: React.FC = () => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-semibold">Project Images</h3>
+          <h3 className="text-lg font-semibold">Images</h3>
           <p className="text-sm text-muted-foreground">
-            Manage images displayed on the Our Projects page
+            Manage images displayed on the {pageLabel} page
           </p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>
@@ -67,6 +77,8 @@ const ProjectImagesManager: React.FC = () => {
         onOpenChange={handleCloseDialog}
         image={editingImage}
         nextPosition={nextPosition}
+        pageSlug={pageSlug}
+        bucket={bucket}
       />
     </div>
   );

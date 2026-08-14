@@ -41,6 +41,8 @@ interface ProjectVideoDialogProps {
   onOpenChange: (open: boolean) => void;
   video: ProjectVideo | null;
   nextPosition: number;
+  pageSlug?: string;
+  bucket?: string;
 }
 
 const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
@@ -48,6 +50,8 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
   onOpenChange,
   video,
   nextPosition,
+  pageSlug = 'our-projects',
+  bucket = 'projects-videos',
 }) => {
   const createVideo = useCreateProjectVideo();
   const updateVideo = useUpdateProjectVideo();
@@ -116,7 +120,7 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
       setUploadProgress(10);
       
       // Upload to Supabase storage
-      const videoUrl = await uploadVideo(file, 'projects-videos', '', { 
+      const videoUrl = await uploadVideo(file, bucket, '', { 
         optimize: false,
         imageType: 'other'
       });
@@ -146,6 +150,7 @@ const ProjectVideoDialog: React.FC<ProjectVideoDialogProps> = ({
         meta_description: data.meta_description || undefined,
         meta_keywords: data.meta_keywords || undefined,
         position: data.position,
+        page_slug: pageSlug,
       };
 
       if (video) {
