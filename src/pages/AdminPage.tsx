@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Lock, LogOut } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { AlertCircle, LogOut, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
 import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
 import HomeProductsTab from "@/components/admin/tabs/HomeProductsTab";
@@ -21,12 +21,17 @@ import AboutTeamTab from "@/components/admin/tabs/AboutTeamTab";
 import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
 import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
 import MyProjectsTab from "@/components/admin/tabs/MyProjectsTab";
+import AluminiumMediaTab from "@/components/admin/tabs/AluminiumMediaTab";
 import ContentReviewManager from "@/components/admin/ContentReviewManager";
 
 const AdminPage = () => {
   const { session, signOut } = useAuth();
   const navigate = useNavigate();
   const [logoutError, setLogoutError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("content-review");
+
+
 
   const handleLogout = async () => {
     setLogoutError(null);
@@ -119,6 +124,13 @@ const AdminPage = () => {
       description: "Manage videos and images for My Projects page"
     },
     { 
+      id: "aluminium-media", 
+      label: "Aluminium Media", 
+      component: AluminiumMediaTab,
+      description: "Manage videos and images for the Aluminium Works page"
+    },
+
+    { 
       id: "pages", 
       label: "Pages", 
       component: PagesTab,
@@ -145,10 +157,45 @@ const AdminPage = () => {
     );
   }
 
+  const active = tabs.find((t) => t.id === activeTab) ?? tabs[0];
+  const ActiveComponent = active.component;
+
   return (
     <div className="container-custom section-padding">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight">Admin Dashboard</h1>
+      <div className="flex justify-between items-center mb-8 gap-4">
+        <div className="flex items-center gap-3">
+          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Open admin menu">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Admin Menu</SheetTitle>
+              </SheetHeader>
+              <nav className="mt-6 flex flex-col gap-1">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setMenuOpen(false);
+                    }}
+                    className={cn(
+                      "text-left rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted",
+                      tab.id === active.id && "bg-primary text-primary-foreground hover:bg-primary"
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Admin Dashboard</h1>
+        </div>
         <Button variant="destructive" onClick={handleLogout} className="gap-2">
           <LogOut className="h-4 w-4" />
           Logout
@@ -162,29 +209,16 @@ const AdminPage = () => {
         </Alert>
       )}
 
-      <Tabs defaultValue={tabs[0].id} className="w-full space-y-4">
-        <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-          <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-max">
-            {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id} className="capitalize whitespace-nowrap">
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-        {tabs.map((tab) => (
-          <TabsContent key={tab.id} value={tab.id} className="space-y-4">
-            <div className="rounded-md border p-4">
-              <h2 className="text-xl font-semibold mb-2">{tab.label}</h2>
-              <p className="text-sm text-muted-foreground">{tab.description}</p>
-            </div>
-            {<tab.component />}
-          </TabsContent>
-        ))}
-      </Tabs>
+      <div className="space-y-4">
+        <div className="rounded-md border p-4">
+          <h2 className="text-xl font-semibold mb-2">{active.label}</h2>
+          <p className="text-sm text-muted-foreground">{active.description}</p>
+        </div>
+        <ActiveComponent />
+      </div>
     </div>
   );
 };
+
 
 export default AdminPage;

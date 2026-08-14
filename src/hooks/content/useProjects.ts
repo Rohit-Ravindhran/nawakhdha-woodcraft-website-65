@@ -11,6 +11,7 @@ export interface ProjectVideo {
   meta_description?: string;
   meta_keywords?: string;
   position: number;
+  page_slug?: string;
   created_at: string;
   updated_at: string;
 }
@@ -24,18 +25,20 @@ export interface ProjectImage {
   meta_description?: string;
   meta_keywords?: string;
   position: number;
+  page_slug?: string;
   created_at: string;
   updated_at: string;
 }
 
 // Fetch all project videos
-export function useProjectsVideos() {
+export function useProjectsVideos(pageSlug: string = 'our-projects') {
   return useQuery({
-    queryKey: ['projects-videos'],
+    queryKey: ['projects-videos', pageSlug],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('projects_videos')
         .select('*')
+        .eq('page_slug', pageSlug)
         .order('position', { ascending: true });
 
       if (error) throw error;
@@ -45,13 +48,14 @@ export function useProjectsVideos() {
 }
 
 // Fetch all project images
-export function useProjectsImages() {
+export function useProjectsImages(pageSlug: string = 'our-projects') {
   return useQuery({
-    queryKey: ['projects-images'],
+    queryKey: ['projects-images', pageSlug],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('projects_images')
         .select('*')
+        .eq('page_slug', pageSlug)
         .order('position', { ascending: true });
 
       if (error) throw error;

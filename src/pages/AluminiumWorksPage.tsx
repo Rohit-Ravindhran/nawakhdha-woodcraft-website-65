@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import ProjectMediaGallery from "@/components/shared/ProjectMediaGallery";
+
 import {
   Building,
   CheckCircle,
@@ -230,6 +232,16 @@ const AluminiumWorksPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Project Videos & Pictures */}
+        <ProjectMediaGallery
+          pageSlug="aluminium-work-bahrain"
+          title="Our Aluminium Works in Bahrain"
+          description="Browse real videos and photos of our completed aluminium and commercial air conditioning projects across Bahrain."
+          fallbackAlt="Aluminium works project in Bahrain by Al Nawakhdha Furnitures"
+        />
+
+
 
         {/* CTA */}
         <section className="section-padding bg-primary text-primary-foreground">
