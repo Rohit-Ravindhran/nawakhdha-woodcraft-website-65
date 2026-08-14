@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Lock, LogOut } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { AlertCircle, LogOut, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import ProductCategoriesTab from "@/components/admin/tabs/ProductCategoriesTab";
 import ProductDetailsTab from "@/components/admin/tabs/ProductDetailsTab";
 import HomeProductsTab from "@/components/admin/tabs/HomeProductsTab";
@@ -21,12 +21,15 @@ import AboutTeamTab from "@/components/admin/tabs/AboutTeamTab";
 import ContactInfoTab from "@/components/admin/tabs/ContactInfoTab";
 import ProductGalleryTab from "@/components/admin/tabs/ProductGalleryTab";
 import MyProjectsTab from "@/components/admin/tabs/MyProjectsTab";
+import AluminiumMediaTab from "@/components/admin/tabs/AluminiumMediaTab";
 import ContentReviewManager from "@/components/admin/ContentReviewManager";
 
 const AdminPage = () => {
   const { session, signOut } = useAuth();
   const navigate = useNavigate();
   const [logoutError, setLogoutError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   const handleLogout = async () => {
     setLogoutError(null);
