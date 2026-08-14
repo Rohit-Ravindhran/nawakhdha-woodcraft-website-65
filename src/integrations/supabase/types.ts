@@ -628,6 +628,7 @@ export type Database = {
           meta_description: string | null
           meta_keywords: string | null
           meta_title: string | null
+          page_slug: string
           position: number | null
           updated_at: string
         }
@@ -640,6 +641,7 @@ export type Database = {
           meta_description?: string | null
           meta_keywords?: string | null
           meta_title?: string | null
+          page_slug?: string
           position?: number | null
           updated_at?: string
         }
@@ -652,6 +654,7 @@ export type Database = {
           meta_description?: string | null
           meta_keywords?: string | null
           meta_title?: string | null
+          page_slug?: string
           position?: number | null
           updated_at?: string
         }
@@ -666,6 +669,7 @@ export type Database = {
           meta_description: string | null
           meta_keywords: string | null
           meta_title: string | null
+          page_slug: string
           position: number | null
           updated_at: string
           video_url: string
@@ -678,6 +682,7 @@ export type Database = {
           meta_description?: string | null
           meta_keywords?: string | null
           meta_title?: string | null
+          page_slug?: string
           position?: number | null
           updated_at?: string
           video_url: string
@@ -690,6 +695,7 @@ export type Database = {
           meta_description?: string | null
           meta_keywords?: string | null
           meta_title?: string | null
+          page_slug?: string
           position?: number | null
           updated_at?: string
           video_url?: string
