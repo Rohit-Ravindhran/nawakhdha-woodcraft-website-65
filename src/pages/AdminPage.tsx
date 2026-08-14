@@ -122,6 +122,13 @@ const AdminPage = () => {
       description: "Manage videos and images for My Projects page"
     },
     { 
+      id: "aluminium-media", 
+      label: "Aluminium Media", 
+      component: AluminiumMediaTab,
+      description: "Manage videos and images for the Aluminium Works page"
+    },
+
+    { 
       id: "pages", 
       label: "Pages", 
       component: PagesTab,
