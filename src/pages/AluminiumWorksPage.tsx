@@ -127,17 +127,15 @@ const AluminiumWorksPage = () => {
 
       <div className="min-h-screen bg-background">
         {/* Hero */}
-        <section className="section-padding bg-gradient-to-br from-primary/5 to-accent/5">
+        <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 to-accent/5">
           <div className="container-custom">
             <div className="max-w-4xl mx-auto text-center">
-              <div className="flex justify-center mb-6">
-                <Building className="h-16 w-16 text-primary" />
-              </div>
-              <h1 className="heading-xl mb-6 text-foreground">Aluminium Works in Bahrain</h1>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                At Al Nawakhdha Furnitures, we provide high-quality aluminium works in Bahrain for residential, commercial, and industrial spaces. Our solutions combine durability, modern design, and precision fabrication to deliver long-lasting aluminium structures.
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-playfair mb-4 text-foreground">
+                Aluminium Works in Bahrain
+              </h1>
+              <p className="text-base md:text-lg text-muted-foreground">
+                Aluminium doors, windows, glass partitions and custom fabrication by Al Nawakhdha Furnitures.
               </p>
-
             </div>
           </div>
         </section>
@@ -172,6 +170,9 @@ const AluminiumWorksPage = () => {
           <div className="container-custom max-w-4xl mx-auto">
             <h2 className="heading-md mb-6 text-center text-foreground">Aluminium Fabrication & Installation</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
+              At Al Nawakhdha Furnitures, we provide high-quality aluminium works in Bahrain for residential, commercial, and industrial spaces. Our solutions combine durability, modern design, and precision fabrication to deliver long-lasting aluminium structures.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mt-4">
               From aluminium doors and windows to glass partitions and office enclosures, we ensure premium finishes and reliable installation across Bahrain.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed mt-4">
