@@ -102,7 +102,7 @@ const MyProjectsPage: React.FC = () => {
       </Helmet>
 
       {/* Hero Banner */}
-      <section className="relative h-[600px] w-full overflow-hidden">
+      <section className="relative h-[280px] w-full overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -110,46 +110,12 @@ const MyProjectsPage: React.FC = () => {
           }}
         >
           <div className="container-custom h-full flex flex-col items-center justify-center text-center text-white">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-playfair mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold font-playfair mb-3">
               Our Completed Projects in Bahrain
             </h1>
-            <p className="text-lg md:text-xl max-w-3xl opacity-90">
+            <p className="text-base md:text-lg max-w-3xl opacity-90">
               Explore our craftsmanship through completed furniture, fit-out, and interior projects across Bahrain.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Introduction Section */}
-      <section className="section-padding bg-background">
-        <div className="container-custom max-w-4xl text-center">
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-            Al Nawakhdha Furnitures proudly showcases over 675+ completed projects across Bahrain, including <Link to="/products" className="text-primary hover:underline">custom furniture</Link>, <Link to="/interior-fitouts-bahrain" className="text-primary hover:underline">interior fit-outs</Link>, <Link to="/fire-rated-doors-bahrain" className="text-primary hover:underline">wooden doors</Link>, office interiors, and home renovations. Our work spans key areas such as Manama, Riffa, Muharraq, Juffair, and Isa Town, serving residential, commercial, and industrial clients. With 30+ years of expertise in woodworking and joinery, we deliver tailored designs, premium materials, and timely execution. Browse through our portfolio of real project videos and images to witness the quality and craftsmanship that sets us apart in Bahrain's furniture and interior industry.
-          </p>
-        </div>
-      </section>
-
-      {/* Metrics Section */}
-      <section className="section-padding bg-secondary/30">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-            {metrics.map((metric, index) => {
-              const Icon = metric.icon;
-              return (
-                <Card 
-                  key={index}
-                  className="p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                >
-                  <Icon className="h-10 w-10 mx-auto mb-3 text-primary" />
-                  <div className="text-2xl md:text-3xl font-bold font-playfair text-primary mb-2">
-                    {metric.value}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {metric.label}
-                  </div>
-                </Card>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -239,6 +205,40 @@ const MyProjectsPage: React.FC = () => {
               )}
             </TabsContent>
           </Tabs>
+        </div>
+      </section>
+
+      {/* Introduction Section */}
+      <section className="section-padding bg-background">
+        <div className="container-custom max-w-4xl text-center">
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+            Al Nawakhdha Furnitures proudly showcases over 675+ completed projects across Bahrain, including <Link to="/products" className="text-primary hover:underline">custom furniture</Link>, <Link to="/interior-fitouts-bahrain" className="text-primary hover:underline">interior fit-outs</Link>, <Link to="/fire-rated-doors-bahrain" className="text-primary hover:underline">wooden doors</Link>, office interiors, and home renovations. Our work spans key areas such as Manama, Riffa, Muharraq, Juffair, and Isa Town, serving residential, commercial, and industrial clients. With 30+ years of expertise in woodworking and joinery, we deliver tailored designs, premium materials, and timely execution. Browse through our portfolio of real project videos and images to witness the quality and craftsmanship that sets us apart in Bahrain's furniture and interior industry.
+          </p>
+        </div>
+      </section>
+
+      {/* Metrics Section */}
+      <section className="section-padding bg-secondary/30">
+        <div className="container-custom">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+            {metrics.map((metric, index) => {
+              const Icon = metric.icon;
+              return (
+                <Card 
+                  key={index}
+                  className="p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                >
+                  <Icon className="h-10 w-10 mx-auto mb-3 text-primary" />
+                  <div className="text-2xl md:text-3xl font-bold font-playfair text-primary mb-2">
+                    {metric.value}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {metric.label}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </section>
 

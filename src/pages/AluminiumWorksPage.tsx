@@ -137,28 +137,6 @@ const AluminiumWorksPage = () => {
               <p className="text-lg text-muted-foreground leading-relaxed">
                 At Al Nawakhdha Furnitures, we provide high-quality aluminium works in Bahrain for residential, commercial, and industrial spaces. Our solutions combine durability, modern design, and precision fabrication to deliver long-lasting aluminium structures.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
-                From aluminium doors and windows to glass partitions and office enclosures, we ensure premium finishes and reliable installation across Bahrain.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
-                Our aluminium fabrication in Bahrain is often delivered as part of larger{" "}
-                <Link to="/interior-fitouts-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
-                  interior fit-out projects in Bahrain
-                </Link>
-                , alongside certified{" "}
-                <Link to="/fire-rated-doors-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
-                  fire rated doors
-                </Link>
-                , custom{" "}
-                <Link to="/product/kitchen-cabinets-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
-                  kitchen cabinets
-                </Link>{" "}
-                and bespoke{" "}
-                <Link to="/product/wardrobes-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
-                  wardrobes
-                </Link>{" "}
-                built in our own workshop.
-              </p>
 
             </div>
           </div>
@@ -178,6 +156,43 @@ const AluminiumWorksPage = () => {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Project Videos & Pictures */}
+        <ProjectMediaGallery
+          pageSlug="aluminium-work-bahrain"
+          title="Our Aluminium Works in Bahrain"
+          description="Browse real videos and photos of our completed aluminium and commercial air conditioning projects across Bahrain."
+          fallbackAlt="Aluminium works project in Bahrain by Al Nawakhdha Furnitures"
+        />
+
+        {/* Description */}
+        <section className="section-padding">
+          <div className="container-custom max-w-4xl mx-auto">
+            <h2 className="heading-md mb-6 text-center text-foreground">Aluminium Fabrication & Installation</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              From aluminium doors and windows to glass partitions and office enclosures, we ensure premium finishes and reliable installation across Bahrain.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mt-4">
+              Our aluminium fabrication in Bahrain is often delivered as part of larger{" "}
+              <Link to="/interior-fitouts-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                interior fit-out projects in Bahrain
+              </Link>
+              , alongside certified{" "}
+              <Link to="/fire-rated-doors-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                fire rated doors
+              </Link>
+              , custom{" "}
+              <Link to="/product/kitchen-cabinets-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                kitchen cabinets
+              </Link>{" "}
+              and bespoke{" "}
+              <Link to="/product/wardrobes-bahrain" className="text-primary underline underline-offset-4 hover:no-underline">
+                wardrobes
+              </Link>{" "}
+              built in our own workshop.
+            </p>
           </div>
         </section>
 
@@ -232,14 +247,6 @@ const AluminiumWorksPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Project Videos & Pictures */}
-        <ProjectMediaGallery
-          pageSlug="aluminium-work-bahrain"
-          title="Our Aluminium Works in Bahrain"
-          description="Browse real videos and photos of our completed aluminium and commercial air conditioning projects across Bahrain."
-          fallbackAlt="Aluminium works project in Bahrain by Al Nawakhdha Furnitures"
-        />
 
 
 
