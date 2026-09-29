@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import ProjectMediaGallery from "@/components/shared/ProjectMediaGallery";
 
 import {
-  Building,
   CheckCircle,
   Home,
   Layers,
