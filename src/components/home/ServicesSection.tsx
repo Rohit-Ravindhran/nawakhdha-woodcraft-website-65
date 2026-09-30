@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Package, Warehouse } from "lucide-react";
+import palletsImage from "@/assets/pallets-packaging.png.asset.json";
 import { HomeServiceData } from "@/hooks/content/types";
 
 interface Service {
@@ -174,9 +175,12 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
             data-testid="service-card-pallets-packaging"
           >
             <figure className="mb-4">
-              <div className="w-16 h-16 rounded-md bg-secondary flex items-center justify-center">
-                <Package className="h-8 w-8 text-primary" aria-hidden="true" />
-              </div>
+              <img
+                src={palletsImage.url}
+                alt="Stacked wooden pallets in the Al Nawakhdha warehouse in Bahrain"
+                className="w-16 h-16 object-cover rounded-md"
+                loading="lazy"
+              />
             </figure>
             <h3 className="text-lg font-bold font-playfair mb-2">Pallets and Packaging</h3>
             <p className="text-muted-foreground text-sm">
