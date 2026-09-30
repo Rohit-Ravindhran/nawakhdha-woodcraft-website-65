@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import SectionTitle from "@/components/ui/section-title";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Package, Warehouse } from "lucide-react";
 import { HomeServiceData } from "@/hooks/content/types";
 
 interface Service {
@@ -42,7 +42,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
             subtitle="Loading our services..."
             centered={true}
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {[1, 2, 3, 4, 5].map((index) => (
               <div key={`skeleton-${index}`} className="bg-white p-6 rounded-lg shadow-sm">
                 <Skeleton className="w-16 h-16 rounded-md mb-4" />
@@ -116,7 +116,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
           subtitle="We offer a comprehensive range of woodworking and furniture services."
           centered={true}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {sortedServices.map((service, index) => {
             // Handle both HomeServiceData and Service types
             const title = (service as Service).title || (service as HomeServiceData).title || '';
@@ -167,6 +167,39 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
               </div>
             );
           })}
+
+          {/* Pallets and Packaging card */}
+          <div
+            className="bg-white p-6 rounded-lg shadow-sm border border-border transition-transform hover:-translate-y-1 flex flex-col"
+            data-testid="service-card-pallets-packaging"
+          >
+            <figure className="mb-4">
+              <div className="w-16 h-16 rounded-md bg-secondary flex items-center justify-center">
+                <Package className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+            </figure>
+            <h3 className="text-lg font-bold font-playfair mb-2">Pallets and Packaging</h3>
+            <p className="text-muted-foreground text-sm">
+              Durable wooden pallets and custom export-grade wooden packaging, manufactured in
+              Bahrain for local and GCC shipping.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-4 pt-2 mt-auto">
+              <Link
+                to="/wooden-pallets-bahrain-saudi-arabia"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                <Warehouse className="h-3.5 w-3.5" aria-hidden="true" />
+                Wooden Pallets
+              </Link>
+              <Link
+                to="/custom-wooden-packaging-bahrain-saudi-arabia"
+                className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-secondary px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-secondary/70"
+              >
+                <Package className="h-3.5 w-3.5" aria-hidden="true" />
+                Wooden Packaging
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
