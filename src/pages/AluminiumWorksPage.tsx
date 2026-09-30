@@ -142,7 +142,7 @@ const AluminiumWorksPage = () => {
         {/* Services */}
         <section className="section-padding">
           <div className="container-custom">
-            <h2 className="heading-lg text-center mb-12 text-foreground">Our Aluminium Services</h2>
+            <h2 className="sr-only">Our Aluminium Services</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((item) => (
                 <Card key={item} className="border-border hover:shadow-lg transition-shadow">
