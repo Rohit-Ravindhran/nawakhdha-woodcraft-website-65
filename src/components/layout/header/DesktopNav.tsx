@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { products } from "./ProductsData";
 import { cn } from "@/lib/utils";
 import React from "react";
-import React from "react";
 
 export function DesktopNav() {
   return (
